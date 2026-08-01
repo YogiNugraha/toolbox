@@ -2,6 +2,22 @@
     @section('page_title', 'Riwayat Aktivitas')
 
     <div class="bg-white rounded-sm border border-hairline overflow-hidden">
+        <!-- Search and Export Header -->
+        <div class="p-6 border-b border-hairline flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="relative w-full sm:w-64">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <x-lucide-search class="h-4 w-4 text-ink-muted" />
+                </div>
+                <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari tool, file, status..." 
+                    class="w-full pl-9 pr-3 py-2 border border-hairline rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-amber focus:border-amber font-mono bg-paper">
+            </div>
+            
+            <button wire:click="export" class="flex items-center justify-center gap-2 px-4 py-2 bg-paper border border-hairline text-ink hover:bg-amber/10 hover:text-amber hover:border-amber/50 rounded-sm text-sm font-medium transition-colors whitespace-nowrap">
+                <x-lucide-download class="h-4 w-4" />
+                Export Excel
+            </button>
+        </div>
+
         @if ($activities->count() > 0)
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-hairline">
