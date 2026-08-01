@@ -15,3 +15,24 @@
     --color-amber: #E8963C;
     --color-steel: #2F5D8A;
 }
+
+/* Sleek Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--color-hairline);
+    border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-ink-muted);
+}
+::-webkit-scrollbar-button {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
