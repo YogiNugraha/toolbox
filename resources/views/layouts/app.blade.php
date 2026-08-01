@@ -33,6 +33,7 @@
 
     <!-- Main Content -->
     <main class="grow w-full">
+        {{ $slot ?? '' }}
         @yield('content')
     </main>
 

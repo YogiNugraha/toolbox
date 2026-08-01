@@ -63,6 +63,14 @@ class ImageConverter extends Component
         }
 
         try {
+            $activity = \App\Models\Activity::create([
+                'user_id' => auth()->id(),
+                'tool_slug' => 'convert-image',
+                'original_filename' => $this->file->getClientOriginalName(),
+                'original_size' => $this->file->getSize(),
+                'status' => 'processing',
+            ]);
+
             // Quality 90 for conversion to preserve details
             $result = $processor->process($this->file, 90, null, $this->outputFormat);
 
@@ -71,7 +79,19 @@ class ImageConverter extends Component
             $this->newSize = $result['new_size'];
             $this->resultExtension = $result['extension'];
 
+            $activity->update([
+                'result_size' => $result['new_size'],
+                'result_path' => $result['path'],
+                'status' => 'completed',
+                'meta' => [
+                    'output_format' => $this->outputFormat
+                ],
+            ]);
+
         } catch (\Exception $e) {
+            if (isset($activity)) {
+                $activity->update(['status' => 'failed', 'meta' => ['error' => $e->getMessage()]]);
+            }
             $this->errorMsg = 'Gagal mengonversi gambar: ' . $e->getMessage();
         }
     }

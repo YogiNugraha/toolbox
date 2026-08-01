@@ -91,6 +91,14 @@ class ImageCompressor extends Component
                 }
             }
 
+            $activity = \App\Models\Activity::create([
+                'user_id' => auth()->id(),
+                'tool_slug' => 'compress-image',
+                'original_filename' => $this->file->getClientOriginalName(),
+                'original_size' => $this->file->getSize(),
+                'status' => 'processing',
+            ]);
+
             $result = $processor->process($this->file, $quality, $maxDimension, $outputFormat);
 
             $this->resultPath = $result['path'];
@@ -98,7 +106,21 @@ class ImageCompressor extends Component
             $this->newSize = $result['new_size'];
             $this->resultExtension = $result['extension'];
 
+            $activity->update([
+                'result_size' => $result['new_size'],
+                'result_path' => $result['path'],
+                'status' => 'completed',
+                'meta' => [
+                    'preset' => $this->preset,
+                    'quality' => $quality,
+                    'output_format' => $outputFormat ?? 'original'
+                ],
+            ]);
+
         } catch (\Exception $e) {
+            if (isset($activity)) {
+                $activity->update(['status' => 'failed', 'meta' => ['error' => $e->getMessage()]]);
+            }
             $this->errorMsg = 'Gagal mengompres gambar: ' . $e->getMessage();
         }
     }

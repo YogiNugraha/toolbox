@@ -17,15 +17,17 @@ class ConvertPdfToWordJob implements ShouldQueue
     public $jobId;
     public $inputPath;
     public $outputDir;
+    public $activityId;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(string $jobId, string $inputPath, string $outputDir)
+    public function __construct(string $jobId, string $inputPath, string $outputDir, ?int $activityId = null)
     {
         $this->jobId = $jobId;
         $this->inputPath = $inputPath;
         $this->outputDir = $outputDir;
+        $this->activityId = $activityId;
     }
 
     /**
@@ -49,9 +51,27 @@ class ConvertPdfToWordJob implements ShouldQueue
                 'new_size' => $newSize,
             ], 3600);
 
+            if ($this->activityId) {
+                // $outputFile is absolute, we need relative path for the result_path
+                $userId = \App\Models\Activity::find($this->activityId)?->user_id ?? 'guest';
+                $relativePath = 'private/users/' . $userId . '/' . basename($outputFile);
+                \App\Models\Activity::where('id', $this->activityId)->update([
+                    'result_size' => $newSize,
+                    'result_path' => $relativePath,
+                    'status' => 'completed',
+                ]);
+            }
+
         } catch (\Exception $e) {
             Cache::put("pdf_conversion_status_{$this->jobId}", 'failed', 3600);
             Cache::put("pdf_conversion_error_{$this->jobId}", $e->getMessage(), 3600);
+
+            if ($this->activityId) {
+                \App\Models\Activity::where('id', $this->activityId)->update([
+                    'status' => 'failed',
+                    'meta' => ['error' => $e->getMessage()],
+                ]);
+            }
         }
     }
 }

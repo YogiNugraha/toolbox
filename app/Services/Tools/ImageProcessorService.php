@@ -58,7 +58,8 @@ class ImageProcessorService
 
         // Generate a unique filename and determine storage path
         $filename = Str::uuid() . '.' . $extension;
-        $relativePath = 'private/temp/' . $filename;
+        $userId = auth()->id() ?? 'guest';
+        $relativePath = 'private/users/' . $userId . '/' . $filename;
         
         // Encode the image with the specific format and quality (v4 syntax)
         if ($extension === 'png') {

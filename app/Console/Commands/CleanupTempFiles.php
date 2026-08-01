@@ -19,7 +19,7 @@ class CleanupTempFiles extends Command
      *
      * @var string
      */
-    protected $description = 'Clean up temporary files older than 1 hour in storage/app/private/temp';
+    protected $description = 'Clean up temporary files older than retention hours and mark activities as expired';
 
     /**
      * Execute the console command.
@@ -27,27 +27,42 @@ class CleanupTempFiles extends Command
     public function handle()
     {
         $disk = Storage::disk('local');
-        $directory = 'private/temp';
+        $retentionHours = env('FILE_RETENTION_HOURS', 24);
+        $threshold = now()->subHours($retentionHours);
 
-        if (!$disk->exists($directory)) {
-            $this->info("Directory does not exist. Nothing to clean.");
-            return;
-        }
+        // Find activities older than threshold that still have a result_path
+        $activities = \App\Models\Activity::whereNotNull('result_path')
+            ->where('status', 'completed')
+            ->where('updated_at', '<', $threshold)
+            ->get();
 
-        $files = $disk->files($directory);
-        $now = now()->timestamp;
         $deleted = 0;
 
-        foreach ($files as $file) {
-            $lastModified = $disk->lastModified($file);
+        foreach ($activities as $activity) {
+            if ($disk->exists($activity->result_path)) {
+                $disk->delete($activity->result_path);
+            }
             
-            // Delete if older than 1 hour (3600 seconds)
-            if ($now - $lastModified > 3600) {
-                $disk->delete($file);
-                $deleted++;
+            $activity->update([
+                'status' => 'expired',
+                'result_path' => null, // clear path so it's not downloadable
+            ]);
+            
+            $deleted++;
+        }
+        
+        // Also clean up any loose files in private/temp older than threshold
+        $tempDir = 'private/temp';
+        if ($disk->exists($tempDir)) {
+            $files = $disk->files($tempDir);
+            $now = now()->timestamp;
+            foreach ($files as $file) {
+                if ($now - $disk->lastModified($file) > ($retentionHours * 3600)) {
+                    $disk->delete($file);
+                }
             }
         }
 
-        $this->info("Deleted $deleted temporary files.");
+        $this->info("Deleted and expired $deleted activity files.");
     }
 }

@@ -53,16 +53,25 @@ class PdfToWord extends Component
             
             // Store file temporarily
             $filename = $this->jobId . '.pdf';
-            $relativePath = 'private/temp/' . $filename;
+            $userId = auth()->id() ?? 'guest';
+            $relativePath = 'private/users/' . $userId . '/' . $filename;
             
             $inputPath = Storage::disk('local')->path($relativePath);
-            $outputDir = Storage::disk('local')->path('private/temp');
+            $outputDir = Storage::disk('local')->path('private/users/' . $userId);
             
             // Move file to our persistent temp folder since getRealPath() will disappear after request
-            $this->file->storeAs('private/temp', $filename, 'local');
+            $this->file->storeAs('private/users/' . $userId, $filename, 'local');
             
+            $activity = \App\Models\Activity::create([
+                'user_id' => auth()->id(),
+                'tool_slug' => 'pdf-to-word',
+                'original_filename' => $this->file->getClientOriginalName(),
+                'original_size' => $this->file->getSize(),
+                'status' => 'processing',
+            ]);
+
             // Dispatch the job
-            ConvertPdfToWordJob::dispatch($this->jobId, $inputPath, $outputDir);
+            ConvertPdfToWordJob::dispatch($this->jobId, $inputPath, $outputDir, $activity->id);
 
         } catch (\Exception $e) {
             $this->status = 'failed';
@@ -82,10 +91,8 @@ class PdfToWord extends Component
             $this->status = 'completed';
             $result = Cache::get("pdf_conversion_result_{$this->jobId}");
             if ($result) {
-                // $result['path'] is absolute path, we need relative path for Storage facade if needed, 
-                // but since download can use absolute path or we can parse it.
-                // It's in storage/app/private/temp/
-                $this->resultPath = 'private/temp/' . pathinfo($result['path'], PATHINFO_BASENAME);
+                $userId = auth()->id() ?? 'guest';
+                $this->resultPath = 'private/users/' . $userId . '/' . pathinfo($result['path'], PATHINFO_BASENAME);
                 $this->originalSize = $result['original_size'];
                 $this->newSize = $result['new_size'];
             }
