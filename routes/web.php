@@ -41,11 +41,11 @@ Route::middleware('auth')->group(function () {
         $filenameWithoutExt = pathinfo($activity->original_filename, PATHINFO_FILENAME);
         $downloadFilename = $filenameWithoutExt . '_processed.' . $extension;
 
-        return Storage::disk('local')->download($activity->result_path, $downloadFilename);
+        return response()->download(Storage::disk('local')->path($activity->result_path), $downloadFilename);
     })->name('activity.download');
 
     Route::post('/logout', function () {
-        auth()->logout();
+        \Illuminate\Support\Facades\Auth::logout();
         request()->session()->invalidate();
         request()->session()->regenerateToken();
         return redirect()->route('login');

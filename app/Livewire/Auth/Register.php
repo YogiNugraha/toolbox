@@ -25,7 +25,7 @@ class Register extends Component
             'password' => bcrypt($this->password),
         ]);
 
-        auth()->login($user);
+        \Illuminate\Support\Facades\Auth::login($user);
         return redirect()->route('dashboard');
     }
 
