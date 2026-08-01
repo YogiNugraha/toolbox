@@ -1,39 +1,39 @@
 <div>
     @section('page_title', 'Riwayat Aktivitas')
 
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="bg-white rounded-sm border border-hairline overflow-hidden">
         @if ($activities->count() > 0)
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                <table class="min-w-full divide-y divide-hairline">
+                    <thead class="bg-paper border-b border-hairline">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left text-[11px] font-mono font-medium text-ink-muted uppercase tracking-wider">
                                 Tool</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left text-[11px] font-mono font-medium text-ink-muted uppercase tracking-wider">
                                 Detail File</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left text-[11px] font-mono font-medium text-ink-muted uppercase tracking-wider">
                                 Efisiensi</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left text-[11px] font-mono font-medium text-ink-muted uppercase tracking-wider">
                                 Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left text-[11px] font-mono font-medium text-ink-muted uppercase tracking-wider">
                                 Tanggal</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-right text-[11px] font-mono font-medium text-ink-muted uppercase tracking-wider">
                                 Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tbody class="bg-white divide-y divide-hairline">
                         @foreach ($activities as $activity)
-                            <tr>
+                            <tr class="hover:bg-paper/50 transition-colors">
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">
+                                    <div class="text-sm font-medium text-ink">
                                         {{ Str::headline($activity->tool_slug) }}</div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="text-sm text-gray-900 font-medium truncate max-w-50"
+                                    <div class="text-sm text-ink font-mono truncate max-w-50"
                                         title="{{ $activity->original_filename }}">
                                         {{ Str::limit($activity->original_filename, 30) }}
                                     </div>
-                                    <div class="text-xs text-gray-500">
+                                    <div class="text-[11px] font-mono text-ink-muted mt-1">
                                         Asli:
                                         {{ $activity->original_size ? \Illuminate\Support\Number::fileSize($activity->original_size) : '-' }}
                                         @if ($activity->result_size)
@@ -42,9 +42,9 @@
                                         @endif
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-ink-muted font-mono">
                                     @if ($activity->original_size && $activity->result_size && $activity->original_size > $activity->result_size)
-                                        <span class="text-green-600 font-medium">
+                                        <span class="text-amber font-medium">
                                             -{{ round((($activity->original_size - $activity->result_size) / $activity->original_size) * 100) }}%
                                         </span>
                                     @else
@@ -52,29 +52,25 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    @if ($activity->status === 'completed')
-                                        <span
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Selesai</span>
+                                    @if($activity->status === 'completed')
+                                        <span class="px-2 py-0.5 inline-flex text-[11px] font-mono rounded-sm border border-hairline bg-paper text-ink-muted">SELESAI</span>
                                     @elseif($activity->status === 'processing')
-                                        <span
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Proses</span>
+                                        <span class="px-2 py-0.5 inline-flex text-[11px] font-mono rounded-sm border border-amber/30 bg-amber/5 text-amber">PROSES</span>
                                     @elseif($activity->status === 'expired')
-                                        <span
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Kedaluwarsa</span>
+                                        <span class="px-2 py-0.5 inline-flex text-[11px] font-mono rounded-sm border border-hairline bg-paper text-ink-muted">KEDALUWARSA</span>
                                     @else
-                                        <span
-                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Gagal</span>
+                                        <span class="px-2 py-0.5 inline-flex text-[11px] font-mono rounded-sm border border-red-200 bg-red-50 text-red-600">GAGAL</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-ink-muted font-mono">
                                     {{ $activity->created_at->format('d M Y, H:i') }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     @if ($activity->status === 'completed' && $activity->result_path)
                                         <a href="{{ route('activity.download', $activity->id) }}"
-                                            class="text-indigo-600 hover:text-indigo-900 bg-indigo-50 px-3 py-1 rounded hover:bg-indigo-100 transition-colors">Download</a>
+                                            class="text-amber hover:text-amber bg-amber/10 border border-amber/20 px-3 py-1 rounded-sm hover:bg-amber/20 transition-colors">Download</a>
                                     @elseif($activity->status === 'expired')
-                                        <span class="text-gray-400">Tidak tersedia</span>
+                                        <span class="text-ink-muted">Tidak tersedia</span>
                                     @else
                                         -
                                     @endif
@@ -85,11 +81,11 @@
                 </table>
             </div>
 
-            <div class="px-6 py-4 border-t border-gray-200">
+            <div class="px-6 py-4 border-t border-hairline">
                 {{ $activities->links() }}
             </div>
         @else
-            <div class="p-8 text-center text-gray-500">
+            <div class="p-8 text-center text-ink-muted">
                 Belum ada aktivitas.
             </div>
         @endif

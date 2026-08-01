@@ -1,6 +1,6 @@
-<div class="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 bg-white shadow-xl rounded-2xl">
-    <h2 class="text-2xl font-bold text-gray-800 mb-2">Compress Gambar</h2>
-    <p class="text-gray-600 mb-8">Kurangi ukuran file gambar Anda tanpa mengurangi kualitas secara signifikan.</p>
+<div class="bg-white border border-hairline rounded-sm p-8">
+    <h2 class="text-2xl font-display font-bold text-ink mb-2">Compress Gambar</h2>
+    <p class="text-ink-muted text-sm mb-8">Kurangi ukuran file gambar Anda tanpa mengurangi kualitas secara signifikan.</p>
 
     <!-- Error Message -->
     @if ($errorMsg)
@@ -20,140 +20,117 @@
             <!-- Upload Area -->
             <div class="w-full">
                 <label
-                    class="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 {{ $file ? 'border-indigo-500' : 'border-gray-300' }} transition-colors">
+                    x-data="{ isDropping: false }"
+                    x-on:dragover.prevent="isDropping = true"
+                    x-on:dragleave.prevent="isDropping = false"
+                    x-on:drop.prevent="isDropping = false; if($event.dataTransfer.files.length > 0) { $refs.fileInput.files = $event.dataTransfer.files; $refs.fileInput.dispatchEvent(new Event('change', { bubbles: true })) }"
+                    :class="isDropping ? 'border-amber/50 bg-amber/5' : '{{ $file ? 'border-amber/50' : 'border-hairline' }}'"
+                    class="flex flex-col items-center justify-center w-full h-48 border border-dashed rounded-sm cursor-pointer bg-paper hover:bg-amber/5 transition-colors">
                     <div class="flex flex-col items-center justify-center pt-5 pb-6">
                         @if ($file)
-                            <svg class="w-10 h-10 text-indigo-500 mb-3" fill="none" stroke="currentColor"
+                            <svg class="w-8 h-8 text-amber mb-3" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                     d="M5 13l4 4L19 7"></path>
                             </svg>
-                            <p class="mb-2 text-sm text-gray-700 font-semibold truncate px-4 max-w-full">
+                            <p class="mb-2 text-sm text-ink font-semibold truncate px-4 max-w-full">
                                 {{ $file->getClientOriginalName() }}</p>
-                            <p class="text-xs text-gray-500">{{ number_format($file->getSize() / 1024, 2) }} KB</p>
+                            <p class="text-[11px] font-mono text-ink-muted">{{ number_format($file->getSize() / 1024, 2) }} KB</p>
                         @else
-                            <svg class="w-10 h-10 text-gray-400 mb-3" fill="none" stroke="currentColor"
+                            <svg class="w-8 h-8 text-ink-muted mb-3" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
-                                </path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M12 4v16m8-8H4"></path>
                             </svg>
-                            <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span>
-                                atau drag and drop</p>
-                            <p class="text-xs text-gray-400">JPG, PNG, WEBP (Max 10MB)</p>
+                            <p class="mb-2 text-sm font-medium text-ink">Klik untuk upload <span class="text-ink-muted font-normal">atau drag and drop</span></p>
+                            <p class="font-mono text-[11px] text-ink-muted mt-2 tracking-wide uppercase px-2 py-0.5 border border-hairline rounded-sm bg-white">JPG · PNG · WEBP — MAX 10MB</p>
                         @endif
                     </div>
-                    <input type="file" wire:model="file" class="hidden" accept="image/jpeg, image/png, image/webp" />
+                    <input type="file" x-ref="fileInput" wire:model="file" class="hidden" accept="image/jpeg, image/png, image/webp" />
                 </label>
 
-                <div wire:loading wire:target="file" class="mt-2 text-sm text-indigo-600 font-medium">
+                <div wire:loading wire:target="file" class="mt-2 text-sm text-amber font-medium">
                     Mengupload...
                 </div>
             </div>
 
             <!-- Presets -->
             @if ($file)
-                <div class="bg-gray-50 p-5 rounded-xl border border-gray-200">
-                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Pilih Kualitas (Preset)</h3>
+                <div class="bg-paper p-6 rounded-sm border border-hairline mt-6">
+                    <h3 class="text-sm font-display font-bold text-ink mb-4">Pilih Kualitas (Preset)</h3>
 
-                    <div class="space-y-3">
-                        <!-- Sosmed -->
-                        <label
-                            class="flex items-start p-3 bg-white border rounded-lg cursor-pointer hover:border-indigo-500 {{ $preset === 'sosmed' ? 'border-indigo-500 ring-1 ring-indigo-500' : 'border-gray-200' }}">
-                            <div class="shrink-0 mt-0.5">
-                                <input type="radio" wire:model.live="preset" value="sosmed"
-                                    class="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
-                            </div>
-                            <div class="ml-3">
-                                <span class="block text-sm font-medium text-gray-900">📱 Sosial Media</span>
-                                <span class="block text-xs text-gray-500">Maks 1080px, Kualitas 80 (Cepat &
-                                    Bagus)</span>
-                            </div>
+                    <div class="flex border-b border-hairline mb-5 overflow-x-auto">
+                        <label class="px-4 py-2 text-sm font-medium cursor-pointer whitespace-nowrap {{ $preset === 'sosmed' ? 'text-ink border-b-2 border-amber' : 'text-ink-muted hover:text-ink' }}">
+                            <input type="radio" wire:model.live="preset" value="sosmed" class="hidden">
+                            Sosial Media
                         </label>
-
-                        <!-- Website -->
-                        <label
-                            class="flex items-start p-3 bg-white border rounded-lg cursor-pointer hover:border-indigo-500 {{ $preset === 'website' ? 'border-indigo-500 ring-1 ring-indigo-500' : 'border-gray-200' }}">
-                            <div class="shrink-0 mt-0.5">
-                                <input type="radio" wire:model.live="preset" value="website"
-                                    class="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
-                            </div>
-                            <div class="ml-3">
-                                <span class="block text-sm font-medium text-gray-900">🌐 Website</span>
-                                <span class="block text-xs text-gray-500">Maks 1920px, Kualitas 75 (Loading
-                                    Cepat)</span>
-
-                                @if ($preset === 'website')
-                                    <div class="mt-2 pl-1">
-                                        <label class="inline-flex items-center">
-                                            <input type="checkbox" wire:model="websiteConvertToWebp"
-                                                class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
-                                            <span class="ml-2 text-xs text-gray-700">Konversi ke format WebP (Lebih
-                                                ringan)</span>
-                                        </label>
-                                    </div>
-                                @endif
-                            </div>
+                        <label class="px-4 py-2 text-sm font-medium cursor-pointer whitespace-nowrap {{ $preset === 'website' ? 'text-ink border-b-2 border-amber' : 'text-ink-muted hover:text-ink' }}">
+                            <input type="radio" wire:model.live="preset" value="website" class="hidden">
+                            Website
                         </label>
-
-                        <!-- Custom -->
-                        <label
-                            class="flex items-start p-3 bg-white border rounded-lg cursor-pointer hover:border-indigo-500 {{ $preset === 'custom' ? 'border-indigo-500 ring-1 ring-indigo-500' : 'border-gray-200' }}">
-                            <div class="shrink-0 mt-0.5">
-                                <input type="radio" wire:model.live="preset" value="custom"
-                                    class="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
-                            </div>
-                            <div class="ml-3 w-full">
-                                <span class="block text-sm font-medium text-gray-900">⚙️ Custom</span>
-                                <span class="block text-xs text-gray-500">Atur manual kualitas dan resolusi</span>
-
-                                @if ($preset === 'custom')
-                                    <div class="mt-3 space-y-3 w-full pr-2">
-                                        <div>
-                                            <label class="text-xs text-gray-600 block mb-1">Kualitas
-                                                ({{ $customQuality }}%)</label>
-                                            <input type="range" wire:model="customQuality" min="1"
-                                                max="100"
-                                                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                                        </div>
-
-                                        <div>
-                                            <label class="inline-flex items-center">
-                                                <input type="checkbox" wire:model.live="customResize"
-                                                    class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
-                                                <span class="ml-2 text-xs text-gray-700">Resize Gambar</span>
-                                            </label>
-
-                                            @if ($customResize)
-                                                <div class="flex gap-2 mt-2">
-                                                    <input type="number" wire:model="customWidth"
-                                                        placeholder="Lebar (px)"
-                                                        class="w-1/2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                                                    <input type="number" wire:model="customHeight"
-                                                        placeholder="Tinggi (px)"
-                                                        class="w-1/2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                                                </div>
-                                            @endif
-                                        </div>
-
-                                        <div>
-                                            <label class="text-xs text-gray-600 block mb-1">Format Output</label>
-                                            <select wire:model="customFormat"
-                                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                                                <option value="original">Original</option>
-                                                <option value="jpg">JPG</option>
-                                                <option value="png">PNG</option>
-                                                <option value="webp">WebP</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
+                        <label class="px-4 py-2 text-sm font-medium cursor-pointer whitespace-nowrap {{ $preset === 'custom' ? 'text-ink border-b-2 border-amber' : 'text-ink-muted hover:text-ink' }}">
+                            <input type="radio" wire:model.live="preset" value="custom" class="hidden">
+                            Custom
                         </label>
                     </div>
 
+                    <!-- Preset Options Details -->
+                    <div class="min-h-[100px]">
+                        @if ($preset === 'sosmed')
+                            <div class="text-sm text-ink-muted">
+                                <p>Maks 1080px, Kualitas 80 (Cepat & Bagus). Cocok untuk upload ke Instagram, Facebook, dsb.</p>
+                            </div>
+                        @elseif ($preset === 'website')
+                            <div class="text-sm text-ink-muted mb-3">
+                                <p>Maks 1920px, Kualitas 75 (Loading Cepat). Cocok untuk banner web.</p>
+                            </div>
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" wire:model="websiteConvertToWebp"
+                                    class="rounded-sm border-hairline text-amber focus:ring-amber/50">
+                                <span class="ml-2 text-xs text-ink">Konversi ke format WebP (Lebih ringan)</span>
+                            </label>
+                        @elseif ($preset === 'custom')
+                            <div class="space-y-4 w-full">
+                                <div>
+                                    <label class="text-xs font-medium text-ink block mb-2">Kualitas (<span class="font-mono">{{ $customQuality }}%</span>)</label>
+                                    <input type="range" wire:model="customQuality" min="1" max="100"
+                                        class="w-full h-1 bg-hairline rounded-full appearance-none cursor-pointer accent-amber">
+                                </div>
+
+                                <div>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" wire:model.live="customResize"
+                                            class="rounded-sm border-hairline text-amber focus:ring-amber/50">
+                                        <span class="ml-2 text-xs text-ink">Resize Gambar</span>
+                                    </label>
+
+                                    @if ($customResize)
+                                        <div class="flex gap-3 mt-3">
+                                            <input type="number" wire:model="customWidth"
+                                                placeholder="Lebar (px)"
+                                                class="w-1/2 rounded-sm border-hairline shadow-sm focus:border-amber focus:ring-amber/20 text-sm font-mono">
+                                            <input type="number" wire:model="customHeight"
+                                                placeholder="Tinggi (px)"
+                                                class="w-1/2 rounded-sm border-hairline shadow-sm focus:border-amber focus:ring-amber/20 text-sm font-mono">
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <div>
+                                    <label class="text-xs font-medium text-ink block mb-2">Format Output</label>
+                                    <select wire:model="customFormat"
+                                        class="w-full rounded-sm border-hairline shadow-sm focus:border-amber focus:ring-amber/20 text-sm">
+                                        <option value="original">Original</option>
+                                        <option value="jpg">JPG</option>
+                                        <option value="png">PNG</option>
+                                        <option value="webp">WebP</option>
+                                    </select>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+
                     <button wire:click="compress" wire:loading.attr="disabled"
-                        class="w-full mt-5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-sm transition-all flex justify-center items-center gap-2">
+                        class="w-full mt-6 bg-amber hover:bg-amber/90 text-ink font-medium py-2.5 px-5 rounded-sm transition-colors flex justify-center items-center gap-2">
                         <span wire:loading.remove wire:target="compress">Compress Gambar</span>
                         <span wire:loading wire:target="compress">
                             <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
@@ -175,45 +152,42 @@
         <div>
             @if ($resultPath)
                 <div
-                    class="bg-indigo-50 p-6 rounded-2xl border border-indigo-100 flex flex-col h-full items-center text-center">
+                    class="bg-white p-6 rounded-sm border border-hairline flex flex-col h-full items-center text-center justify-center">
                     <div
-                        class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                        class="w-12 h-12 border border-hairline bg-paper text-ink rounded-sm flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7">
                             </path>
                         </svg>
                     </div>
 
-                    <h3 class="text-lg font-bold text-gray-800 mb-1">Berhasil Dikompres!</h3>
+                    <h3 class="text-lg font-display font-bold text-ink mb-1">Berhasil Dikompres</h3>
 
                     @php
                         $percentage = $originalSize > 0 ? round((($originalSize - $newSize) / $originalSize) * 100) : 0;
-                        $savedClasses = $percentage > 0 ? 'text-green-600 font-bold' : 'text-gray-600 font-bold';
+                        $savedClasses = $percentage > 0 ? 'text-amber bg-amber/15' : 'text-ink-muted bg-paper';
                     @endphp
 
-                    <div class="mt-4 bg-white p-4 rounded-xl w-full border border-indigo-50 shadow-sm">
-                        <div class="flex justify-between items-center mb-2 pb-2 border-b border-gray-100">
-                            <span class="text-sm text-gray-500">Ukuran Asli</span>
-                            <span
-                                class="text-sm font-semibold text-gray-700">{{ number_format($originalSize / 1024, 2) }}
-                                KB</span>
+                    <div class="mt-6 w-full max-w-sm">
+                        <div class="flex justify-between items-center mb-3 pb-3 border-b border-hairline">
+                            <span class="text-sm font-medium text-ink-muted">Ukuran Asli</span>
+                            <span class="text-sm font-mono text-ink line-through">{{ number_format($originalSize / 1024, 2) }} KB</span>
                         </div>
-                        <div class="flex justify-between items-center mb-2 pb-2 border-b border-gray-100">
-                            <span class="text-sm text-gray-500">Ukuran Baru</span>
-                            <span class="text-sm font-semibold text-gray-900">{{ number_format($newSize / 1024, 2) }}
-                                KB</span>
+                        <div class="flex justify-between items-center mb-3 pb-3 border-b border-hairline">
+                            <span class="text-sm font-medium text-ink-muted">Ukuran Baru</span>
+                            <span class="text-sm font-mono font-medium text-ink">{{ number_format($newSize / 1024, 2) }} KB</span>
                         </div>
-                        <div class="flex justify-between items-center pt-1">
-                            <span class="text-sm font-medium text-gray-600">Hemat</span>
-                            <span class="text-lg {{ $savedClasses }}">{{ $percentage }}%</span>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-ink-muted">Hemat</span>
+                            <span class="font-mono text-xs px-2 py-0.5 rounded-sm {{ $savedClasses }}">-{{ $percentage }}%</span>
                         </div>
                     </div>
 
-                    <div class="mt-6 w-full">
+                    <div class="mt-8 w-full max-w-sm">
                         <button wire:click="download"
-                            class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-xl shadow transition-colors flex justify-center items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            class="w-full bg-amber hover:bg-amber/90 text-ink font-medium py-2.5 px-5 rounded-sm transition-colors flex justify-center items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                     d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                             </svg>
                             Download Gambar
@@ -222,14 +196,15 @@
                 </div>
             @else
                 <div
-                    class="bg-gray-50 p-6 rounded-2xl border border-dashed border-gray-200 flex flex-col h-full items-center justify-center text-center min-h-75">
-                    <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                        </path>
-                    </svg>
-                    <p class="text-gray-500 text-sm">Upload dan compress gambar untuk melihat hasilnya di sini.</p>
+                    class="bg-paper p-6 rounded-sm border border-hairline flex flex-col h-full items-center justify-center text-center min-h-[300px]">
+                    <div class="w-12 h-12 border border-hairline bg-white text-ink-muted rounded-sm flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"
+                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <p class="font-mono text-xs text-ink-muted uppercase tracking-wide max-w-[200px]">PREVIEW AREA</p>
                 </div>
             @endif
         </div>

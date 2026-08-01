@@ -1,65 +1,85 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Dashboard - ToolBox')</title>
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=space-grotesk:500,700|inter:400,500,600|jetbrains-mono:400,500"
+        rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="bg-gray-100 text-gray-900 font-sans antialiased flex h-screen overflow-hidden">
+
+<body class="bg-paper text-ink font-sans antialiased flex h-screen overflow-hidden">
 
     <!-- Sidebar -->
-    <aside class="w-64 bg-indigo-900 text-white flex flex-col h-full shrink-0">
-        <div class="h-16 flex items-center px-6 border-b border-indigo-800">
-            <a href="{{ route('dashboard') }}" class="text-2xl font-black flex items-center gap-2">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a1 1 0 01-1-1v-3a1 1 0 011-1h1a2 2 0 100-4H4a1 1 0 01-1-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path>
+    <aside class="w-64 bg-ink text-slate-300 flex flex-col h-full shrink-0">
+        <div class="px-6 py-5 border-b border-white/10 shrink-0">
+            <a href="{{ route('dashboard') }}"
+                class="font-display font-bold text-white text-lg tracking-tight flex items-center gap-2">
+                <svg class="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                    </path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                 </svg>
                 ToolBox
             </a>
         </div>
-        
-        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
-            <a href="{{ route('dashboard') }}" class="block px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('dashboard') ? 'bg-indigo-800 text-white' : 'text-indigo-100 hover:bg-indigo-700' }}">Dashboard</a>
-            <a href="{{ route('history') }}" class="block px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('history') ? 'bg-indigo-800 text-white' : 'text-indigo-100 hover:bg-indigo-700' }}">Riwayat</a>
-            
-            <div class="pt-4 pb-2">
-                <p class="px-3 text-xs font-semibold text-indigo-300 uppercase tracking-wider">Tools</p>
-            </div>
-            @foreach(config('tools') as $tool)
-                <a href="{{ route('tool', $tool['slug']) }}" class="block px-3 py-2 rounded-md text-sm font-medium {{ request()->is('tool/'.$tool['slug']) ? 'bg-indigo-800 text-white' : 'text-indigo-100 hover:bg-indigo-700' }}">{{ $tool['name'] }}</a>
+
+        <nav class="flex-1 py-4 space-y-0.5 overflow-y-auto">
+            <a href="{{ route('dashboard') }}"
+                class="flex items-center gap-3 px-6 py-2.5 text-sm {{ request()->routeIs('dashboard') ? 'text-white font-medium bg-white/5 border-l-2 border-amber' : 'text-slate-400 hover:text-white hover:bg-white/5 transition-colors border-l-2 border-transparent' }}">Dashboard</a>
+            <a href="{{ route('history') }}"
+                class="flex items-center gap-3 px-6 py-2.5 text-sm {{ request()->routeIs('history') ? 'text-white font-medium bg-white/5 border-l-2 border-amber' : 'text-slate-400 hover:text-white hover:bg-white/5 transition-colors border-l-2 border-transparent' }}">Riwayat</a>
+
+            <p
+                class="px-6 pt-6 pb-2 text-[11px] font-mono uppercase tracking-widest text-slate-500 border-t border-white/10 mt-4 mb-2">
+                Tools
+            </p>
+
+            @foreach (config('tools') as $tool)
+                <a href="{{ route('tool', $tool['slug']) }}"
+                    class="flex items-center gap-3 px-6 py-2.5 text-sm {{ request()->is('tool/' . $tool['slug']) ? 'text-white font-medium bg-white/5 border-l-2 border-amber' : 'text-slate-400 hover:text-white hover:bg-white/5 transition-colors border-l-2 border-transparent' }}">{{ $tool['name'] }}</a>
             @endforeach
         </nav>
-        
-        <div class="p-4 border-t border-indigo-800">
-            <a href="{{ route('profile') }}" class="block px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('profile') ? 'bg-indigo-800 text-white' : 'text-indigo-100 hover:bg-indigo-700' }}">Profil Saya</a>
-            <form action="{{ route('logout') }}" method="POST" class="mt-2">
+
+        <div class="py-4 border-t border-white/10 shrink-0">
+            <a href="{{ route('profile') }}"
+                class="flex items-center gap-3 px-6 py-2.5 text-sm {{ request()->routeIs('profile') ? 'text-white font-medium bg-white/5 border-l-2 border-amber' : 'text-slate-400 hover:text-white hover:bg-white/5 transition-colors border-l-2 border-transparent' }}">Profil
+                Saya</a>
+            <form action="{{ route('logout') }}" method="POST">
                 @csrf
-                <button type="submit" class="w-full text-left block px-3 py-2 rounded-md text-sm font-medium text-indigo-100 hover:bg-indigo-700">Logout</button>
+                <button type="submit"
+                    class="w-full text-left flex items-center gap-3 px-6 py-2.5 text-sm text-slate-400 hover:text-white hover:bg-white/5 transition-colors border-l-2 border-transparent">Logout</button>
             </form>
         </div>
     </aside>
 
     <!-- Main content area -->
     <div class="flex-1 flex flex-col h-full overflow-hidden">
-        
+
         <!-- Topbar -->
-        <header class="h-16 bg-white shadow-sm flex items-center justify-between px-6 border-b border-gray-200 shrink-0">
+        <header class="bg-paper border-b border-hairline px-8 py-4 flex justify-between items-center shrink-0">
             <div>
-                <h1 class="text-xl font-semibold text-gray-800">@yield('page_title', 'Dashboard')</h1>
+                <h1 class="font-display font-bold text-xl text-ink">@yield('page_title', 'Dashboard')</h1>
             </div>
-            <div class="flex items-center gap-4">
-                <span class="text-sm text-gray-600">Halo, <strong>{{ auth()->user()->name }}</strong></span>
-                <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold border border-indigo-200">
+            <div class="flex items-center gap-3">
+                <span class="text-sm text-ink-muted">Halo, <span
+                        class="font-medium text-ink">{{ auth()->user()->name }}</span></span>
+                <div
+                    class="w-8 h-8 rounded-full bg-amber/15 border border-amber/40 text-amber font-mono text-sm flex items-center justify-center">
                     {{ substr(auth()->user()->name, 0, 1) }}
                 </div>
             </div>
         </header>
 
         <!-- Main content -->
-        <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
-            <div class="max-w-6xl mx-auto">
+        <main class="flex-1 overflow-y-auto bg-paper flex flex-col">
+            <div class="w-full px-8 py-8">
                 {{ $slot ?? '' }}
                 @yield('content')
             </div>
@@ -68,4 +88,5 @@
 
     @livewireScripts
 </body>
+
 </html>
