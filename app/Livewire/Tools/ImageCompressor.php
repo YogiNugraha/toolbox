@@ -48,10 +48,10 @@ class ImageCompressor extends Component
     {
         $this->errorMsg = null;
         $this->validate([
-            'file' => 'required|file|mimes:jpg,jpeg,png,webp|max:10240', // 10MB max
+            'file' => 'required|file|mimes:jpg,jpeg,png,webp|max:20480', // 20MB max
         ], [
             'file.mimes' => 'Format file tidak didukung. Gunakan JPG, PNG, atau WebP.',
-            'file.max' => 'Ukuran file maksimal 10MB.'
+            'file.max' => 'Ukuran file maksimal 20MB.'
         ]);
     }
 

@@ -36,3 +36,11 @@
     width: 0 !important;
     height: 0 !important;
 }
+
+/* Livewire Navigation Progress Bar */
+#nprogress .bar {
+    background: var(--color-amber) !important;
+}
+#nprogress .peg {
+    box-shadow: 0 0 10px var(--color-amber), 0 0 5px var(--color-amber) !important;
+}
