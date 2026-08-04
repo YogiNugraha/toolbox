@@ -1,6 +1,7 @@
 <div class="bg-white border border-hairline rounded-sm p-8">
     <h2 class="text-2xl font-display font-bold text-ink mb-2">Compress Gambar</h2>
-    <p class="text-ink-muted text-sm mb-8">Kurangi ukuran file gambar Anda tanpa mengurangi kualitas secara signifikan.</p>
+    <p class="text-ink-muted text-sm mb-8">Kurangi ukuran file gambar Anda tanpa mengurangi kualitas secara signifikan.
+    </p>
 
     <!-- Error Message -->
     @if ($errorMsg)
@@ -19,9 +20,7 @@
         <div class="space-y-6">
             <!-- Upload Area -->
             <div class="w-full">
-                <label
-                    x-data="{ isDropping: false }"
-                    x-on:dragover.prevent="isDropping = true"
+                <label x-data="{ isDropping: false }" x-on:dragover.prevent="isDropping = true"
                     x-on:dragleave.prevent="isDropping = false"
                     x-on:drop.prevent="isDropping = false; if($event.dataTransfer.files.length > 0) { $refs.fileInput.files = $event.dataTransfer.files; $refs.fileInput.dispatchEvent(new Event('change', { bubbles: true })) }"
                     :class="isDropping ? 'border-amber/50 bg-amber/5' : '{{ $file ? 'border-amber/50' : 'border-hairline' }}'"
@@ -35,17 +34,23 @@
                             </svg>
                             <p class="mb-2 text-sm text-ink font-semibold truncate px-4 max-w-full">
                                 {{ $file->getClientOriginalName() }}</p>
-                            <p class="text-[11px] font-mono text-ink-muted">{{ number_format($file->getSize() / 1024, 2) }} KB</p>
+                            <p class="text-[11px] font-mono text-ink-muted">
+                                {{ number_format($file->getSize() / 1024, 2) }} KB</p>
                         @else
                             <svg class="w-8 h-8 text-ink-muted mb-3" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M12 4v16m8-8H4"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"
+                                    d="M12 4v16m8-8H4"></path>
                             </svg>
-                            <p class="mb-2 text-sm font-medium text-ink">Klik untuk upload <span class="text-ink-muted font-normal">atau drag and drop</span></p>
-                            <p class="font-mono text-[11px] text-ink-muted mt-2 tracking-wide uppercase px-2 py-0.5 border border-hairline rounded-sm bg-white">JPG · PNG · WEBP — MAX 20MB</p>
+                            <p class="mb-2 text-sm font-medium text-ink">Klik untuk upload <span
+                                    class="text-ink-muted font-normal">atau drag and drop</span></p>
+                            <p
+                                class="font-mono text-[11px] text-ink-muted mt-2 tracking-wide uppercase px-2 py-0.5 border border-hairline rounded-sm bg-white">
+                                JPG · PNG · WEBP — MAX 20MB</p>
                         @endif
                     </div>
-                    <input type="file" x-ref="fileInput" wire:model="file" class="hidden" accept="image/jpeg, image/png, image/webp" />
+                    <input type="file" x-ref="fileInput" wire:model="file" class="hidden"
+                        accept="image/jpeg, image/png, image/webp" />
                 </label>
 
                 <div wire:loading wire:target="file" class="mt-2 text-sm text-amber font-medium">
@@ -59,25 +64,29 @@
                     <h3 class="text-sm font-display font-bold text-ink mb-4">Pilih Kualitas (Preset)</h3>
 
                     <div class="flex border-b border-hairline mb-5 overflow-x-auto">
-                        <label class="px-4 py-2 text-sm font-medium cursor-pointer whitespace-nowrap {{ $preset === 'sosmed' ? 'text-ink border-b-2 border-amber' : 'text-ink-muted hover:text-ink' }}">
+                        <label
+                            class="px-4 py-2 text-sm font-medium cursor-pointer whitespace-nowrap {{ $preset === 'sosmed' ? 'text-ink border-b-2 border-amber' : 'text-ink-muted hover:text-ink' }}">
                             <input type="radio" wire:model.live="preset" value="sosmed" class="hidden">
                             Sosial Media
                         </label>
-                        <label class="px-4 py-2 text-sm font-medium cursor-pointer whitespace-nowrap {{ $preset === 'website' ? 'text-ink border-b-2 border-amber' : 'text-ink-muted hover:text-ink' }}">
+                        <label
+                            class="px-4 py-2 text-sm font-medium cursor-pointer whitespace-nowrap {{ $preset === 'website' ? 'text-ink border-b-2 border-amber' : 'text-ink-muted hover:text-ink' }}">
                             <input type="radio" wire:model.live="preset" value="website" class="hidden">
                             Website
                         </label>
-                        <label class="px-4 py-2 text-sm font-medium cursor-pointer whitespace-nowrap {{ $preset === 'custom' ? 'text-ink border-b-2 border-amber' : 'text-ink-muted hover:text-ink' }}">
+                        <label
+                            class="px-4 py-2 text-sm font-medium cursor-pointer whitespace-nowrap {{ $preset === 'custom' ? 'text-ink border-b-2 border-amber' : 'text-ink-muted hover:text-ink' }}">
                             <input type="radio" wire:model.live="preset" value="custom" class="hidden">
                             Custom
                         </label>
                     </div>
 
                     <!-- Preset Options Details -->
-                    <div class="min-h-[100px]">
+                    <div class="min-h-25">
                         @if ($preset === 'sosmed')
                             <div class="text-sm text-ink-muted">
-                                <p>Maks 1080px, Kualitas 80 (Cepat & Bagus). Cocok untuk upload ke Instagram, Facebook, dsb.</p>
+                                <p>Maks 1080px, Kualitas 80 (Cepat & Bagus). Cocok untuk upload ke Instagram, Facebook,
+                                    dsb.</p>
                             </div>
                         @elseif ($preset === 'website')
                             <div class="text-sm text-ink-muted mb-3">
@@ -91,7 +100,8 @@
                         @elseif ($preset === 'custom')
                             <div class="space-y-4 w-full">
                                 <div>
-                                    <label class="text-xs font-medium text-ink block mb-2">Kualitas (<span class="font-mono">{{ $customQuality }}%</span>)</label>
+                                    <label class="text-xs font-medium text-ink block mb-2">Kualitas (<span
+                                            class="font-mono">{{ $customQuality }}%</span>)</label>
                                     <input type="range" wire:model.live="customQuality" min="1" max="100"
                                         class="w-full h-1 bg-hairline rounded-full appearance-none cursor-pointer accent-amber">
                                 </div>
@@ -105,11 +115,9 @@
 
                                     @if ($customResize)
                                         <div class="flex gap-3 mt-3">
-                                            <input type="number" wire:model="customWidth"
-                                                placeholder="Lebar (px)"
+                                            <input type="number" wire:model="customWidth" placeholder="Lebar (px)"
                                                 class="w-1/2 rounded-sm border-hairline shadow-sm focus:border-amber focus:ring-amber/20 text-sm font-mono">
-                                            <input type="number" wire:model="customHeight"
-                                                placeholder="Tinggi (px)"
+                                            <input type="number" wire:model="customHeight" placeholder="Tinggi (px)"
                                                 class="w-1/2 rounded-sm border-hairline shadow-sm focus:border-amber focus:ring-amber/20 text-sm font-mono">
                                         </div>
                                     @endif
@@ -156,7 +164,8 @@
                     <div
                         class="w-12 h-12 border border-hairline bg-paper text-ink rounded-sm flex items-center justify-center mb-4">
                         <svg class="w-6 h-6 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M5 13l4 4L19 7">
                             </path>
                         </svg>
                     </div>
@@ -171,15 +180,20 @@
                     <div class="mt-6 w-full max-w-sm">
                         <div class="flex justify-between items-center mb-3 pb-3 border-b border-hairline">
                             <span class="text-sm font-medium text-ink-muted">Ukuran Asli</span>
-                            <span class="text-sm font-mono text-ink line-through">{{ number_format($originalSize / 1024, 2) }} KB</span>
+                            <span
+                                class="text-sm font-mono text-ink line-through">{{ number_format($originalSize / 1024, 2) }}
+                                KB</span>
                         </div>
                         <div class="flex justify-between items-center mb-3 pb-3 border-b border-hairline">
                             <span class="text-sm font-medium text-ink-muted">Ukuran Baru</span>
-                            <span class="text-sm font-mono font-medium text-ink">{{ number_format($newSize / 1024, 2) }} KB</span>
+                            <span
+                                class="text-sm font-mono font-medium text-ink">{{ number_format($newSize / 1024, 2) }}
+                                KB</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="text-sm font-medium text-ink-muted">Hemat</span>
-                            <span class="font-mono text-xs px-2 py-0.5 rounded-sm {{ $savedClasses }}">-{{ $percentage }}%</span>
+                            <span
+                                class="font-mono text-xs px-2 py-0.5 rounded-sm {{ $savedClasses }}">-{{ $percentage }}%</span>
                         </div>
                     </div>
 
@@ -194,22 +208,26 @@
                         </button>
                     </div>
                 </div>
-            @elseif ($file)
-                <div class="bg-paper p-6 rounded-sm border border-hairline flex flex-col h-full items-center justify-center text-center min-h-[300px] relative overflow-hidden">
-                    <img src="{{ $file->temporaryUrl() }}" class="max-w-full max-h-[300px] object-contain rounded-sm" alt="Preview">
+            @elseif ($file && !$errors->has('file'))
+                <div
+                    class="bg-paper p-6 rounded-sm border border-hairline flex flex-col h-full items-center justify-center text-center min-h-75 relative overflow-hidden">
+                    <img src="{{ $file->temporaryUrl() }}" class="max-w-full max-h-75 object-contain rounded-sm"
+                        alt="Preview">
                     <div class="absolute bottom-4 left-0 right-0 flex justify-center">
-                        <span class="bg-ink/80 text-white font-mono text-[10px] px-2 py-1 rounded-sm uppercase tracking-wider backdrop-blur-sm shadow-sm">
+                        <span
+                            class="bg-ink/80 text-white font-mono text-[10px] px-2 py-1 rounded-sm uppercase tracking-wider backdrop-blur-sm shadow-sm">
                             Ready to Compress
                         </span>
                     </div>
                 </div>
             @else
                 <div
-                    class="bg-paper p-6 rounded-sm border border-hairline flex flex-col h-full items-center justify-center text-center min-h-[300px]">
-                    <div class="w-12 h-12 border border-hairline bg-white text-ink-muted rounded-sm flex items-center justify-center mb-4">
+                    class="bg-paper p-6 rounded-sm border border-hairline flex flex-col h-full items-center justify-center text-center min-h-75">
+                    <div
+                        class="w-12 h-12 border border-hairline bg-white text-ink-muted rounded-sm flex items-center justify-center mb-4">
                         <x-lucide-image class="w-5 h-5 text-ink-muted" />
                     </div>
-                    <p class="font-mono text-xs text-ink-muted uppercase tracking-wide max-w-[200px]">PREVIEW AREA</p>
+                    <p class="font-mono text-xs text-ink-muted uppercase tracking-wide max-w-50">PREVIEW AREA</p>
                 </div>
             @endif
         </div>

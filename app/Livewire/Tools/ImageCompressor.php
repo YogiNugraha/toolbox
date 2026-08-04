@@ -53,6 +53,15 @@ class ImageCompressor extends Component
             'file.mimes' => 'Format file tidak didukung. Gunakan JPG, PNG, atau WebP.',
             'file.max' => 'Ukuran file maksimal 20MB.'
         ]);
+
+        if ($this->file) {
+            $realMime = $this->file->getMimeType();
+            if (!in_array($realMime, ['image/jpeg', 'image/png', 'image/webp'])) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'file' => 'Format file tidak valid. Ekstensi file mungkin dipalsukan.'
+                ]);
+            }
+        }
     }
 
     public function compress(ImageProcessorService $processor)

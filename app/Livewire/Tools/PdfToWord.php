@@ -37,6 +37,15 @@ class PdfToWord extends Component
             'file.mimes' => 'File harus berupa PDF.',
             'file.max' => 'Ukuran maksimal 20MB.'
         ]);
+
+        if ($this->file) {
+            $realMime = $this->file->getMimeType();
+            if ($realMime !== 'application/pdf') {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'file' => 'Format file tidak valid. Ekstensi file mungkin dipalsukan.'
+                ]);
+            }
+        }
     }
 
     public function convert()

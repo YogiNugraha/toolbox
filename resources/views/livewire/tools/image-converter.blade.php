@@ -126,7 +126,7 @@
                         </button>
                     </div>
                 </div>
-            @elseif ($file)
+            @elseif ($file && !$errors->has('file'))
                 <div class="bg-paper p-6 rounded-sm border border-hairline flex flex-col h-full items-center justify-center text-center min-h-[300px] relative overflow-hidden">
                     <img src="{{ $file->temporaryUrl() }}" class="max-w-full max-h-[300px] object-contain rounded-sm" alt="Preview">
                     <div class="absolute bottom-4 left-0 right-0 flex justify-center">

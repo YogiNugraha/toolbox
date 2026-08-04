@@ -52,6 +52,16 @@ class ImageConverter extends Component
             'file.mimes' => 'Format file tidak didukung.',
             'file.max' => 'Ukuran file maksimal 10MB.'
         ]);
+
+        if ($this->file) {
+            $realMime = $this->file->getMimeType();
+            $allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/bmp'];
+            if (!in_array($realMime, $allowedMimes)) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'file' => 'Format file tidak valid. Ekstensi file mungkin dipalsukan.'
+                ]);
+            }
+        }
     }
 
     public function convert(ImageProcessorService $processor)

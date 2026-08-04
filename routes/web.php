@@ -10,13 +10,13 @@ Route::get('/', function () {
 })->name('home');
 
 // GUEST ONLY (belum login)
-Route::middleware('guest')->group(function () {
+Route::middleware(['guest', 'throttle:5,1'])->group(function () {
     Route::get('/login', \App\Livewire\Auth\Login::class)->name('login');
     Route::get('/register', \App\Livewire\Auth\Register::class)->name('register');
 });
 
 // AUTH ONLY (wajib login)
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'throttle:20,1'])->group(function () {
     Route::get('/dashboard', \App\Livewire\Dashboard\Overview::class)->name('dashboard');
     Route::get('/history', \App\Livewire\Dashboard\History::class)->name('history');
     Route::get('/profile', \App\Livewire\Dashboard\Profile::class)->name('profile');
