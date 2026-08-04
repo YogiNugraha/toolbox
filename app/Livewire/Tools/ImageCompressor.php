@@ -64,11 +64,25 @@ class ImageCompressor extends Component
         }
     }
 
-    public function compress(ImageProcessorService $processor)
+    public function compress(ImageProcessorService $processor, \App\Services\EntitlementService $entitlementService)
     {
         $this->validateFile();
 
         if (!$this->file) {
+            return;
+        }
+
+        $user = auth()->user();
+        $toolSlug = 'compress-image';
+
+        $remaining = $entitlementService->getRemainingQuota($user, $toolSlug);
+        if ($remaining !== null && $remaining <= 0) {
+            $this->errorMsg = 'Kuota harian Anda sudah habis. Silakan upgrade ke Pro.';
+            return;
+        }
+
+        if ($this->preset === 'custom' && $entitlementService->isFeatureLocked($user, $toolSlug, 'preset_custom')) {
+            $this->errorMsg = 'Fitur Custom hanya tersedia untuk pengguna Pro. Silakan upgrade.';
             return;
         }
 
@@ -152,8 +166,21 @@ class ImageCompressor extends Component
         $this->errorMsg = 'File tidak ditemukan atau sudah kadaluarsa.';
     }
 
-    public function render()
+    public function render(\App\Services\EntitlementService $entitlementService)
     {
-        return view('livewire.tools.image-compressor');
+        $user = auth()->user();
+        $toolSlug = 'compress-image';
+        
+        $remainingQuota = $entitlementService->getRemainingQuota($user, $toolSlug);
+        $isCustomLocked = $entitlementService->isFeatureLocked($user, $toolSlug, 'preset_custom');
+        $currentPlan = $entitlementService->getCurrentPlan($user);
+        $dailyLimit = config("plans.{$currentPlan}.limits.{$toolSlug}.daily_quota");
+
+        return view('livewire.tools.image-compressor', [
+            'remainingQuota' => $remainingQuota,
+            'isCustomLocked' => $isCustomLocked,
+            'dailyLimit' => $dailyLimit,
+            'currentPlan' => $currentPlan,
+        ]);
     }
 }

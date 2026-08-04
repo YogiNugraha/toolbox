@@ -15,11 +15,18 @@ Route::middleware(['guest', 'throttle:5,1'])->group(function () {
     Route::get('/register', \App\Livewire\Auth\Register::class)->name('register');
 });
 
+// WEBHOOK
+Route::post('/webhook/midtrans', [\App\Http\Controllers\MidtransWebhookController::class, 'handle'])->name('webhook.midtrans');
+
 // AUTH ONLY (wajib login)
 Route::middleware(['auth', 'throttle:20,1'])->group(function () {
     Route::get('/dashboard', \App\Livewire\Dashboard\Overview::class)->name('dashboard');
     Route::get('/history', \App\Livewire\Dashboard\History::class)->name('history');
     Route::get('/profile', \App\Livewire\Dashboard\Profile::class)->name('profile');
+    
+    // Langganan & Pembayaran
+    Route::get('/pricing', \App\Livewire\Pricing::class)->name('pricing');
+    Route::get('/billing', \App\Livewire\Dashboard\Billing::class)->name('dashboard.billing');
 
     Route::get('/tool/{slug}', function ($slug) {
         $tools = config('tools');

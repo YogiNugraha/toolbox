@@ -16,42 +16,59 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <!-- Left: Upload & Settings -->
         <div class="space-y-6">
-            <div class="w-full">
-                <label
-                    x-data="{ isDropping: false }"
-                    x-on:dragover.prevent="isDropping = true"
-                    x-on:dragleave.prevent="isDropping = false"
-                    x-on:drop.prevent="isDropping = false; if($event.dataTransfer.files.length > 0) { $refs.fileInput.files = $event.dataTransfer.files; $refs.fileInput.dispatchEvent(new Event('change', { bubbles: true })) }"
-                    :class="isDropping ? 'border-amber/50 bg-amber/5' : '{{ $file ? 'border-amber/50' : 'border-hairline' }}'"
-                    class="flex flex-col items-center justify-center w-full h-48 border border-dashed rounded-sm cursor-pointer bg-paper hover:bg-amber/5 transition-colors">
-                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                        @if ($file)
-                            <svg class="w-8 h-8 text-amber mb-3" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                </path>
-                            </svg>
-                            <p class="mb-1 text-sm text-ink font-semibold truncate px-4 max-w-full">
-                                {{ $file->getClientOriginalName() }}</p>
-                            <p class="font-mono text-[11px] text-ink-muted mt-1 uppercase">{{ strtoupper($file->getClientOriginalExtension()) }} •
-                                {{ number_format($file->getSize() / 1024, 2) }} KB</p>
-                        @else
-                            <svg class="w-8 h-8 text-ink-muted mb-3" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M12 4v16m8-8H4"></path>
-                            </svg>
-                            <p class="mb-2 text-sm font-medium text-ink">Klik untuk upload <span class="text-ink-muted font-normal">atau drag and drop</span></p>
-                            <p class="font-mono text-[11px] text-ink-muted mt-2 tracking-wide uppercase px-2 py-0.5 border border-hairline rounded-sm bg-white">JPG · PNG · WEBP · GIF — MAX 10MB</p>
-                        @endif
-                    </div>
-                    <input type="file" x-ref="fileInput" wire:model="file" class="hidden"
-                        accept="image/jpeg, image/png, image/webp, image/gif, image/bmp" />
-                </label>
+            @if($remainingQuota !== null)
+            <div class="font-mono text-xs text-ink-muted border border-hairline rounded-sm px-3 py-1.5 inline-block">
+                Sisa kuota hari ini: <span class="text-ink font-medium">{{ $remainingQuota }}</span> / {{ $dailyLimit }}
+            </div>
+            @endif
 
-                <div wire:loading wire:target="file" class="mt-2 text-sm text-amber font-medium">
-                    Mengupload...
+            @if($remainingQuota !== null && $remainingQuota <= 0)
+                <div class="border border-amber/30 bg-amber/5 rounded-sm p-8 text-center">
+                    <p class="font-display font-bold text-lg text-ink mb-2">Kuota harian kamu sudah habis</p>
+                    <p class="text-ink-muted text-sm mb-4">Upgrade ke Pro untuk pemakaian unlimited di semua tools.</p>
+                    <a href="{{ route('pricing') }}" class="bg-amber text-ink font-medium px-5 py-2.5 rounded-sm inline-block">
+                        Upgrade ke Pro
+                    </a>
                 </div>
+            @else
+                <div class="w-full">
+                    <label
+                        x-data="{ isDropping: false }"
+                        x-on:dragover.prevent="isDropping = true"
+                        x-on:dragleave.prevent="isDropping = false"
+                        x-on:drop.prevent="isDropping = false; if($event.dataTransfer.files.length > 0) { $refs.fileInput.files = $event.dataTransfer.files; $refs.fileInput.dispatchEvent(new Event('change', { bubbles: true })) }"
+                        :class="isDropping ? 'border-amber/50 bg-amber/5' : '{{ $file ? 'border-amber/50' : 'border-hairline' }}'"
+                        class="flex flex-col items-center justify-center w-full h-48 border border-dashed rounded-sm cursor-pointer bg-paper hover:bg-amber/5 transition-colors">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            @if ($file)
+                                <svg class="w-8 h-8 text-amber mb-3" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                                <p class="mb-1 text-sm text-ink font-semibold truncate px-4 max-w-full">
+                                    {{ $file->getClientOriginalName() }}</p>
+                                <p class="font-mono text-[11px] text-ink-muted mt-1 uppercase">{{ strtoupper($file->getClientOriginalExtension()) }} •
+                                    {{ number_format($file->getSize() / 1024, 2) }} KB</p>
+                            @else
+                                <svg class="w-8 h-8 text-ink-muted mb-3" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                <p class="mb-2 text-sm font-medium text-ink">Klik untuk upload <span class="text-ink-muted font-normal">atau drag and drop</span></p>
+                                <p class="font-mono text-[11px] text-ink-muted mt-2 tracking-wide uppercase px-2 py-0.5 border border-hairline rounded-sm bg-white">JPG · PNG · WEBP · GIF — MAX 10MB</p>
+                            @endif
+                        </div>
+                        <input type="file" x-ref="fileInput" wire:model="file" class="hidden"
+                            accept="image/jpeg, image/png, image/webp, image/gif, image/bmp" />
+                    </label>
+
+                    <div wire:loading wire:target="file" class="mt-2 text-sm text-amber font-medium">
+                        Mengupload...
+                    </div>
+                </div>
+            @endif
             </div>
 
             @if ($file)

@@ -34,4 +34,18 @@ class User extends Authenticatable
     {
         return $this->hasMany(Activity::class);
     }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function activeSubscription()
+    {
+        return $this->subscriptions()
+            ->where('status', 'active')
+            ->where('expires_at', '>', now())
+            ->latest('expires_at')
+            ->first();
+    }
 }

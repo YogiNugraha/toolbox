@@ -31,11 +31,18 @@ class PdfToWord extends Component
     public function validateFile()
     {
         $this->errorMsg = null;
+        
+        $user = auth()->user();
+        $entitlementService = app(\App\Services\EntitlementService::class);
+        $plan = $entitlementService->getCurrentPlan($user);
+        $maxMb = config("plans.{$plan}.limits.pdf-to-word.max_file_size_mb") ?? 50; // default 50 if unlimited
+        $maxKb = $maxMb * 1024;
+
         $this->validate([
-            'file' => 'required|file|mimes:pdf|max:20480', // 20MB max
+            'file' => "required|file|mimes:pdf|max:{$maxKb}",
         ], [
             'file.mimes' => 'File harus berupa PDF.',
-            'file.max' => 'Ukuran maksimal 20MB.'
+            'file.max' => "Ukuran maksimal {$maxMb}MB."
         ]);
 
         if ($this->file) {
@@ -48,11 +55,25 @@ class PdfToWord extends Component
         }
     }
 
-    public function convert()
+    public function convert(\App\Services\EntitlementService $entitlementService)
     {
         $this->validateFile();
 
         if (!$this->file) {
+            return;
+        }
+        
+        $user = auth()->user();
+        $toolSlug = 'pdf-to-word';
+
+        $remaining = $entitlementService->getRemainingQuota($user, $toolSlug);
+        if ($remaining !== null && $remaining <= 0) {
+            $this->errorMsg = 'Kuota harian Anda sudah habis. Silakan upgrade ke Pro.';
+            return;
+        }
+
+        if (!$entitlementService->canProcessFile($user, $toolSlug, $this->file->getSize())) {
+            $this->errorMsg = 'Ukuran file melebihi batas paket Anda. Silakan upgrade ke Pro.';
             return;
         }
 
@@ -135,8 +156,21 @@ class PdfToWord extends Component
         $this->errorMsg = null;
     }
 
-    public function render()
+    public function render(\App\Services\EntitlementService $entitlementService)
     {
-        return view('livewire.tools.pdf-to-word');
+        $user = auth()->user();
+        $toolSlug = 'pdf-to-word';
+        
+        $remainingQuota = $entitlementService->getRemainingQuota($user, $toolSlug);
+        $currentPlan = $entitlementService->getCurrentPlan($user);
+        $dailyLimit = config("plans.{$currentPlan}.limits.{$toolSlug}.daily_quota");
+        $maxMb = config("plans.{$currentPlan}.limits.{$toolSlug}.max_file_size_mb");
+
+        return view('livewire.tools.pdf-to-word', [
+            'remainingQuota' => $remainingQuota,
+            'dailyLimit' => $dailyLimit,
+            'currentPlan' => $currentPlan,
+            'maxMb' => $maxMb,
+        ]);
     }
 }

@@ -64,11 +64,20 @@ class ImageConverter extends Component
         }
     }
 
-    public function convert(ImageProcessorService $processor)
+    public function convert(ImageProcessorService $processor, \App\Services\EntitlementService $entitlementService)
     {
         $this->validateFile();
 
         if (!$this->file) {
+            return;
+        }
+
+        $user = auth()->user();
+        $toolSlug = 'convert-image';
+
+        $remaining = $entitlementService->getRemainingQuota($user, $toolSlug);
+        if ($remaining !== null && $remaining <= 0) {
+            $this->errorMsg = 'Kuota harian Anda sudah habis. Silakan upgrade ke Pro.';
             return;
         }
 
@@ -127,8 +136,19 @@ class ImageConverter extends Component
         $this->errorMsg = 'File tidak ditemukan atau sudah kadaluarsa.';
     }
 
-    public function render()
+    public function render(\App\Services\EntitlementService $entitlementService)
     {
-        return view('livewire.tools.image-converter');
+        $user = auth()->user();
+        $toolSlug = 'convert-image';
+        
+        $remainingQuota = $entitlementService->getRemainingQuota($user, $toolSlug);
+        $currentPlan = $entitlementService->getCurrentPlan($user);
+        $dailyLimit = config("plans.{$currentPlan}.limits.{$toolSlug}.daily_quota");
+
+        return view('livewire.tools.image-converter', [
+            'remainingQuota' => $remainingQuota,
+            'dailyLimit' => $dailyLimit,
+            'currentPlan' => $currentPlan,
+        ]);
     }
 }

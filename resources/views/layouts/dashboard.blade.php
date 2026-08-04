@@ -36,6 +36,15 @@
                     <x-lucide-history class="w-5 h-5 shrink-0" />
                     <span x-show="sidebarOpen" x-transition.opacity.duration.300ms class="whitespace-nowrap">Riwayat</span>
                 </a>
+                
+                <a href="{{ route('dashboard.billing') }}" wire:navigate title="Billing & Pro"
+                    class="flex items-center gap-4 px-6 py-3 text-sm transition-colors border-l-2 {{ request()->routeIs('dashboard.billing') ? 'text-white font-medium bg-white/5 border-amber' : 'text-slate-400 hover:text-white hover:bg-white/5 border-transparent' }}">
+                    <x-lucide-credit-card class="w-5 h-5 shrink-0" />
+                    <span x-show="sidebarOpen" x-transition.opacity.duration.300ms class="whitespace-nowrap flex-1">Billing</span>
+                    @if (auth()->user()->activeSubscription())
+                        <span x-show="sidebarOpen" class="px-1.5 py-0.5 text-[10px] bg-amber/20 text-amber border border-amber/30 rounded-sm font-bold uppercase tracking-wider">PRO</span>
+                    @endif
+                </a>
 
                 <div x-data="{ toolsOpen: {{ request()->is('tool/*') ? 'true' : 'false' }} }" class="mt-2 border-t border-white/10 pt-4">
                     <button @click="sidebarOpen ? toolsOpen = !toolsOpen : (sidebarOpen = true, toolsOpen = true)" 
@@ -128,6 +137,26 @@
                          class="absolute right-0 top-full mt-2 w-48 bg-white rounded-sm border border-hairline shadow-lg py-1 z-50"
                          style="display: none;" x-cloak>
                         
+                        <div class="px-4 py-3 border-b border-hairline bg-paper/50">
+                            <p class="text-xs text-ink-muted mb-1">Paket Saat Ini</p>
+                            @if(auth()->user()->activeSubscription())
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-bold text-ink">Pro</span>
+                                    <span class="text-[10px] bg-amber/20 text-amber px-1.5 py-0.5 rounded-sm border border-amber/30">AKTIF</span>
+                                </div>
+                            @else
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-bold text-ink">Free</span>
+                                    <a href="{{ route('pricing') }}" class="text-[10px] bg-amber text-ink px-2 py-0.5 rounded-sm hover:bg-amber/90">Upgrade</a>
+                                </div>
+                            @endif
+                        </div>
+                        
+                        <a href="{{ route('dashboard.billing') }}" wire:navigate class="flex items-center gap-3 px-4 py-2 text-sm text-ink hover:bg-paper transition-colors mt-1">
+                            <x-lucide-credit-card class="w-4 h-4 text-ink-muted" />
+                            Billing & Pro
+                        </a>
+
                         <a href="{{ route('profile') }}" wire:navigate class="flex items-center gap-3 px-4 py-2 text-sm text-ink hover:bg-paper transition-colors">
                             <x-lucide-user class="w-4 h-4 text-ink-muted" />
                             Profil Saya

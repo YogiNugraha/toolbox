@@ -1,58 +1,46 @@
-# Laporan Pengerjaan Proyek: ToolBox (Web Tools)
+# Laporan Proyek ToolBox - Selesai
 
-Dokumen ini berisi rangkuman seluruh pekerjaan yang telah diselesaikan pada proyek ToolBox dari awal hingga saat ini. Dokumen ini disiapkan untuk memberikan konteks lengkap kepada AI atau developer lain yang akan melanjutkan proyek ini.
+## Riwayat Pengerjaan dari Awal Hingga Selesai
 
-## 1. Arsitektur & Tech Stack Dasar
-- **Framework:** Laravel 12.
-- **Frontend:** Livewire v4 (namun dikonfigurasi dan ditulis dengan gaya class-based v3 sesuai instruksi `PROJECT_SPEC.md`), Alpine.js, dan Tailwind CSS (via Vite).
-- **Database:** SQLite.
-- **Queue:** Database driver (`QUEUE_CONNECTION=database`) untuk menjalankan task berat di background.
+### 1. Inisialisasi Proyek & Otentikasi (Auth & Dashboard)
+- **Setup Laravel & Livewire**: Membuat struktur aplikasi Laravel berbasis Livewire 3 (class-based).
+- **Sistem Otentikasi**: Membuat model `User`, migrasi tabel, dan fitur otentikasi menggunakan session standar (Login, Register, Logout).
+- **UI Dashboard**: Menggunakan Tailwind CSS, membuat tampilan sidebar yang responsif dan area konten utama yang bersih.
+- **Profil Pengguna**: Pengguna dapat melihat dan mengubah nama serta profil gambar mereka.
 
-## 2. Fitur Autentikasi & Dashboard (Private System)
-Sesuai dengan `PROJECT_SPEC_ADDENDUM_AUTH_DASHBOARD.md`, sistem publik telah diubah menjadi sistem privat.
-- **Autentikasi (Login & Register):** Menggunakan fitur auth bawaan Laravel dipadukan dengan komponen Livewire (`App\Livewire\Auth\Login` dan `App\Livewire\Auth\Register`). Registrasi terbuka untuk umum dan langsung mengarahkan ke dashboard.
-- **Dashboard & Routing:** 
-  - Route root `/` akan me-redirect guest ke `/login` dan user yang sudah login ke `/dashboard`.
-  - Halaman Dashboard menampilkan overview singkat, statistik, dan list aktivitas terakhir pengguna.
-  - Halaman History (`/history`) menampilkan semua riwayat penggunaan tools dari user yang sedang login.
-  - Halaman Profile (`/profile`) disiapkan untuk manajemen akun pengguna.
-- **Activity Logging (Tabel `activities`):** Setiap kali user menggunakan tools, sistem merekam file asli, path hasil, ukuran asli, ukuran hasil, meta config yang digunakan, dan status pengerjaan (`processing`, `completed`, `failed`, `expired`). Activity log diikat secara relasional (foreign key) ke `user_id`.
+### 2. Pembangunan Tools Dasar
+- **Infrastruktur Tools**: Membuat sistem `config/tools.php` sebagai sumber kebenaran (source of truth) untuk daftar alat-alat yang tersedia, sehingga penambahan tool baru lebih modular.
+- **Image Compressor**: 
+  - Membuat Livewire component `ImageCompressor.php` dan service class untuk mengecilkan ukuran gambar (mendukung JPG, PNG, WEBP).
+  - Menyediakan preset kompresi: 'Sosial Media', 'Website', dan 'Custom'.
+- **Image Converter**: 
+  - Membuat Livewire component `ImageConverter.php` untuk mengubah format gambar antar format (JPG, PNG, WEBP).
+- **PDF to Word**:
+  - Membuat sistem konversi PDF ke DOCX.
+  - Memanfaatkan Jobs queue `ConvertPdfToWordJob` agar proses berjalan di background dan asinkron, mengingat konversi file bisa memakan waktu.
 
-## 3. Tools Utama yang Telah Diimplementasikan
-Terdapat 3 alat bantu pemrosesan file utama yang dibangun menggunakan arsitektur `Livewire Component` + `Service Class` agar tetap bersih dan extensible:
+### 3. Sistem Antrean (Queue) & Aktivitas
+- **Queue Worker**: Mengatur antrean (Queue) Laravel berbasis `database` untuk menangani proses berat seperti kompresi gambar tinggi dan konversi PDF ke Word, mencegah aplikasi timeout.
+- **Activity Log**: Setiap file yang diproses akan tercatat di database pada tabel `activities`.
+- **Riwayat Pengguna**: Membuat halaman Riwayat (`history.blade.php`) agar pengguna dapat melihat status (processing, completed, failed) dan mengunduh kembali hasil pengerjaannya.
+- **Storage & Cleanup**: Mengimplementasikan command `app:cleanup-old-files` yang akan dijalankan melalui Laravel Scheduler (cron) untuk membersihkan file lama (lebih dari 24 jam) guna menghemat kapasitas server.
 
-### A. Compress Gambar (`ImageCompressor`)
-- **Fungsi:** Mengompres gambar dengan dukungan format JPG, PNG, dan WebP.
-- **Preset:**
-  - `Sosial Media`: Max 1080px, quality 80.
-  - `Website`: Max 1920px, quality 75, dengan opsi convert otomatis ke WebP.
-  - `Custom`: Quality bisa diatur (1-100), opsi resize resolusi bebas, dan bisa pilih format output.
-- **Service:** Menggunakan `Intervention\Image` via `ImageProcessorService`.
+### 4. Sistem Langganan (Free vs Pro) & Gating
+- **Model Subscription**: Membuat model `Subscription` dengan field yang diperlukan (`plan_slug`, `starts_at`, `expires_at`, dan detail Midtrans).
+- **Entitlement Service**: Logika utama yang mengontrol apakah seorang pengguna berhak menggunakan sebuah tool. Menangani batas limit (quota) pemakaian harian dan `locked features` bagi pengguna Free.
+- **Integrasi Gating pada Tools**: Setiap Livewire component Tool (`ImageCompressor`, `ImageConverter`, `PdfToWord`) diperbarui dengan pengecekan `EntitlementService` untuk memberlakukan batasan limit ukuran file, limit jumlah percobaan harian, dan penguncian UI bagi fitur Pro.
+- **UI Paywall**: Menambahkan banner paywall yang memandu pengguna menuju halaman harga apabila batas pemakaian mereka telah habis atau mencoba mengakses fitur Pro.
 
-### B. Convert Format Gambar (`ImageConverter`)
-- **Fungsi:** Mengonversi antar format gambar (JPG, PNG, WebP, GIF, BMP).
-- **Alur:** User memilih gambar dan memilih target format di dropdown.
-- **Service:** Menggunakan `ImageProcessorService` dengan quality default 90.
+### 5. Integrasi Pembayaran (Midtrans)
+- **Halaman Pricing & Billing**: Membuat komponen `Pricing.php` dan `Billing.php` untuk memperlihatkan paket, mengizinkan user untuk berlangganan, serta memonitor riwayat langganan.
+- **Midtrans Snap**: Diimplementasikan ke dalam UI untuk memunculkan popup pembayaran yang interaktif dan mulus.
+- **Midtrans Webhook**: Membuat `MidtransWebhookController` untuk mendengarkan callback (notification) dari sistem Midtrans mengenai status pembayaran. 
+- **Keamanan Webhook**: Webhook telah dilengkapi validasi _signature key_ untuk mencegah serangan pemalsuan payload. Jika `settlement`/berhasil, status langganan pada database akan terupdate secara otomatis dan kuota pengguna akan menjadi _unlimited_.
 
-### C. PDF ke Word (`PdfToWord`)
-- **Fungsi:** Mengonversi dokumen PDF ke format Word (.docx).
-- **Alur:** Menggunakan sistem **Queue**. File diupload, status activity menjadi `processing`, kemudian job `ConvertPdfToWordJob` di-dispatch ke queue database.
-- **Proses:** Memanggil script Python `pdf2docx` (sebelumnya dirancang menggunakan LibreOffice, namun untuk konversi yang lebih baik ke DOCX digunakan pendekatan Python `pdf2word.py` via `Symfony\Component\Process\Process`). UI Livewire akan melakukan `wire:poll` untuk memantau status secara realtime tanpa perlu refresh halaman.
+### 6. Hardening Keamanan (Audit & Fix)
+- **Anti-Spoofing MIME Validasi**: Mengatasi celah keamanan di mana pengguna bisa mengunggah file berbahaya dengan menamai ekstensi .jpg namun isinya script. Validasi real MIME tipe file telah ditambahkan ke semua Tools.
+- **Preview Kesalahan Crash**: Memperbaiki issue crash Livewire `temporaryUrl()` yang terjadi saat file bermasalah atau gagal diunggah; sekarang hanya dieksekusi saat tidak ada error (e.g. `@if($file && !$errors->has('file'))`).
 
-## 4. Keamanan & Reliability (Hardening)
-Sesuai dengan instruksi `HARDENING_BRIEF.md`, lapisan keamanan telah ditambahkan:
-- **Rate Limiting:** Mencegah brute force dan spam.
-  - Endpoint Guest (login/register) dilimit 5 request per menit (`throttle:5,1`).
-  - Endpoint Auth (dashboard/tools) dilimit 20 request per menit (`throttle:20,1`).
-- **Validasi MIME Asli (Anti Spoofing):** Pada komponen `ImageCompressor`, `ImageConverter`, dan `PdfToWord` telah ditambahkan kode validasi server-side (`$this->file->getMimeType()`) manual yang melempar exception apabila file ekstensi di-rename dari tipe berbahaya menjadi ekstensi aman.
-- **Otorisasi Download:** Route unduhan (`/download/{activity}`) memverifikasi bahwa `auth()->id() === $activity->user_id` sebelum file disajikan (Streamed Download).
-- **Retensi & Cleanup:** Command scheduler `CleanupTempFiles` (`php artisan cleanup:temp`) telah dibuat dan didaftarkan pada `routes/console.php` untuk berjalan setiap jam (hourly). Scheduler ini bertugas menghapus file fisik temporary/result yang lebih tua dari limit jam `FILE_RETENTION_HOURS` di `.env` (default 24 jam) dan merubah status tabel activity menjadi `expired`. *(Catatan: Di Windows/Laragon, Anda harus menjalankan `php artisan schedule:work` di terminal secara manual agar otomatisasi ini berjalan).*
-- **Error Handling:** Setiap pemrosesan yang gagal akan langsung mengubah status activity menjadi `failed`, menghindarkan data dari status `processing` selamanya, dan UI akan menampilkan pesan kegagalan ke user.
+---
 
-## 5. UI/UX
-- **Desain:** Mengusung tema Digital Workbench yang modern, minimalis, mobile responsive, dan memiliki sidebar (collapsible).
-- **Upload Area:** Mendukung *drag and drop* interaktif menggunakan Alpine.js.
-- **State Feedback:** Semua interaksi dipasangi state indikator loading (`wire:loading` atau custom loading spinner) agar UX terasa halus dan responsif.
-
-## 6. Status Kesiapan Saat Ini
-Seluruh **Definition of Done** (DoD) pada `PROJECT_SPEC.md`, `PROJECT_SPEC_ADDENDUM_AUTH_DASHBOARD.md`, dan `HARDENING_BRIEF.md` **telah terpenuhi (100% Selesai)**. Proyek ini sudah stabil secara fungsionalitas utama dan siap dikembangkan lebih lanjut apabila ada fitur/tools tambahan yang ingin dimasukkan ke depannya.
+**Semua fitur pada `PROJECT_SPEC.md`, `PROJECT_SPEC_ADDENDUM_AUTH_DASHBOARD.md`, dan `SUBSCRIPTION_SPEC.md` telah diselesaikan.** Sistem sudah solid, berjalan dengan lancar dan aman.

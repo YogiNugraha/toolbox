@@ -18,45 +18,61 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <!-- Left: Upload & Settings -->
         <div class="space-y-6">
-            <!-- Upload Area -->
-            <div class="w-full">
-                <label x-data="{ isDropping: false }" x-on:dragover.prevent="isDropping = true"
-                    x-on:dragleave.prevent="isDropping = false"
-                    x-on:drop.prevent="isDropping = false; if($event.dataTransfer.files.length > 0) { $refs.fileInput.files = $event.dataTransfer.files; $refs.fileInput.dispatchEvent(new Event('change', { bubbles: true })) }"
-                    :class="isDropping ? 'border-amber/50 bg-amber/5' : '{{ $file ? 'border-amber/50' : 'border-hairline' }}'"
-                    class="flex flex-col items-center justify-center w-full h-48 border border-dashed rounded-sm cursor-pointer bg-paper hover:bg-amber/5 transition-colors">
-                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                        @if ($file)
-                            <svg class="w-8 h-8 text-amber mb-3" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            <p class="mb-2 text-sm text-ink font-semibold truncate px-4 max-w-full">
-                                {{ $file->getClientOriginalName() }}</p>
-                            <p class="text-[11px] font-mono text-ink-muted">
-                                {{ number_format($file->getSize() / 1024, 2) }} KB</p>
-                        @else
-                            <svg class="w-8 h-8 text-ink-muted mb-3" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"
-                                    d="M12 4v16m8-8H4"></path>
-                            </svg>
-                            <p class="mb-2 text-sm font-medium text-ink">Klik untuk upload <span
-                                    class="text-ink-muted font-normal">atau drag and drop</span></p>
-                            <p
-                                class="font-mono text-[11px] text-ink-muted mt-2 tracking-wide uppercase px-2 py-0.5 border border-hairline rounded-sm bg-white">
-                                JPG · PNG · WEBP — MAX 20MB</p>
-                        @endif
-                    </div>
-                    <input type="file" x-ref="fileInput" wire:model="file" class="hidden"
-                        accept="image/jpeg, image/png, image/webp" />
-                </label>
-
-                <div wire:loading wire:target="file" class="mt-2 text-sm text-amber font-medium">
-                    Mengupload...
-                </div>
+            @if($remainingQuota !== null)
+            <div class="font-mono text-xs text-ink-muted border border-hairline rounded-sm px-3 py-1.5 inline-block">
+                Sisa kuota hari ini: <span class="text-ink font-medium">{{ $remainingQuota }}</span> / {{ $dailyLimit }}
             </div>
+            @endif
+
+            @if($remainingQuota !== null && $remainingQuota <= 0)
+                <div class="border border-amber/30 bg-amber/5 rounded-sm p-8 text-center">
+                    <p class="font-display font-bold text-lg text-ink mb-2">Kuota harian kamu sudah habis</p>
+                    <p class="text-ink-muted text-sm mb-4">Upgrade ke Pro untuk pemakaian unlimited di semua tools.</p>
+                    <a href="{{ route('pricing') }}" class="bg-amber text-ink font-medium px-5 py-2.5 rounded-sm inline-block">
+                        Upgrade ke Pro
+                    </a>
+                </div>
+            @else
+                <!-- Upload Area -->
+                <div class="w-full">
+                    <label x-data="{ isDropping: false }" x-on:dragover.prevent="isDropping = true"
+                        x-on:dragleave.prevent="isDropping = false"
+                        x-on:drop.prevent="isDropping = false; if($event.dataTransfer.files.length > 0) { $refs.fileInput.files = $event.dataTransfer.files; $refs.fileInput.dispatchEvent(new Event('change', { bubbles: true })) }"
+                        :class="isDropping ? 'border-amber/50 bg-amber/5' : '{{ $file ? 'border-amber/50' : 'border-hairline' }}'"
+                        class="flex flex-col items-center justify-center w-full h-48 border border-dashed rounded-sm cursor-pointer bg-paper hover:bg-amber/5 transition-colors">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            @if ($file)
+                                <svg class="w-8 h-8 text-amber mb-3" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <p class="mb-2 text-sm text-ink font-semibold truncate px-4 max-w-full">
+                                    {{ $file->getClientOriginalName() }}</p>
+                                <p class="text-[11px] font-mono text-ink-muted">
+                                    {{ number_format($file->getSize() / 1024, 2) }} KB</p>
+                            @else
+                                <svg class="w-8 h-8 text-ink-muted mb-3" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"
+                                        d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                <p class="mb-2 text-sm font-medium text-ink">Klik untuk upload <span
+                                        class="text-ink-muted font-normal">atau drag and drop</span></p>
+                                <p
+                                    class="font-mono text-[11px] text-ink-muted mt-2 tracking-wide uppercase px-2 py-0.5 border border-hairline rounded-sm bg-white">
+                                    JPG · PNG · WEBP — MAX 20MB</p>
+                            @endif
+                        </div>
+                        <input type="file" x-ref="fileInput" wire:model="file" class="hidden"
+                            accept="image/jpeg, image/png, image/webp" />
+                    </label>
+
+                    <div wire:loading wire:target="file" class="mt-2 text-sm text-amber font-medium">
+                        Mengupload...
+                    </div>
+                </div>
+            @endif
 
             <!-- Presets -->
             @if ($file)
@@ -75,9 +91,9 @@
                             Website
                         </label>
                         <label
-                            class="px-4 py-2 text-sm font-medium cursor-pointer whitespace-nowrap {{ $preset === 'custom' ? 'text-ink border-b-2 border-amber' : 'text-ink-muted hover:text-ink' }}">
-                            <input type="radio" wire:model.live="preset" value="custom" class="hidden">
-                            Custom
+                            class="px-4 py-2 text-sm font-medium cursor-pointer whitespace-nowrap {{ $preset === 'custom' ? 'text-ink border-b-2 border-amber' : 'text-ink-muted hover:text-ink' }} {{ $isCustomLocked ? 'opacity-50 cursor-not-allowed' : '' }}">
+                            <input type="radio" wire:model.live="preset" value="custom" class="hidden" {{ $isCustomLocked ? 'disabled' : '' }}>
+                            Custom @if($isCustomLocked) <span class="ml-1 text-[10px] bg-amber/20 text-amber px-1 rounded-sm border border-amber/30">PRO</span> @endif
                         </label>
                     </div>
 
@@ -98,7 +114,13 @@
                                 <span class="ml-2 text-xs text-ink">Konversi ke format WebP (Lebih ringan)</span>
                             </label>
                         @elseif ($preset === 'custom')
-                            <div class="space-y-4 w-full">
+                            @if($isCustomLocked)
+                                <div class="p-4 bg-paper border border-hairline rounded-sm text-center">
+                                    <p class="text-sm font-medium text-ink mb-3">Fitur Custom (Atur Resolusi & Format Output) khusus pengguna Pro.</p>
+                                    <a href="{{ route('pricing') }}" class="text-xs bg-amber text-ink px-3 py-1.5 rounded-sm font-medium inline-block hover:bg-amber/90 transition-colors">Upgrade ke Pro</a>
+                                </div>
+                            @else
+                                <div class="space-y-4 w-full">
                                 <div>
                                     <label class="text-xs font-medium text-ink block mb-2">Kualitas (<span
                                             class="font-mono">{{ $customQuality }}%</span>)</label>
@@ -134,6 +156,7 @@
                                     </select>
                                 </div>
                             </div>
+                            @endif
                         @endif
                     </div>
 
