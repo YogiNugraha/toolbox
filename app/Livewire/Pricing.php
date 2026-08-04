@@ -12,6 +12,32 @@ class Pricing extends Component
 {
     public $snapToken;
 
+    public function mount()
+    {
+        if (request()->query('action') === 'checkout') {
+            $this->checkout();
+        }
+    }
+
+    public function cancelPending()
+    {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
+        $pending = auth()->user()->subscriptions()
+            ->where('status', 'pending')
+            ->latest()
+            ->first();
+
+        if ($pending) {
+            $pending->update(['status' => 'expired']);
+            
+            // Redirect to refresh state
+            return redirect()->route('pricing');
+        }
+    }
+
     public function checkout()
     {
         if (!auth()->check()) {
@@ -20,9 +46,25 @@ class Pricing extends Component
 
         $user = auth()->user();
 
-        // Check if already has active subscription
-        if ($user->activeSubscription()) {
+        // Check if already has active subscription and not eligible for renewal
+        $activeSub = $user->activeSubscription();
+        if ($activeSub && now()->diffInDays($activeSub->expires_at, false) > 7) {
             return redirect()->route('dashboard.billing')->with('message', 'Anda sudah memiliki paket Pro yang aktif.');
+        }
+
+        $pending = $user->subscriptions()
+            ->where('status', 'pending')
+            ->latest()
+            ->first();
+
+        if ($pending) {
+            if ($pending->created_at > now()->subHours(24) && $pending->snap_token) {
+                $this->snapToken = $pending->snap_token;
+                $this->dispatch('snap-token-ready', token: $this->snapToken);
+                return;
+            } else {
+                $pending->update(['status' => 'expired']);
+            }
         }
 
         // Setup Midtrans
@@ -62,6 +104,7 @@ class Pricing extends Component
 
         try {
             $this->snapToken = Snap::getSnapToken($params);
+            $subscription->update(['snap_token' => $this->snapToken]);
             $this->dispatch('snap-token-ready', token: $this->snapToken);
         } catch (\Exception $e) {
             // Handle error, maybe show alert
@@ -71,6 +114,8 @@ class Pricing extends Component
 
     public function render()
     {
-        return view('livewire.pricing')->layout('layouts.app');
+        return view('livewire.pricing')
+            ->layout('layouts.dashboard')
+            ->title('Upgrade ke Pro');
     }
 }

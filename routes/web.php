@@ -4,9 +4,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-// Redirect root sesuai status login
 Route::get('/', function () {
-    return auth()->check() ? redirect()->route('dashboard') : redirect()->route('login');
+    return view('welcome');
 })->name('home');
 
 // GUEST ONLY (belum login)

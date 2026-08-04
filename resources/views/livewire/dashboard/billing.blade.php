@@ -15,35 +15,55 @@
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <!-- Current Plan Info -->
-        <div class="col-span-1 md:col-span-2 bg-white border border-hairline rounded-sm p-6 flex flex-col justify-between">
+        <div class="col-span-1 md:col-span-2 bg-white border {{ $activeSubscription ? 'border-amber shadow-sm' : 'border-hairline' }} rounded-sm p-6 flex flex-col justify-between relative overflow-hidden">
+            @if ($activeSubscription)
+                <div class="absolute top-0 right-0 bg-amber text-ink text-xs font-bold px-3 py-1 border-b border-l border-amber">PRO</div>
+            @endif
             <div>
                 <h3 class="text-sm font-medium text-ink-muted uppercase tracking-wider mb-2">Paket Saat Ini</h3>
                 @if ($activeSubscription)
                     <div class="flex items-center gap-3 mb-4">
                         <span class="text-3xl font-display font-extrabold text-ink">Pro</span>
-                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
                             Aktif
                         </span>
                     </div>
-                    <p class="text-ink-muted text-sm">
-                        Berlaku sampai: <strong class="text-ink">{{ $activeSubscription->expires_at->translatedFormat('d F Y, H:i') }}</strong>
-                    </p>
+                    
+                    @php
+                        $daysRemaining = now()->diffInDays($activeSubscription->expires_at, false);
+                    @endphp
+
+                    @if($daysRemaining > 7)
+                        <p class="text-sm text-ink-muted">
+                            Berlaku sampai
+                            <span class="text-ink font-medium">{{ $activeSubscription->expires_at->translatedFormat('d F Y, H:i') }}</span>
+                        </p>
+                    @elseif($daysRemaining >= 0)
+                        <div class="border border-amber/40 bg-amber/5 rounded-sm p-4 flex items-center justify-between mt-4">
+                            <p class="text-sm text-ink">
+                                Langganan Pro kamu berakhir dalam <span class="font-mono font-medium">{{ $daysRemaining }} hari</span> 
+                                ({{ $activeSubscription->expires_at->translatedFormat('d F Y') }})
+                            </p>
+                            <button wire:click="renew" class="bg-amber text-ink font-medium px-4 py-2 rounded-sm text-sm whitespace-nowrap hover:bg-amber/90 transition-colors">
+                                Perpanjang Sekarang
+                            </button>
+                        </div>
+                    @else
+                        <div class="border border-red-300 bg-red-50 rounded-sm p-4 flex items-center justify-between mt-4">
+                            <p class="text-sm text-ink">Langganan Pro kamu sudah berakhir.</p>
+                            <button wire:click="renew" class="bg-amber text-ink font-medium px-4 py-2 rounded-sm text-sm whitespace-nowrap hover:bg-amber/90 transition-colors">
+                                Perpanjang Langganan
+                            </button>
+                        </div>
+                    @endif
+
                 @else
                     <div class="flex items-center gap-3 mb-4">
                         <span class="text-3xl font-display font-extrabold text-ink">Free</span>
                     </div>
-                    <p class="text-ink-muted text-sm">
-                        Anda menggunakan paket dasar dengan kuota terbatas.
+                    <p class="text-ink-muted text-sm mb-4">
+                        Kamu masih pakai paket Free.
                     </p>
-                @endif
-            </div>
-            
-            <div class="mt-6 pt-6 border-t border-hairline">
-                @if ($activeSubscription)
-                    <a href="{{ route('pricing') }}" class="inline-flex items-center justify-center px-4 py-2 border border-amber bg-amber/10 text-amber hover:bg-amber hover:text-ink font-medium rounded-sm transition-colors text-sm">
-                        Perpanjang Langganan
-                    </a>
-                @else
                     <a href="{{ route('pricing') }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent bg-amber text-ink hover:bg-amber/90 font-medium rounded-sm transition-colors shadow-sm text-sm">
                         Upgrade ke Pro
                     </a>
@@ -93,7 +113,9 @@
                                     @if($trx->status === 'active')
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Aktif</span>
                                     @elseif($trx->status === 'pending')
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                                        <a href="{{ route('pricing') }}" class="px-2.5 py-0.5 inline-flex items-center text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 hover:bg-yellow-200 transition-colors border border-yellow-200 shadow-sm" title="Selesaikan Pembayaran">
+                                            Pending <span class="ml-1 text-yellow-600">&rarr;</span>
+                                        </a>
                                     @elseif($trx->status === 'expired')
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Expired</span>
                                     @elseif($trx->status === 'failed')
