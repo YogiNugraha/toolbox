@@ -108,5 +108,11 @@ class MidtransWebhookController extends Controller
             'starts_at' => $startsAt,
             'expires_at' => $expiresAt,
         ]);
+
+        // Fix A: Auto-close pending transactions
+        Subscription::where('user_id', $subscription->user_id)
+            ->where('id', '!=', $subscription->id)
+            ->where('status', 'pending')
+            ->update(['status' => 'expired']);
     }
 }

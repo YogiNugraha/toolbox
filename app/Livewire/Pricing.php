@@ -31,10 +31,18 @@ class Pricing extends Component
             ->first();
 
         if ($pending) {
-            $pending->update(['status' => 'expired']);
+            try {
+                Config::$serverKey = config('services.midtrans.server_key');
+                Config::$isProduction = config('services.midtrans.is_production');
+                \Midtrans\Transaction::cancel($pending->midtrans_order_id);
+            } catch (\Exception $e) {
+                \Log::warning('Gagal cancel transaksi Midtrans: ' . $e->getMessage());
+            }
+
+            $pending->update(['status' => 'cancelled']);
             
-            // Redirect to refresh state
-            return redirect()->route('pricing');
+            session()->flash('info', 'Pembayaran dibatalkan.');
+            return redirect()->route('dashboard.billing');
         }
     }
 
@@ -57,14 +65,14 @@ class Pricing extends Component
             ->latest()
             ->first();
 
+        if ($pending && $pending->created_at > now()->subHours(24) && $pending->snap_token) {
+            $this->snapToken = $pending->snap_token;
+            $this->dispatch('snap-token-ready', token: $this->snapToken);
+            return;
+        }
+
         if ($pending) {
-            if ($pending->created_at > now()->subHours(24) && $pending->snap_token) {
-                $this->snapToken = $pending->snap_token;
-                $this->dispatch('snap-token-ready', token: $this->snapToken);
-                return;
-            } else {
-                $pending->update(['status' => 'expired']);
-            }
+            $pending->update(['status' => 'expired']);
         }
 
         // Setup Midtrans

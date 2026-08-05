@@ -24,7 +24,7 @@
                     Selesaikan Pembayaran
                 </h1>
                 <button wire:click="cancelPending" class="font-mono text-xs uppercase text-ink-muted underline hover:text-ink">
-                    Batal / Ganti Paket
+                    Batal
                 </button>
             </div>
 

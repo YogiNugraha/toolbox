@@ -14,7 +14,8 @@ class Subscription extends Model
         'expires_at', 
         'midtrans_order_id', 
         'midtrans_transaction_id', 
-        'amount'
+        'amount',
+        'snap_token'
     ];
     
     protected $casts = [

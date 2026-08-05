@@ -13,6 +13,18 @@
         </div>
     @endif
 
+    @if (session()->has('info'))
+        <div class="mb-6 bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded relative" role="alert">
+            <span class="block sm:inline">{{ session('info') }}</span>
+        </div>
+    @endif
+
+    @if (session()->has('message'))
+        <div class="mb-6 bg-slate-50 border border-slate-200 text-slate-700 px-4 py-3 rounded relative" role="alert">
+            <span class="block sm:inline">{{ session('message') }}</span>
+        </div>
+    @endif
+
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <!-- Current Plan Info -->
         <div class="col-span-1 md:col-span-2 bg-white border {{ $activeSubscription ? 'border-amber shadow-sm' : 'border-hairline' }} rounded-sm p-6 flex flex-col justify-between relative overflow-hidden">
@@ -30,10 +42,20 @@
                     </div>
                     
                     @php
-                        $daysRemaining = now()->diffInDays($activeSubscription->expires_at, false);
+                        $daysRemaining = ceil(now()->diffInDays($activeSubscription->expires_at, false));
                     @endphp
 
-                    @if($daysRemaining > 7)
+                    @if($pending)
+                        <div class="border border-slate-300 bg-slate-50 rounded-sm p-4 flex items-center justify-between mt-4">
+                            <div>
+                                <p class="text-sm text-ink font-medium">Kamu punya pembayaran yang belum diselesaikan</p>
+                                <p class="font-mono text-xs text-ink-muted mt-1">Order #{{ $pending->midtrans_order_id }} · Rp {{ number_format($pending->amount, 0, ',', '.') }}</p>
+                            </div>
+                            <button wire:click="renew" class="bg-slate-700 text-white font-medium px-4 py-2 rounded-sm text-sm whitespace-nowrap hover:bg-slate-800 transition-colors">
+                                Selesaikan Pembayaran
+                            </button>
+                        </div>
+                    @elseif($daysRemaining > 7)
                         <p class="text-sm text-ink-muted">
                             Berlaku sampai
                             <span class="text-ink font-medium">{{ $activeSubscription->expires_at->translatedFormat('d F Y, H:i') }}</span>
@@ -64,9 +86,22 @@
                     <p class="text-ink-muted text-sm mb-4">
                         Kamu masih pakai paket Free.
                     </p>
-                    <a href="{{ route('pricing') }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent bg-amber text-ink hover:bg-amber/90 font-medium rounded-sm transition-colors shadow-sm text-sm">
-                        Upgrade ke Pro
-                    </a>
+                    
+                    @if($pending)
+                        <div class="border border-slate-300 bg-slate-50 rounded-sm p-4 flex items-center justify-between mt-4">
+                            <div>
+                                <p class="text-sm text-ink font-medium">Kamu punya pembayaran yang belum diselesaikan</p>
+                                <p class="font-mono text-xs text-ink-muted mt-1">Order #{{ $pending->midtrans_order_id }} · Rp {{ number_format($pending->amount, 0, ',', '.') }}</p>
+                            </div>
+                            <button wire:click="renew" class="bg-slate-700 text-white font-medium px-4 py-2 rounded-sm text-sm whitespace-nowrap hover:bg-slate-800 transition-colors">
+                                Selesaikan Pembayaran
+                            </button>
+                        </div>
+                    @else
+                        <a href="{{ route('pricing') }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent bg-amber text-ink hover:bg-amber/90 font-medium rounded-sm transition-colors shadow-sm text-sm">
+                            Upgrade ke Pro
+                        </a>
+                    @endif
                 @endif
             </div>
         </div>
@@ -101,7 +136,7 @@
                                     {{ $trx->midtrans_order_id }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-ink">
-                                    {{ $trx->created_at->format('d M Y, H:i') }}
+                                    {{ $trx->created_at->translatedFormat('d M Y, H:i') }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-ink capitalize">
                                     {{ $trx->plan_slug }}
@@ -113,9 +148,7 @@
                                     @if($trx->status === 'active')
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Aktif</span>
                                     @elseif($trx->status === 'pending')
-                                        <a href="{{ route('pricing') }}" class="px-2.5 py-0.5 inline-flex items-center text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 hover:bg-yellow-200 transition-colors border border-yellow-200 shadow-sm" title="Selesaikan Pembayaran">
-                                            Pending <span class="ml-1 text-yellow-600">&rarr;</span>
-                                        </a>
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
                                     @elseif($trx->status === 'expired')
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Expired</span>
                                     @elseif($trx->status === 'failed')

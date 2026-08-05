@@ -367,7 +367,130 @@ Kirim notifikasi (in-app banner cukup, email opsional) otomatis sekali saat subs
 
 ---
 
-## 7. Definition of Done
+## 8. Fix: Transaksi Pending Lama Jadi Nyangkut & Riwayat Bisa Diklik Bayar Lagi
+
+**Dua masalah terpisah yang keliatan dari kasus ini:**
+
+1. Ada transaksi lain yang sudah aktif (menggantikan), tapi transaksi pending yang lebih lama tetap nyangkut berstatus "Pending" selamanya di riwayat.
+2. Baris di tabel Riwayat Transaksi bisa diklik dan mengarahkan ke halaman pricing/checkout — padahal riwayat harusnya cuma catatan, bukan pintu bayar.
+
+### Fix A — Auto-tutup pending lain begitu ada yang jadi aktif
+
+Tambahkan di webhook handler, tepat setelah subscription baru berhasil di-set `active`:
+
+```php
+// setelah $subscription->update(['status' => 'active', ...]);
+
+\App\Models\Subscription::where('user_id', $subscription->user_id)
+    ->where('id', '!=', $subscription->id)
+    ->where('status', 'pending')
+    ->update(['status' => 'expired']);
+```
+
+Ini juga sekalian menutup celah yang sama untuk kasus 3 transaksi ditest berturut-turut seperti tadi — begitu ada yang aktif, sisanya otomatis rapi jadi "Expired", bukan nyangkut "Pending".
+
+### Fix B — Riwayat Transaksi jadi read-only, bukan link
+
+Baris di tabel Riwayat Transaksi TIDAK boleh mengarahkan ke halaman pricing/checkout apapun statusnya. Kalau mau tetap ada interaksi, cukup buka detail kecil (bisa modal/expand row), isinya cuma info (Order ID lengkap, tanggal, nominal, status) — bukan tombol bayar.
+
+```html
+<!-- baris riwayat: hilangkan <a href> atau wire:click yang redirect ke pricing/checkout -->
+<tr class="hover:bg-paper/50">
+    <!-- cukup hover state biasa, bukan cursor-pointer + navigasi -->
+    <td>...</td>
+</tr>
+```
+
+Kalau memang user butuh menyelesaikan/memperpanjang pembayaran, itu SUDAH ditangani oleh banner status di bagian atas halaman Billing (section 6) — bukan dari klik baris riwayat. Dua jalur ini sengaja dipisah: **card atas** = aksi yang relevan sekarang, **tabel riwayat** = arsip read-only.
+
+---
+
+---
+
+## 10. Fix: Pending yang Ditinggal Harus Bisa Dilanjutkan, Bukan Bikin Baru Terus
+
+**Bug ditemukan langsung dari testing:** user klik "Perpanjang Sekarang" → masuk checkout → keluar tanpa bayar → transaksi jadi "Pending" di riwayat. Klik "Perpanjang Sekarang" lagi harusnya **melanjutkan** transaksi pending yang sama, tapi yang kejadian malah transaksi pending lama langsung di-expire dan dibikin transaksi baru. Ini kebalikan dari yang diminta di section 5 — cek ulang urutan logic-nya, kemungkinan besar bagian "reuse kalau masih ada pending valid" ke-skip atau salah taruh setelah bagian "expire yang lama".
+
+### Fix logic `initiateCheckout()` — urutan pengecekan harus begini, jangan dibalik
+
+```php
+public function initiateCheckout(User $user)
+{
+    $pending = $user->subscriptions()
+        ->where('status', 'pending')
+        ->where('created_at', '>', now()->subHours(24))
+        ->latest()
+        ->first();
+
+    // 1. Kalau ada pending yang MASIH VALID (belum 24 jam) dan punya snap_token → PAKAI ITU LAGI, STOP DI SINI
+    if ($pending && $pending->snap_token) {
+        return $pending->snap_token;
+    }
+
+    // 2. Baru kalau pending itu sudah lewat 24 jam, DI SINI baru boleh di-expire
+    if ($pending) {
+        $pending->update(['status' => 'expired']);
+    }
+
+    // 3. Baru bikin transaksi baru kalau memang tidak ada pending valid sama sekali
+    // ...generate order baru seperti biasa (section 5)
+}
+```
+
+Poin (1) harus dicek dan STOP sebelum sampai ke poin (2) — kalau kodenya sekarang selalu jalan ke poin (2)/(3) duluan, itu penyebab bug ini.
+
+### Fix prioritas banner di halaman Billing
+
+State "ada pending yang belum selesai" harus jadi **prioritas paling atas**, mengalahkan banner "≤7 hari lagi" — supaya user nggak dikasih pesan yang salah konteks (nyuruh "perpanjang" padahal sebenarnya ada pembayaran yang tinggal diselesaikan).
+
+```php
+$pending = auth()->user()->subscriptions()->where('status', 'pending')
+    ->where('created_at', '>', now()->subHours(24))->latest()->first();
+$activeSubscription = auth()->user()->activeSubscription();
+$daysRemaining = $activeSubscription ? now()->diffInDays($activeSubscription->expires_at, false) : null;
+```
+
+| Prioritas     | Kondisi                             | Banner                                                                             |
+| ------------- | ----------------------------------- | ---------------------------------------------------------------------------------- |
+| 1 (tertinggi) | Ada `$pending` valid                | "Kamu punya pembayaran yang belum diselesaikan" + tombol **Selesaikan Pembayaran** |
+| 2             | Tidak ada pending, tidak ada active | "Kamu masih Free" + Upgrade                                                        |
+| 3             | Aktif, `daysRemaining > 7`          | Info biasa, tanpa tombol                                                           |
+| 4             | Aktif, `daysRemaining <= 7`         | Banner amber + Perpanjang Sekarang                                                 |
+| 5             | Sudah expired                       | Banner merah + Perpanjang Langganan                                                |
+
+```html
+@if($pending)
+<div
+    class="border border-steel/40 bg-steel/5 rounded-sm p-4 flex items-center justify-between"
+>
+    <div>
+        <p class="text-sm text-ink font-medium">
+            Kamu punya pembayaran yang belum diselesaikan
+        </p>
+        <p class="font-mono text-xs text-ink-muted mt-1">
+            Order #{{ $pending->midtrans_order_id }} · Rp {{
+            number_format($pending->amount, 0, ',', '.') }}
+        </p>
+    </div>
+    <a
+        href="{{ route('checkout.renew') }}"
+        class="bg-steel text-white font-medium px-4 py-2 rounded-sm text-sm whitespace-nowrap"
+    >
+        Selesaikan Pembayaran
+    </a>
+</div>
+@endif
+```
+
+> Catatan soal URL: kamu sempat diarahkan ke `/pricing?action=checkout` — kalau memang itu tujuannya biar bypass pilihan paket, pastikan halaman itu langsung memanggil `initiateCheckout()` yang sudah diperbaiki di atas TANPA sempat menampilkan card pilihan paket sama sekali (harus terasa instan, bukan mampir dulu baru redirect). Boleh juga dirapikan jadi route terpisah `/checkout/renew` seperti di section 6 kalau lebih gampang dikontrol.
+
+---
+
+## 11. Definition of Done (tambahan)
+
+- [ ] Klik "Perpanjang Sekarang" dua kali berturut-turut TANPA menyelesaikan pembayaran → transaksi pending TETAP SAMA (order_id sama), tidak bikin transaksi baru
+- [ ] Kalau ada transaksi pending yang valid, banner "Selesaikan Pembayaran" muncul dan jadi prioritas — mengalahkan banner "≤7 hari lagi" kalau dua-duanya berpotensi muncul bersamaan
+- [ ] Tombol "Selesaikan Pembayaran" membuka checkout dengan `snap_token` yang SAMA seperti percobaan sebelumnya, bukan generate baru
 
 - [ ] Halaman `/` (guest) menampilkan landing page, bukan langsung redirect ke login (kecuali kamu memang mau balik ke redirect langsung — konfirmasi kalau mau diubah)
 - [ ] Login & Register pakai layout split-panel sesuai desain sistem, bukan styling default lagi
@@ -378,3 +501,75 @@ Kirim notifikasi (in-app banner cukup, email opsional) otomatis sekali saat subs
 - [ ] Semua halaman ini responsive di mobile (khususnya form login/register — panel kiri disembunyikan otomatis di layar kecil)
 - [ ] Tombol "Perpanjang Langganan" TIDAK muncul selama Pro masih aktif dengan sisa >7 hari — cuma muncul saat ≤7 hari lagi (sebagai peringatan) atau sudah expired
 - [ ] Kapanpun tombol perpanjang itu muncul, langsung membuka checkout, TIDAK lagi mampir ke `/pricing`
+- [ ] Begitu ada transaksi baru yang aktif, transaksi pending lain milik user yang sama otomatis ikut ditutup (jadi "Expired"), tidak ada lagi status "Pending" yang menggantung padahal user sudah Pro
+
+---
+
+## 12. Fix: Tombol "Batal" Harus Beneran Cancel di Midtrans + Hapus "Ganti Paket"
+
+### A. Ganti label tombol
+
+Karena cuma ada 1 paket berbayar (Pro), teks "Ganti Paket" tidak relevan — ganti jadi cuma **"Batal"** saja.
+
+```html
+<button
+    type="submit"
+    form="cancel-checkout-form"
+    class="font-mono text-xs uppercase text-ink-muted underline hover:text-ink"
+>
+    Batal
+</button>
+```
+
+### B. Klik "Batal" harus panggil Cancel API Midtrans, bukan cuma navigasi balik
+
+```php
+// routes/web.php
+Route::post('/checkout/{subscription}/cancel', [CheckoutController::class, 'cancel'])
+    ->middleware('auth')->name('checkout.cancel');
+```
+
+```php
+public function cancel(Subscription $subscription)
+{
+    abort_if($subscription->user_id !== auth()->id(), 403);
+    abort_unless($subscription->status === 'pending', 400); // cuma boleh cancel yang masih pending
+
+    try {
+        \Midtrans\Config::$serverKey = config('services.midtrans.server_key');
+        \Midtrans\Config::$isProduction = config('services.midtrans.is_production');
+        \Midtrans\Transaction::cancel($subscription->midtrans_order_id);
+    } catch (\Exception $e) {
+        // kalau di Midtrans ternyata transaksinya sudah settlement/expired duluan
+        // (race condition — misal user bayar tepat pas mau klik batal), abaikan error ini,
+        // biar webhook yang urus status sebenarnya. Jangan sampai user macet gara-gara ini.
+        \Log::warning('Gagal cancel transaksi Midtrans: ' . $e->getMessage());
+    }
+
+    $subscription->update(['status' => 'cancelled']);
+
+    return redirect()->route('billing')->with('info', 'Pembayaran dibatalkan.');
+}
+```
+
+```html
+<!-- form pembungkus, ditaruh di halaman checkout -->
+<form
+    id="cancel-checkout-form"
+    action="{{ route('checkout.cancel', $subscription) }}"
+    method="POST"
+    class="hidden"
+>
+    @csrf
+</form>
+```
+
+> Catatan: pakai method `POST`, bukan `GET`, karena ini aksi yang mengubah data (bukan sekadar navigasi) — sesuaikan tombolnya jadi form submit, bukan `<a href>` biasa.
+
+---
+
+## 13. Definition of Done (tambahan)
+
+- [ ] Buka dashboard Midtrans Sandbox, transaksi yang baru dibuat (belum dibayar) muncul dengan status "Pending" — dikonfirmasi manual, bukan diasumsikan
+- [ ] Klik "Batal" pada checkout yang masih pending → transaksi di Midtrans Sandbox ikut berubah status (cancelled), dicek langsung dari dashboard Midtrans setelah klik
+- [ ] Teks tombol sudah jadi "Batal" saja, tidak ada lagi "Ganti Paket"

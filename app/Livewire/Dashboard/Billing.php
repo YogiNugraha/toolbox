@@ -48,6 +48,12 @@ class Billing extends Component
                             'starts_at' => $startsAt,
                             'expires_at' => $expiresAt,
                         ]);
+
+                        // Fix A: Auto-close pending transactions
+                        \App\Models\Subscription::where('user_id', $subscription->user_id)
+                            ->where('id', '!=', $subscription->id)
+                            ->where('status', 'pending')
+                            ->update(['status' => 'expired']);
                     } elseif (in_array($status->transaction_status, ['deny', 'cancel', 'expire'])) {
                         $subscription->update(['status' => 'failed']);
                     }
@@ -59,10 +65,16 @@ class Billing extends Component
 
         $activeSubscription = $user->activeSubscription();
         $history = $user->subscriptions()->latest()->get();
+        $pending = $user->subscriptions()
+            ->where('status', 'pending')
+            ->where('created_at', '>', now()->subHours(24))
+            ->latest()
+            ->first();
 
         return view('livewire.dashboard.billing', [
             'activeSubscription' => $activeSubscription,
             'history' => $history,
+            'pending' => $pending,
         ])->layout('layouts.dashboard');
     }
 
