@@ -13,10 +13,10 @@
 </head>
 
 <body class="bg-paper text-ink font-sans antialiased">
-    <div x-data="{ sidebarOpen: true }" class="flex h-screen overflow-hidden">
+    <div x-data="{ sidebarOpen: true }" class="flex h-screen overflow-hidden print:h-auto print:overflow-visible print:block">
         
         <!-- Sidebar -->
-        <aside :class="sidebarOpen ? 'w-64' : 'w-[84px]'" class="bg-ink text-slate-300 flex flex-col h-full shrink-0 transition-all duration-300 overflow-hidden relative">
+        <aside :class="sidebarOpen ? 'w-64' : 'w-[84px]'" class="print:hidden bg-ink text-slate-300 flex flex-col h-full shrink-0 transition-all duration-300 overflow-hidden relative">
             <div class="px-6 py-5 border-b border-white/10 shrink-0 flex items-center h-[73px]">
                 <a href="{{ route('dashboard') }}" wire:navigate class="font-display font-bold text-white text-lg tracking-tight flex items-center gap-3 overflow-hidden whitespace-nowrap">
                     <x-lucide-package class="w-7 h-7 text-white/70 shrink-0 -ml-0.5" />
@@ -97,9 +97,9 @@
         </aside>
 
         <!-- Main content area -->
-        <div class="flex-1 flex flex-col h-full overflow-hidden">
+        <div class="flex-1 flex flex-col h-full overflow-hidden print:h-auto print:overflow-visible print:block">
             <!-- Topbar -->
-            <header class="bg-paper border-b border-hairline px-8 py-4 flex justify-between items-center shrink-0 h-[73px]">
+            <header class="print:hidden bg-paper border-b border-hairline px-8 py-4 flex justify-between items-center shrink-0 h-[73px]">
                 <div class="flex items-center gap-4">
                     <button @click="sidebarOpen = !sidebarOpen" class="cursor-pointer text-ink-muted hover:text-ink transition-colors p-1 -ml-2 rounded-sm focus:outline-none focus:ring-2 focus:ring-amber/50">
                         <x-lucide-menu class="w-6 h-6" />
@@ -176,8 +176,8 @@
             </header>
 
             <!-- Main content -->
-            <main class="flex-1 overflow-y-auto bg-paper flex flex-col">
-                <div class="w-full px-8 py-8">
+            <main class="flex-1 overflow-y-auto bg-paper flex flex-col print:overflow-visible print:bg-white print:block">
+                <div class="w-full px-8 py-8 print:p-0">
                     {{ $slot ?? '' }}
                     @yield('content')
                 </div>
@@ -185,6 +185,8 @@
         </div>
     </div>
     @livewireScripts
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </body>
 
 </html>

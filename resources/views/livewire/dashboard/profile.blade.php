@@ -77,6 +77,21 @@
                             <input type="email" wire:model="email" class="w-full rounded-sm border-hairline shadow-sm focus:border-amber focus:ring-amber/20 text-sm">
                             @error('email') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
+                        <div>
+                            <label class="block text-sm font-medium text-ink mb-1">Nomor HP <span class="text-ink-muted font-normal">(Opsional)</span></label>
+                            <div class="flex shadow-sm rounded-sm">
+                                <select wire:model="country_code" class="w-1/3 md:w-1/4 rounded-l-sm border-hairline focus:border-amber focus:ring-amber/20 text-sm bg-paper/50">
+                                    <option value="+62">🇮🇩 +62</option>
+                                    <option value="+1">🇺🇸 +1</option>
+                                    <option value="+44">🇬🇧 +44</option>
+                                    <option value="+60">🇲🇾 +60</option>
+                                    <option value="+65">🇸🇬 +65</option>
+                                    <option value="+61">🇦🇺 +61</option>
+                                </select>
+                                <input type="text" wire:model="phone" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^0+/, '')" class="w-2/3 md:w-3/4 rounded-r-sm border-l-0 border-hairline focus:border-amber focus:ring-amber/20 text-sm" placeholder="81234567890">
+                            </div>
+                            @error('phone') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        </div>
                         <div class="pt-2 flex justify-end">
                             <button type="submit" class="bg-amber hover:bg-amber/90 text-ink font-medium py-2 px-6 rounded-sm transition-colors text-sm flex items-center gap-2">
                                 <span wire:loading.remove wire:target="updateProfile">Simpan Perubahan</span>

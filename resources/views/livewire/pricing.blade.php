@@ -68,6 +68,36 @@
             </div>
         </div>
 
+        @if($showPhoneForm)
+            <div class="max-w-md mx-auto bg-white border border-hairline rounded-sm p-6 mb-12 shadow-sm text-left">
+                <h3 class="text-xl font-display font-bold text-ink mb-2">Lengkapi Nomor HP</h3>
+                <p class="text-sm text-ink-muted mb-6">Untuk melanjutkan pembayaran, silakan masukkan nomor handphone Anda.</p>
+                <form wire:submit="savePhone">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-ink mb-1">Nomor HP</label>
+                        <div class="flex shadow-sm rounded-sm">
+                            <select wire:model="country_code" class="w-1/3 md:w-1/4 rounded-l-sm border-hairline focus:border-amber focus:ring-amber/20 text-sm bg-paper/50">
+                                <option value="+62">🇮🇩 +62</option>
+                                <option value="+1">🇺🇸 +1</option>
+                                <option value="+44">🇬🇧 +44</option>
+                                <option value="+60">🇲🇾 +60</option>
+                                <option value="+65">🇸🇬 +65</option>
+                                <option value="+61">🇦🇺 +61</option>
+                            </select>
+                            <input type="text" wire:model="phone" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^0+/, '')" class="w-2/3 md:w-3/4 rounded-r-sm border-l-0 border-hairline focus:border-amber focus:ring-amber/20 text-sm" placeholder="81234567890">
+                        </div>
+                        @error('phone') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button type="button" wire:click="$set('showPhoneForm', false)" class="px-4 py-2 text-sm font-medium text-ink-muted hover:text-ink">Batal</button>
+                        <button type="submit" class="bg-amber hover:bg-amber/90 text-ink font-medium py-2 px-6 rounded-sm transition-colors text-sm flex items-center gap-2">
+                            <span wire:loading.remove wire:target="savePhone">Lanjutkan</span>
+                            <span wire:loading wire:target="savePhone">Menyimpan...</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        @else
         <!-- Pricing Tiers -->
         <div id="pricing-tiers" class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
             
@@ -145,8 +175,8 @@
                     @endif
                 </div>
             </div>
-
         </div>
+        @endif
     </div>
 
     <!-- Midtrans Snap Script -->

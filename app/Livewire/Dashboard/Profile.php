@@ -13,6 +13,8 @@ class Profile extends Component
     public $photo;
     public $name;
     public $email;
+    public $country_code = '+62';
+    public $phone;
 
     public $current_password;
     public $password;
@@ -44,6 +46,21 @@ class Profile extends Component
     {
         $this->name = auth()->user()->name;
         $this->email = auth()->user()->email;
+        
+        $fullPhone = auth()->user()->phone;
+        if ($fullPhone) {
+            $codes = ['+62', '+1', '+44', '+60', '+65', '+61'];
+            foreach ($codes as $code) {
+                if (str_starts_with($fullPhone, $code)) {
+                    $this->country_code = $code;
+                    $this->phone = substr($fullPhone, strlen($code));
+                    break;
+                }
+            }
+            if (!$this->phone) {
+                $this->phone = $fullPhone;
+            }
+        }
     }
 
     public function updateProfile()
@@ -51,11 +68,20 @@ class Profile extends Component
         $this->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . auth()->id(),
+            'country_code' => 'nullable|string|max:10',
+            'phone' => 'nullable|string|max:20',
         ]);
+
+        $finalPhone = null;
+        if (!empty($this->phone)) {
+            $cleanPhone = ltrim(preg_replace('/[^0-9]/', '', $this->phone), '0');
+            $finalPhone = $this->country_code . $cleanPhone;
+        }
 
         auth()->user()->update([
             'name' => $this->name,
             'email' => $this->email,
+            'phone' => $finalPhone,
         ]);
 
         $this->dispatch('profile-updated', name: $this->name);

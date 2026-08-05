@@ -26,6 +26,7 @@ Route::middleware(['auth', 'throttle:20,1'])->group(function () {
     // Langganan & Pembayaran
     Route::get('/pricing', \App\Livewire\Pricing::class)->name('pricing');
     Route::get('/billing', \App\Livewire\Dashboard\Billing::class)->name('dashboard.billing');
+    Route::get('/billing/invoice/{order_id}', \App\Livewire\Dashboard\Invoice::class)->name('dashboard.invoice');
 
     Route::get('/tool/{slug}', function ($slug) {
         $tools = config('tools');

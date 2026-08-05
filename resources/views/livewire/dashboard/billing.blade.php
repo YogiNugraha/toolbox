@@ -34,11 +34,19 @@
             <div>
                 <h3 class="text-sm font-medium text-ink-muted uppercase tracking-wider mb-2">Paket Saat Ini</h3>
                 @if ($activeSubscription)
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="text-3xl font-display font-extrabold text-ink">Pro</span>
-                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
-                            Aktif
-                        </span>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-3xl font-display font-extrabold text-ink">Pro</span>
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+                                Aktif
+                            </span>
+                        </div>
+                        <button 
+                            wire:click="confirmCancel" 
+                            class="text-xs text-red-500 hover:text-red-700 underline font-medium whitespace-nowrap"
+                        >
+                            Berhenti Berlangganan
+                        </button>
                     </div>
                     
                     @php
@@ -133,7 +141,10 @@
                         @foreach ($history as $trx)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-ink-muted">
-                                    {{ $trx->midtrans_order_id }}
+                                    <a href="{{ route('dashboard.invoice', ['order_id' => $trx->midtrans_order_id]) }}" class="hover:text-amber hover:underline transition-colors flex items-center gap-1 group">
+                                        {{ $trx->midtrans_order_id }}
+                                        <svg class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                    </a>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-ink">
                                     {{ $trx->created_at->translatedFormat('d M Y, H:i') }}

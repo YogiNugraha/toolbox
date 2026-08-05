@@ -3,6 +3,8 @@
 namespace App\Livewire\Dashboard;
 
 use Livewire\Component;
+use Livewire\Attributes\On;
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 
 class Billing extends Component
 {
@@ -81,5 +83,40 @@ class Billing extends Component
     public function renew()
     {
         return redirect()->to(route('pricing') . '?action=checkout');
+    }
+
+    public function confirmCancel()
+    {
+        LivewireAlert::title('Yakin ingin berhenti?')
+            ->warning()
+            ->text('Akses Pro Anda akan langsung dihentikan dan tidak ada pengembalian sisa dana.')
+            ->position('center')
+            ->timer(null)
+            ->toast(false)
+            ->withConfirmButton('Ya, Berhenti')
+            ->confirmButtonColor('#ef4444')
+            ->withCancelButton('Batal')
+            ->onConfirm('cancelSubscription')
+            ->show();
+    }
+
+    #[On('cancelSubscription')]
+    public function cancelSubscription()
+    {
+        $activeSub = auth()->user()->activeSubscription();
+        
+        if ($activeSub) {
+            $activeSub->update([
+                'status' => 'expired',
+                'expires_at' => now(), // Mematikan akses Pro saat ini juga
+            ]);
+
+            LivewireAlert::title('Langganan Pro Anda telah diberhentikan.')
+                ->success()
+                ->position('top-end')
+                ->timer(3000)
+                ->toast(true)
+                ->show();
+        }
     }
 }
