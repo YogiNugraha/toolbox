@@ -51,6 +51,8 @@ class Billing extends Component
                             'expires_at' => $expiresAt,
                         ]);
 
+                        \Illuminate\Support\Facades\Mail::to($subscription->user->email)->queue(new \App\Mail\PaymentSuccessMail($subscription));
+
                         // Fix A: Auto-close pending transactions
                         \App\Models\Subscription::where('user_id', $subscription->user_id)
                             ->where('id', '!=', $subscription->id)
