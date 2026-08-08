@@ -13,9 +13,9 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="mb-8">
         <!-- Current Plan Info -->
-        <div class="col-span-1 md:col-span-2 bg-white border {{ $activeSubscription ? 'border-amber shadow-sm' : 'border-hairline' }} rounded-sm p-6 flex flex-col justify-between relative overflow-hidden">
+        <div class="bg-white border {{ $activeSubscription ? 'border-amber shadow-sm' : 'border-hairline' }} rounded-sm p-6 flex flex-col justify-between relative overflow-hidden">
             @if ($activeSubscription)
                 <div class="absolute top-0 right-0 bg-amber text-ink text-xs font-bold px-3 py-1 border-b border-l border-amber">PRO</div>
             @endif

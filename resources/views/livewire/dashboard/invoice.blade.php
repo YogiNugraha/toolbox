@@ -3,7 +3,7 @@
         <!-- Header Invoice -->
         <div class="flex justify-between items-start border-b border-hairline pb-6 mb-6">
             <div>
-                <h1 class="text-3xl font-display font-black text-amber">ToolBox</h1>
+                <h1 class="text-3xl font-display font-black text-amber">{{ config('app.name') }}</h1>
                 <p class="text-sm text-ink-muted mt-1">Sistem Alat Produktivitas</p>
             </div>
             <div class="text-right">
@@ -75,7 +75,7 @@
 
         <!-- Footer / Notes -->
         <div class="text-sm text-ink-muted border-t border-hairline pt-6">
-            <p>Terima kasih telah menggunakan ToolBox. Jika Anda memiliki pertanyaan mengenai tagihan ini, silakan hubungi dukungan pelanggan kami.</p>
+            <p>Terima kasih telah menggunakan {{ config('app.name') }}. Jika Anda memiliki pertanyaan mengenai tagihan ini, silakan hubungi dukungan pelanggan kami.</p>
         </div>
 
         <!-- Tombol Aksi (Sembunyi saat diprint) -->

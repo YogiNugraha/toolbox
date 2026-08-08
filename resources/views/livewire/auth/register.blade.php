@@ -1,12 +1,12 @@
 <div class="min-h-screen flex font-sans">
   <!-- Panel kiri: brand, disembunyikan di mobile -->
   <div class="hidden lg:flex w-1/2 bg-ink text-white flex-col justify-between p-12">
-    <span class="font-display font-bold text-xl"><a href="/">ToolBox</a></span>
+    <span class="font-display font-bold text-xl"><a href="/">{{ config('app.name') }}</a></span>
     <div>
       <p class="font-display text-4xl font-bold mb-3 leading-tight">Mulai lebih cepat.</p>
-      <p class="text-slate-400 text-sm">Bergabunglah dengan ribuan pengguna ToolBox lainnya.</p>
+      <p class="text-slate-400 text-sm">Bergabunglah dengan ribuan pengguna {{ config('app.name') }} lainnya.</p>
     </div>
-    <p class="font-mono text-xs text-slate-500">© {{ date('Y') }} ToolBox</p>
+    <p class="font-mono text-xs text-slate-500">© {{ date('Y') }} {{ config('app.name') }}</p>
   </div>
 
   <!-- Panel kanan: form -->

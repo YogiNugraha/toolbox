@@ -3,7 +3,7 @@
 
 Halo **{{ $subscription->user->name }}**,
 
-Terima kasih! Pembayaran Anda untuk langganan **ToolBox {{ ucfirst($subscription->plan_slug) }}** telah berhasil kami proses. 
+Terima kasih! Pembayaran Anda untuk langganan **{{ config('app.name') }} {{ ucfirst($subscription->plan_slug) }}** telah berhasil kami proses. 
 
 Akun Anda sekarang telah ditingkatkan ke status Pro. Mulai saat ini, Anda dapat menikmati **semua fitur unggulan tanpa batasan**!
 
@@ -18,7 +18,7 @@ Akun Anda sekarang telah ditingkatkan ke status Pro. Mulai saat ini, Anda dapat 
 *Catatan: Kami telah melampirkan salinan PDF Invoice resmi pada email ini untuk keperluan administrasi Anda.*
 
 <x-mail::button :url="route('dashboard')">
-Mulai Gunakan ToolBox Pro
+Mulai Gunakan {{ config('app.name') }} Pro
 </x-mail::button>
 
 Jika Anda memiliki pertanyaan lebih lanjut, jangan ragu untuk membalas email ini atau menghubungi tim dukungan kami.

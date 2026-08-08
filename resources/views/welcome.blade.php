@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ToolBox - Compress, convert, done.</title>
+    <title>{{ config('app.name') }} - Compress, convert, done.</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-paper text-ink font-sans antialiased min-h-screen flex flex-col">
@@ -11,7 +11,7 @@
     <!-- Header -->
     <header class="border-b border-hairline bg-white">
         <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="font-display font-bold text-xl tracking-tight">ToolBox</div>
+            <div class="font-display font-bold text-xl tracking-tight">{{ config('app.name') }}</div>
             <nav class="flex items-center gap-3">
                 @auth
                     <a href="{{ route('dashboard') }}" class="text-sm font-medium hover:text-amber transition-colors">Dashboard</a>
@@ -79,7 +79,7 @@
 
     <!-- Footer -->
     <footer class="border-t border-hairline py-8 bg-white text-center">
-        <p class="font-mono text-xs text-slate-500">&copy; {{ date('Y') }} ToolBox.</p>
+        <p class="font-mono text-xs text-slate-500">&copy; {{ date('Y') }} {{ config('app.name') }}.</p>
     </footer>
 
 </body>

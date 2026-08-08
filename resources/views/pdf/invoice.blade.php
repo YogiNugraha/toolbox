@@ -185,7 +185,7 @@
         <table class="header-table" cellpadding="0" cellspacing="0">
             <tr>
                 <td>
-                    <h1 class="brand-title">ToolBox</h1>
+                    <h1 class="brand-title">{{ config('app.name') }}</h1>
                     <p class="brand-subtitle">Sistem Alat Produktivitas</p>
                 </td>
                 <td style="text-align: right;">
@@ -259,7 +259,7 @@
         
         <!-- Footer -->
         <div class="footer">
-            <p>Terima kasih telah menggunakan ToolBox. Jika Anda memiliki pertanyaan mengenai tagihan ini, silakan hubungi dukungan pelanggan kami.</p>
+            <p>Terima kasih telah menggunakan {{ config('app.name') }}. Jika Anda memiliki pertanyaan mengenai tagihan ini, silakan hubungi dukungan pelanggan kami.</p>
         </div>
     </div>
 </body>

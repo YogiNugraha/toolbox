@@ -31,7 +31,7 @@ class SubscriptionCancelledMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Konfirmasi Berhenti Berlangganan - ToolBox Pro',
+            subject: 'Konfirmasi Berhenti Berlangganan - ' . config('app.name') . ' Pro',
         );
     }
 

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Dashboard - ToolBox')</title>
+    <title>@yield('title', 'Dashboard - ' . config('app.name'))</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=space-grotesk:500,700|inter:400,500,600|jetbrains-mono:400,500"
         rel="stylesheet">
@@ -20,7 +20,7 @@
             <div class="px-6 py-5 border-b border-white/10 shrink-0 flex items-center h-[73px]">
                 <a href="{{ route('dashboard') }}" wire:navigate class="font-display font-bold text-white text-lg tracking-tight flex items-center gap-3 overflow-hidden whitespace-nowrap">
                     <x-lucide-package class="w-7 h-7 text-white/70 shrink-0 -ml-0.5" />
-                    <span x-show="sidebarOpen" x-transition.opacity.duration.300ms>ToolBox</span>
+                    <span x-show="sidebarOpen" x-transition.opacity.duration.300ms>{{ config('app.name') }}</span>
                 </a>
             </div>
 

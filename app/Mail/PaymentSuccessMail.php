@@ -32,7 +32,7 @@ class PaymentSuccessMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Pembayaran Berhasil - ToolBox Pro',
+            subject: 'Pembayaran Berhasil - ' . config('app.name') . ' Pro',
         );
     }
 
@@ -57,7 +57,7 @@ class PaymentSuccessMail extends Mailable
         $pdf->setPaper('A4', 'portrait');
 
         return [
-            Attachment::fromData(fn () => $pdf->output(), 'Invoice_ToolBox_Pro_' . $this->subscription->midtrans_order_id . '.pdf')
+            Attachment::fromData(fn () => $pdf->output(), 'Invoice_' . str_replace(' ', '_', config('app.name')) . '_Pro_' . $this->subscription->midtrans_order_id . '.pdf')
                     ->withMime('application/pdf'),
         ];
     }

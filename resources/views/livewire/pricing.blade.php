@@ -97,7 +97,7 @@
                     Pilih Paket Anda
                 </h2>
                 <p class="mt-3 text-lg text-ink-muted">
-                    Tingkatkan produktivitas tanpa batas dengan ToolBox Pro.
+                    Tingkatkan produktivitas tanpa batas dengan {{ config('app.name') }} Pro.
                 </p>
             </div>
             
