@@ -18,7 +18,7 @@ Route::middleware(['guest', 'throttle:5,1'])->group(function () {
 Route::post('/webhook/midtrans', [\App\Http\Controllers\MidtransWebhookController::class, 'handle'])->name('webhook.midtrans');
 
 // AUTH ONLY (wajib login)
-Route::middleware(['auth', 'throttle:60,1'])->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\EnsureUserIsNotBanned::class, 'throttle:60,1'])->group(function () {
     Route::get('/dashboard', \App\Livewire\Dashboard\Overview::class)->name('dashboard');
     Route::get('/history', \App\Livewire\Dashboard\History::class)->name('history');
     Route::get('/profile', \App\Livewire\Dashboard\Profile::class)->name('profile');
@@ -57,4 +57,11 @@ Route::middleware(['auth', 'throttle:60,1'])->group(function () {
         request()->session()->regenerateToken();
         return redirect()->route('login');
     })->name('logout');
+});
+
+// ADMIN ONLY
+Route::middleware(['auth', \App\Http\Middleware\EnsureUserIsNotBanned::class, \App\Http\Middleware\IsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', \App\Livewire\Admin\Overview::class)->name('overview');
+    Route::get('/users', \App\Livewire\Admin\Users::class)->name('users');
+    Route::get('/transactions', \App\Livewire\Admin\Transactions::class)->name('transactions');
 });

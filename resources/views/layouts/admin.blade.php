@@ -25,58 +25,27 @@
             </div>
 
             <nav class="flex-1 py-4 space-y-1 overflow-y-auto overflow-x-hidden scrollbar-hide">
-                <a href="{{ route('dashboard') }}" wire:navigate title="Dashboard"
-                    class="flex items-center gap-4 px-6 py-3 text-sm transition-colors border-l-2 {{ request()->routeIs('dashboard') ? 'text-white font-medium bg-white/5 border-amber' : 'text-slate-400 hover:text-white hover:bg-white/5 border-transparent' }}">
-                    <x-lucide-layout-dashboard class="w-5 h-5 shrink-0" />
-                    <span x-show="sidebarOpen" x-transition.opacity.duration.300ms class="whitespace-nowrap">Dashboard</span>
-                </a>
-                
-                <a href="{{ route('history') }}" wire:navigate title="Riwayat"
-                    class="flex items-center gap-4 px-6 py-3 text-sm transition-colors border-l-2 {{ request()->routeIs('history') ? 'text-white font-medium bg-white/5 border-amber' : 'text-slate-400 hover:text-white hover:bg-white/5 border-transparent' }}">
-                    <x-lucide-history class="w-5 h-5 shrink-0" />
-                    <span x-show="sidebarOpen" x-transition.opacity.duration.300ms class="whitespace-nowrap">Riwayat</span>
-                </a>
-                
-                <a href="{{ route('dashboard.billing') }}" wire:navigate title="Billing & Pro"
-                    class="flex items-center gap-4 px-6 py-3 text-sm transition-colors border-l-2 {{ request()->routeIs('dashboard.billing') ? 'text-white font-medium bg-white/5 border-amber' : 'text-slate-400 hover:text-white hover:bg-white/5 border-transparent' }}">
-                    <x-lucide-credit-card class="w-5 h-5 shrink-0" />
-                    <span x-show="sidebarOpen" x-transition.opacity.duration.300ms class="whitespace-nowrap flex-1">Billing</span>
-                    @if (auth()->user()->activeSubscription())
-                        <span x-show="sidebarOpen" class="px-1.5 py-0.5 text-[10px] bg-amber/20 text-amber border border-amber/30 rounded-sm font-bold uppercase tracking-wider">PRO</span>
-                    @endif
-                </a>
-
-                <div x-data="{ toolsOpen: {{ request()->is('tool/*') ? 'true' : 'false' }} }" class="mt-2 border-t border-white/10 pt-4">
-                    <button @click="sidebarOpen ? toolsOpen = !toolsOpen : (sidebarOpen = true, toolsOpen = true)" 
-                            class="w-full flex items-center justify-between gap-4 px-6 py-3 text-sm transition-colors border-l-2 {{ request()->is('tool/*') ? 'text-white bg-white/5 border-amber' : 'text-slate-400 hover:text-white hover:bg-white/5 border-transparent' }}">
-                        <div class="flex items-center gap-4">
-                            <x-lucide-layers class="w-5 h-5 shrink-0" />
-                            <span x-show="sidebarOpen" x-transition.opacity.duration.300ms class="whitespace-nowrap font-medium">Kumpulan Tools</span>
-                        </div>
-                        <x-lucide-chevron-down x-show="sidebarOpen" class="w-4 h-4 shrink-0 transition-transform duration-200" x-bind:class="toolsOpen ? 'rotate-180' : ''" />
-                    </button>
-
-                    <div x-show="toolsOpen && sidebarOpen" 
-                         x-transition:enter="transition ease-out duration-200"
-                         x-transition:enter-start="opacity-0 -translate-y-2"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition ease-in duration-150"
-                         x-transition:leave-start="opacity-100 translate-y-0"
-                         x-transition:leave-end="opacity-0 -translate-y-2"
-                         class="bg-black/20 py-2 mt-1 space-y-1" x-cloak>
-                        
-                        @foreach (config('tools') as $tool)
-                            <a href="{{ route('tool', $tool['slug']) }}" wire:navigate title="{{ $tool['name'] }}"
-                                class="flex items-center gap-4 px-6 py-2 text-sm transition-colors border-l-2 border-transparent {{ request()->is('tool/' . $tool['slug']) ? 'text-white' : 'text-slate-400 hover:text-white' }}">
-                                <!-- Indentation dot instead of full icon -->
-                                <div class="w-5 flex justify-center shrink-0">
-                                    <div class="w-1.5 h-1.5 rounded-full {{ request()->is('tool/' . $tool['slug']) ? 'bg-amber' : 'bg-slate-600' }}"></div>
-                                </div>
-                                <span class="whitespace-nowrap">{{ $tool['name'] }}</span>
-                            </a>
-                        @endforeach
-                    </div>
+                <div class="px-6 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider" x-show="sidebarOpen">
+                    Admin Panel
                 </div>
+                
+                <a href="{{ route('admin.overview') }}" wire:navigate title="Overview"
+                    class="flex items-center gap-4 px-6 py-3 text-sm transition-colors border-l-2 {{ request()->routeIs('admin.overview') ? 'text-white font-medium bg-white/5 border-amber' : 'text-slate-400 hover:text-white hover:bg-white/5 border-transparent' }}">
+                    <x-lucide-layout-dashboard class="w-5 h-5 shrink-0" />
+                    <span x-show="sidebarOpen" x-transition.opacity.duration.300ms class="whitespace-nowrap">Overview</span>
+                </a>
+                
+                <a href="{{ route('admin.users') }}" wire:navigate title="Pengguna"
+                    class="flex items-center gap-4 px-6 py-3 text-sm transition-colors border-l-2 {{ request()->routeIs('admin.users') ? 'text-white font-medium bg-white/5 border-amber' : 'text-slate-400 hover:text-white hover:bg-white/5 border-transparent' }}">
+                    <x-lucide-users class="w-5 h-5 shrink-0" />
+                    <span x-show="sidebarOpen" x-transition.opacity.duration.300ms class="whitespace-nowrap">Pengguna</span>
+                </a>
+                
+                <a href="{{ route('admin.transactions') }}" wire:navigate title="Transaksi"
+                    class="flex items-center gap-4 px-6 py-3 text-sm transition-colors border-l-2 {{ request()->routeIs('admin.transactions') ? 'text-white font-medium bg-white/5 border-amber' : 'text-slate-400 hover:text-white hover:bg-white/5 border-transparent' }}">
+                    <x-lucide-receipt class="w-5 h-5 shrink-0" />
+                    <span x-show="sidebarOpen" x-transition.opacity.duration.300ms class="whitespace-nowrap flex-1">Transaksi</span>
+                </a>
             </nav>
 
             <div class="py-4 border-t border-white/10 shrink-0 overflow-hidden">
@@ -162,14 +131,10 @@
                             Profil Saya
                         </a>
                         
-                        @if(auth()->user()->is_admin)
-                        <a href="{{ route('admin.overview') }}" wire:navigate class="flex items-center gap-3 px-4 py-2 text-sm text-ink hover:bg-paper transition-colors border-t border-hairline border-b">
-                            <x-lucide-shield-alert class="w-4 h-4 text-amber" />
-                            Admin Panel
+                        <a href="{{ route('dashboard') }}" wire:navigate class="flex items-center gap-3 px-4 py-2 text-sm text-ink hover:bg-paper transition-colors border-t border-hairline border-b">
+                            <x-lucide-arrow-left class="w-4 h-4 text-ink-muted" />
+                            Kembali ke User Dashboard
                         </a>
-                        @else
-                        <div class="border-t border-hairline my-1"></div>
-                        @endif
                         
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
