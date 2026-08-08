@@ -50,11 +50,11 @@ class MidtransWebhookController extends Controller
                     if ($fraud == 'challenge') {
                         $subscription->update(['status' => 'pending']);
                     } else {
-                        $this->activateSubscription($subscription);
+                        $subscription->activate();
                     }
                 }
             } else if ($transaction == 'settlement') {
-                $this->activateSubscription($subscription);
+                $subscription->activate();
             } else if ($transaction == 'pending') {
                 $subscription->update(['status' => 'pending']);
             } else if ($transaction == 'deny' || $transaction == 'expire' || $transaction == 'cancel') {
@@ -68,53 +68,4 @@ class MidtransWebhookController extends Controller
         }
     }
 
-    private function activateSubscription(Subscription $subscription)
-    {
-        // Idempotency: Jika langganan ini sudah aktif, abaikan agar expires_at tidak bertambah berkali-kali
-        if ($subscription->status === 'active') {
-            return;
-        }
-
-        $durationDays = config('plans.' . $subscription->plan_slug . '.duration_days');
-        
-        // Cek apakah ada langganan aktif lainnya yang belum expired (E1 Upgrade Stacking)
-        $activeSub = Subscription::where('user_id', $subscription->user_id)
-            ->where('status', 'active')
-            ->where('id', '!=', $subscription->id)
-            ->where('expires_at', '>', now())
-            ->latest('expires_at')
-            ->first();
-
-        $startsAt = now();
-        $expiresAt = now()->addDays($durationDays);
-
-        if ($activeSub) {
-            // Jika ada langganan lama yang masih aktif, masa aktif langganan baru ditambahkan ke akhir masa aktif lama
-            $startsAt = $activeSub->expires_at;
-            $expiresAt = $activeSub->expires_at->addDays($durationDays);
-            
-            // Tandai langganan lama sebagai expired karena sudah digantikan oleh langganan baru ini
-            $activeSub->update(['status' => 'expired']);
-        } else {
-            // Cancel any old active that might be expired but still have status=active in DB
-            Subscription::where('user_id', $subscription->user_id)
-                ->where('status', 'active')
-                ->where('id', '!=', $subscription->id)
-                ->update(['status' => 'expired']);
-        }
-        
-        $subscription->update([
-            'status' => 'active',
-            'starts_at' => $startsAt,
-            'expires_at' => $expiresAt,
-        ]);
-
-        \Illuminate\Support\Facades\Mail::to($subscription->user->email)->queue(new \App\Mail\PaymentSuccessMail($subscription));
-
-        // Fix A: Auto-close pending transactions
-        Subscription::where('user_id', $subscription->user_id)
-            ->where('id', '!=', $subscription->id)
-            ->where('status', 'pending')
-            ->update(['status' => 'expired']);
-    }
 }

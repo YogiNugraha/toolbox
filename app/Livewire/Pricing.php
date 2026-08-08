@@ -161,6 +161,50 @@ class Pricing extends Component
         }
     }
 
+    public function checkPaymentStatus()
+    {
+        if ($this->snapToken) {
+            $pending = auth()->user()->subscriptions()
+                ->where('snap_token', $this->snapToken)
+                ->first();
+            
+            if ($pending && $pending->status === 'active') {
+                session()->flash('message', 'Berhasil! Pembayaran Anda telah terverifikasi oleh sistem.');
+                return redirect()->route('dashboard.billing');
+            }
+        }
+    }
+
+    public function handlePaymentStatus($status)
+    {
+        if ($status === 'success') {
+            $pending = auth()->user()->subscriptions()
+                ->where('status', 'pending')
+                ->where('snap_token', $this->snapToken)
+                ->first();
+            
+            if ($pending) {
+                try {
+                    Config::$serverKey = config('services.midtrans.server_key');
+                    Config::$isProduction = config('services.midtrans.is_production');
+                    
+                    $midtransStatus = \Midtrans\Transaction::status($pending->midtrans_order_id);
+                    
+                    if ($midtransStatus && in_array($midtransStatus->transaction_status, ['capture', 'settlement'])) {
+                        $pending->activate();
+                    }
+                } catch (\Exception $e) {
+                    \Log::error('Gagal verifikasi dari frontend: ' . $e->getMessage());
+                }
+            }
+            session()->flash('message', 'Berhasil! Pembayaran Anda telah terverifikasi oleh sistem.');
+        } elseif ($status === 'pending') {
+            session()->flash('info', 'Menunggu Pembayaran! Silakan selesaikan pembayaran Anda. Status akan diperbarui otomatis setelah berhasil.');
+        }
+        
+        return redirect()->route('dashboard.billing');
+    }
+
     public function render()
     {
         return view('livewire.pricing')

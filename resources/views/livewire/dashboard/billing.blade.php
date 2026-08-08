@@ -1,18 +1,6 @@
 <div>
     <h2 class="text-2xl font-display font-bold text-ink mb-6">Billing & Langganan</h2>
 
-    @if (request()->query('status') === 'success')
-        <div class="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded relative" role="alert">
-            <strong class="font-bold">Berhasil!</strong>
-            <span class="block sm:inline">Pembayaran Anda sedang diproses. Status langganan akan otomatis aktif setelah pembayaran terverifikasi oleh sistem.</span>
-        </div>
-    @elseif(request()->query('status') === 'pending')
-        <div class="mb-6 bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded relative" role="alert">
-            <strong class="font-bold">Menunggu Pembayaran!</strong>
-            <span class="block sm:inline">Silakan selesaikan pembayaran Anda. Status akan diperbarui otomatis setelah berhasil.</span>
-        </div>
-    @endif
-
     @if (session()->has('info'))
         <div class="mb-6 bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded relative" role="alert">
             <span class="block sm:inline">{{ session('info') }}</span>
