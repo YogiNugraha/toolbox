@@ -8,6 +8,8 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
 use App\Jobs\ConvertPdfToWordJob;
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
+use Illuminate\Validation\ValidationException;
 
 class PdfToWord extends Component
 {
@@ -38,20 +40,25 @@ class PdfToWord extends Component
         $maxMb = config("plans.{$plan}.limits.pdf-to-word.max_file_size_mb") ?? 50; // default 50 if unlimited
         $maxKb = $maxMb * 1024;
 
-        $this->validate([
-            'file' => "required|file|mimes:pdf|max:{$maxKb}",
-        ], [
-            'file.mimes' => 'File harus berupa PDF.',
-            'file.max' => "Ukuran maksimal {$maxMb}MB."
-        ]);
+        try {
+            $this->validate([
+                'file' => "required|file|mimes:pdf|max:{$maxKb}",
+            ], [
+                'file.mimes' => 'File harus berupa PDF.',
+                'file.max' => "Ukuran maksimal {$maxMb}MB."
+            ]);
 
-        if ($this->file) {
-            $realMime = $this->file->getMimeType();
-            if ($realMime !== 'application/pdf') {
-                throw \Illuminate\Validation\ValidationException::withMessages([
-                    'file' => 'Format file tidak valid. Ekstensi file mungkin dipalsukan.'
-                ]);
+            if ($this->file) {
+                $realMime = $this->file->getMimeType();
+                if ($realMime !== 'application/pdf') {
+                    throw ValidationException::withMessages([
+                        'file' => 'Format file tidak valid. Ekstensi file mungkin dipalsukan.'
+                    ]);
+                }
             }
+        } catch (ValidationException $e) {
+            LivewireAlert::title('Format file tidak didukung atau terlalu besar.')->error()->toast()->position('top-end')->timer(4000)->show();
+            throw $e;
         }
     }
 
@@ -69,6 +76,7 @@ class PdfToWord extends Component
         $remaining = $entitlementService->getRemainingQuota($user, $toolSlug);
         if ($remaining !== null && $remaining <= 0) {
             $this->errorMsg = 'Kuota harian Anda sudah habis. Silakan upgrade ke Pro.';
+            LivewireAlert::title('Kuota harian kamu sudah habis.')->info()->toast()->position('top-end')->show();
             return;
         }
 
@@ -126,6 +134,7 @@ class PdfToWord extends Component
                 $this->originalSize = $result['original_size'];
                 $this->newSize = $result['new_size'];
             }
+            LivewireAlert::title('PDF berhasil dikonversi ke Word!')->success()->toast()->position('top-end')->timer(3000)->show();
         } elseif ($currentStatus === 'failed') {
             $this->status = 'failed';
             $this->errorMsg = Cache::get("pdf_conversion_error_{$this->jobId}");

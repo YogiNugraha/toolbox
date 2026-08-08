@@ -5,6 +5,7 @@ namespace App\Livewire\Dashboard;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Activity;
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 
 class History extends Component
 {
@@ -35,7 +36,7 @@ class History extends Component
             mkdir($tempPath, 0755, true);
         }
 
-        return response()->streamDownload(function () use ($tempPath, $activities) {
+        $response = response()->streamDownload(function () use ($tempPath, $activities) {
             $options = new \OpenSpout\Writer\XLSX\Options();
             $options->setTempFolder($tempPath);
 
@@ -60,6 +61,9 @@ class History extends Component
 
             $writer->close();
         }, 'riwayat_aktivitas.xlsx');
+        
+        LivewireAlert::title('File Excel siap diunduh.')->success()->toast()->position('top-end')->show();
+        return $response;
     }
 
     public function render()

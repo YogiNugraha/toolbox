@@ -8,6 +8,14 @@ use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 
 class Billing extends Component
 {
+    public function mount()
+    {
+        if (request('status') === 'success') {
+            LivewireAlert::title('Pembayaran berhasil! Akun kamu sudah Pro.')->success()->toast()->position('top-end')->timer(4000)->show();
+        } elseif (request('status') === 'pending') {
+            LivewireAlert::title('Pembayaran sedang diproses.')->info()->toast()->position('top-end')->show();
+        }
+    }
     public function render()
     {
         $user = auth()->user();
@@ -89,14 +97,11 @@ class Billing extends Component
 
     public function confirmCancel()
     {
-        LivewireAlert::title('Yakin ingin berhenti?')
+        LivewireAlert::title('Yakin mau berhenti berlangganan Pro?')
             ->warning()
-            ->text('Akses Pro Anda akan langsung dihentikan dan tidak ada pengembalian sisa dana.')
-            ->position('center')
-            ->timer(null)
             ->toast(false)
+            ->position('center')
             ->withConfirmButton('Ya, Berhenti')
-            ->confirmButtonColor('#ef4444')
             ->withCancelButton('Batal')
             ->onConfirm('cancelSubscription')
             ->show();
@@ -116,12 +121,7 @@ class Billing extends Component
             \Illuminate\Support\Facades\Mail::to(auth()->user()->email)
                 ->queue(new \App\Mail\SubscriptionCancelledMail(auth()->user()));
 
-            LivewireAlert::title('Langganan Pro Anda telah diberhentikan.')
-                ->success()
-                ->position('top-end')
-                ->timer(3000)
-                ->toast(true)
-                ->show();
+            LivewireAlert::title('Langganan Pro sudah dibatalkan.')->success()->toast()->position('top-end')->timer(3000)->show();
         }
     }
 }

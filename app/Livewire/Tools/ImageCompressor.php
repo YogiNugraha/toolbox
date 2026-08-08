@@ -7,6 +7,8 @@ use Livewire\WithFileUploads;
 use App\Services\Tools\ImageProcessorService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Route;
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
+use Illuminate\Validation\ValidationException;
 
 class ImageCompressor extends Component
 {
@@ -47,20 +49,25 @@ class ImageCompressor extends Component
     public function validateFile()
     {
         $this->errorMsg = null;
-        $this->validate([
-            'file' => 'required|file|mimes:jpg,jpeg,png,webp|max:20480', // 20MB max
-        ], [
-            'file.mimes' => 'Format file tidak didukung. Gunakan JPG, PNG, atau WebP.',
-            'file.max' => 'Ukuran file maksimal 20MB.'
-        ]);
+        try {
+            $this->validate([
+                'file' => 'required|file|mimes:jpg,jpeg,png,webp|max:20480', // 20MB max
+            ], [
+                'file.mimes' => 'Format file tidak didukung. Gunakan JPG, PNG, atau WebP.',
+                'file.max' => 'Ukuran file maksimal 20MB.'
+            ]);
 
-        if ($this->file) {
-            $realMime = $this->file->getMimeType();
-            if (!in_array($realMime, ['image/jpeg', 'image/png', 'image/webp'])) {
-                throw \Illuminate\Validation\ValidationException::withMessages([
-                    'file' => 'Format file tidak valid. Ekstensi file mungkin dipalsukan.'
-                ]);
+            if ($this->file) {
+                $realMime = $this->file->getMimeType();
+                if (!in_array($realMime, ['image/jpeg', 'image/png', 'image/webp'])) {
+                    throw ValidationException::withMessages([
+                        'file' => 'Format file tidak valid. Ekstensi file mungkin dipalsukan.'
+                    ]);
+                }
             }
+        } catch (ValidationException $e) {
+            LivewireAlert::title('Format file tidak didukung atau terlalu besar.')->error()->toast()->position('top-end')->timer(4000)->show();
+            throw $e;
         }
     }
 
@@ -78,6 +85,7 @@ class ImageCompressor extends Component
         $remaining = $entitlementService->getRemainingQuota($user, $toolSlug);
         if ($remaining !== null && $remaining <= 0) {
             $this->errorMsg = 'Kuota harian Anda sudah habis. Silakan upgrade ke Pro.';
+            LivewireAlert::title('Kuota harian kamu sudah habis.')->info()->toast()->position('top-end')->show();
             return;
         }
 
@@ -139,6 +147,8 @@ class ImageCompressor extends Component
                     'output_format' => $outputFormat ?? 'original'
                 ],
             ]);
+
+            LivewireAlert::title('Gambar berhasil dikompres!')->success()->toast()->position('top-end')->timer(3000)->show();
 
         } catch (\Exception $e) {
             if (isset($activity)) {

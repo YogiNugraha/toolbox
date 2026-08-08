@@ -60,12 +60,6 @@
                     <p class="text-sm text-ink-muted">Perbarui informasi profil dan alamat email akun Anda.</p>
                 </div>
                 <div class="p-6">
-                    @if (session()->has('profile_message'))
-                        <div class="mb-4 p-3 bg-green-50 text-green-700 rounded-sm border border-green-200 text-sm">
-                            {{ session('profile_message') }}
-                        </div>
-                    @endif
-
                     <form wire:submit="updateProfile" class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-ink mb-1">Nama Lengkap</label>
@@ -109,12 +103,6 @@
                     <p class="text-sm text-ink-muted">Pastikan akun Anda menggunakan password yang panjang dan acak agar tetap aman.</p>
                 </div>
                 <div class="p-6">
-                    @if (session()->has('password_message'))
-                        <div class="mb-4 p-3 bg-green-50 text-green-700 rounded-sm border border-green-200 text-sm">
-                            {{ session('password_message') }}
-                        </div>
-                    @endif
-
                     <form wire:submit="updatePassword" class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-ink mb-1">Password Saat Ini</label>

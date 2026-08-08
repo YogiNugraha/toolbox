@@ -16,7 +16,7 @@
                     <h1 class="font-display font-bold text-2xl text-ink">
                         Selesaikan Pembayaran
                     </h1>
-                    <button wire:click="cancelPending" class="font-mono text-xs uppercase text-ink-muted underline hover:text-ink">
+                    <button wire:click="confirmCancelCheckout" class="font-mono text-xs uppercase text-ink-muted underline hover:text-ink">
                         Batal
                     </button>
                 </div>

@@ -5,6 +5,7 @@ namespace App\Livewire\Dashboard;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 
 class Profile extends Component
 {
@@ -38,7 +39,7 @@ class Profile extends Component
             auth()->user()->update(['profile_photo_path' => $path]);
             
             $this->dispatch('profile-photo-updated', path: Storage::url($path));
-            session()->flash('profile_message', 'Foto profil berhasil diperbarui!');
+            LivewireAlert::title('Foto profil berhasil diperbarui.')->success()->toast()->position('top-end')->timer(2500)->show();
         }
     }
 
@@ -85,7 +86,7 @@ class Profile extends Component
         ]);
 
         $this->dispatch('profile-updated', name: $this->name);
-        session()->flash('profile_message', 'Profil berhasil diperbarui!');
+        LivewireAlert::title('Profil berhasil diperbarui.')->success()->toast()->position('top-end')->timer(2500)->show();
     }
 
     public function updatePassword()
@@ -101,7 +102,7 @@ class Profile extends Component
 
         $this->reset(['current_password', 'password', 'password_confirmation']);
 
-        session()->flash('password_message', 'Password berhasil diperbarui!');
+        LivewireAlert::title('Password berhasil diperbarui.')->success()->toast()->position('top-end')->timer(2500)->show();
     }
 
     public function render()

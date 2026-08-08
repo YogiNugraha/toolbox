@@ -6,6 +6,8 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Services\Tools\ImageProcessorService;
 use Illuminate\Support\Facades\Storage;
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
+use Illuminate\Validation\ValidationException;
 
 class ImageConverter extends Component
 {
@@ -46,21 +48,26 @@ class ImageConverter extends Component
     public function validateFile()
     {
         $this->errorMsg = null;
-        $this->validate([
-            'file' => 'required|file|mimes:jpg,jpeg,png,webp,gif,bmp|max:10240', // 10MB max
-        ], [
-            'file.mimes' => 'Format file tidak didukung.',
-            'file.max' => 'Ukuran file maksimal 10MB.'
-        ]);
+        try {
+            $this->validate([
+                'file' => 'required|file|mimes:jpg,jpeg,png,webp,gif,bmp|max:10240', // 10MB max
+            ], [
+                'file.mimes' => 'Format file tidak didukung.',
+                'file.max' => 'Ukuran file maksimal 10MB.'
+            ]);
 
-        if ($this->file) {
-            $realMime = $this->file->getMimeType();
-            $allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/bmp'];
-            if (!in_array($realMime, $allowedMimes)) {
-                throw \Illuminate\Validation\ValidationException::withMessages([
-                    'file' => 'Format file tidak valid. Ekstensi file mungkin dipalsukan.'
-                ]);
+            if ($this->file) {
+                $realMime = $this->file->getMimeType();
+                $allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/bmp'];
+                if (!in_array($realMime, $allowedMimes)) {
+                    throw ValidationException::withMessages([
+                        'file' => 'Format file tidak valid. Ekstensi file mungkin dipalsukan.'
+                    ]);
+                }
             }
+        } catch (ValidationException $e) {
+            LivewireAlert::title('Format file tidak didukung.')->error()->toast()->position('top-end')->timer(4000)->show();
+            throw $e;
         }
     }
 
@@ -78,6 +85,7 @@ class ImageConverter extends Component
         $remaining = $entitlementService->getRemainingQuota($user, $toolSlug);
         if ($remaining !== null && $remaining <= 0) {
             $this->errorMsg = 'Kuota harian Anda sudah habis. Silakan upgrade ke Pro.';
+            LivewireAlert::title('Kuota harian kamu sudah habis.')->info()->toast()->position('top-end')->show();
             return;
         }
 
@@ -106,6 +114,8 @@ class ImageConverter extends Component
                     'output_format' => $this->outputFormat
                 ],
             ]);
+
+            LivewireAlert::title('Gambar berhasil dikonversi!')->success()->toast()->position('top-end')->timer(3000)->show();
 
         } catch (\Exception $e) {
             if (isset($activity)) {
