@@ -168,9 +168,27 @@ class Pricing extends Component
                 ->where('snap_token', $this->snapToken)
                 ->first();
             
-            if ($pending && $pending->status === 'active') {
-                session()->flash('message', 'Berhasil! Pembayaran Anda telah terverifikasi oleh sistem.');
-                return redirect()->route('dashboard.billing');
+            if ($pending) {
+                if ($pending->status === 'active') {
+                    session()->flash('message', 'Berhasil! Pembayaran Anda telah terverifikasi oleh sistem.');
+                    return redirect()->route('dashboard.billing');
+                }
+
+                // Fallback: Check Midtrans API directly just in case Webhook is delayed
+                try {
+                    Config::$serverKey = config('services.midtrans.server_key');
+                    Config::$isProduction = config('services.midtrans.is_production');
+                    
+                    $midtransStatus = \Midtrans\Transaction::status($pending->midtrans_order_id);
+                    
+                    if ($midtransStatus && in_array($midtransStatus->transaction_status, ['capture', 'settlement'])) {
+                        $pending->activate();
+                        session()->flash('message', 'Berhasil! Pembayaran Anda telah terverifikasi.');
+                        return redirect()->route('dashboard.billing');
+                    }
+                } catch (\Exception $e) {
+                    // Ignore errors (e.g., transaction not found yet)
+                }
             }
         }
     }

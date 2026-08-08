@@ -9,21 +9,20 @@ use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use App\Models\User;
 
-use App\Models\Subscription;
-
-class PaymentSuccessMail extends Mailable
+class SubscriptionCancelledMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $subscription;
+    public $user;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(Subscription $subscription)
+    public function __construct(User $user)
     {
-        $this->subscription = $subscription;
+        $this->user = $user;
     }
 
     /**
@@ -32,7 +31,7 @@ class PaymentSuccessMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Pembayaran Berhasil - ToolBox Pro',
+            subject: 'Konfirmasi Berhenti Berlangganan - ToolBox Pro',
         );
     }
 
@@ -42,7 +41,7 @@ class PaymentSuccessMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.payment-success',
+            markdown: 'emails.subscription-cancelled',
         );
     }
 
@@ -53,12 +52,6 @@ class PaymentSuccessMail extends Mailable
      */
     public function attachments(): array
     {
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.invoice', ['subscription' => $this->subscription]);
-        $pdf->setPaper('A4', 'portrait');
-
-        return [
-            Attachment::fromData(fn () => $pdf->output(), 'Invoice_ToolBox_Pro_' . $this->subscription->midtrans_order_id . '.pdf')
-                    ->withMime('application/pdf'),
-        ];
+        return [];
     }
 }

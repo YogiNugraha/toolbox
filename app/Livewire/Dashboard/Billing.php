@@ -113,6 +113,9 @@ class Billing extends Component
                 'expires_at' => now(), // Mematikan akses Pro saat ini juga
             ]);
 
+            \Illuminate\Support\Facades\Mail::to(auth()->user()->email)
+                ->queue(new \App\Mail\SubscriptionCancelledMail(auth()->user()));
+
             LivewireAlert::title('Langganan Pro Anda telah diberhentikan.')
                 ->success()
                 ->position('top-end')

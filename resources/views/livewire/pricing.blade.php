@@ -10,7 +10,7 @@
         @if($snapToken)
             <!-- Snap Container Wrapper -->
             <div id="snap-container-wrapper" class="mb-12 max-w-5xl mx-auto">
-                <div wire:poll.3s="checkPaymentStatus" class="hidden"></div>
+                <div wire:poll.10s="checkPaymentStatus" class="hidden"></div>
                 
                 <div class="flex justify-between items-center mb-6">
                     <h1 class="font-display font-bold text-2xl text-ink">
@@ -200,6 +200,9 @@
                         onError: function (result) {
                             document.getElementById("checkout-error").classList.remove("hidden");
                         },
+                        onClose: function () {
+                            window.location.href = "{{ route('dashboard.billing') }}";
+                        }
                     });
                 }
             };
