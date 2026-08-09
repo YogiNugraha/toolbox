@@ -196,7 +196,13 @@ class Pricing extends Component
                     
                     $midtransStatus = \Midtrans\Transaction::status($pending->midtrans_order_id);
                     
-                    if ($midtransStatus && in_array($midtransStatus->transaction_status, ['capture', 'settlement'])) {
+                    $transactionStatus = data_get($midtransStatus, 'transaction_status');
+                    $transactionId = data_get($midtransStatus, 'transaction_id');
+
+                    if ($midtransStatus && in_array($transactionStatus, ['capture', 'settlement'])) {
+                        if (!empty($transactionId) && empty($pending->midtrans_transaction_id)) {
+                            $pending->update(['midtrans_transaction_id' => $transactionId]);
+                        }
                         $pending->activate();
                         session()->flash('message', 'Berhasil! Pembayaran Anda telah terverifikasi.');
                         return redirect()->route('dashboard.billing');
@@ -223,7 +229,13 @@ class Pricing extends Component
                     
                     $midtransStatus = \Midtrans\Transaction::status($pending->midtrans_order_id);
                     
-                    if ($midtransStatus && in_array($midtransStatus->transaction_status, ['capture', 'settlement'])) {
+                    $transactionStatus = data_get($midtransStatus, 'transaction_status');
+                    $transactionId = data_get($midtransStatus, 'transaction_id');
+
+                    if ($midtransStatus && in_array($transactionStatus, ['capture', 'settlement'])) {
+                        if (!empty($transactionId) && empty($pending->midtrans_transaction_id)) {
+                            $pending->update(['midtrans_transaction_id' => $transactionId]);
+                        }
                         $pending->activate();
                     }
                 } catch (\Exception $e) {

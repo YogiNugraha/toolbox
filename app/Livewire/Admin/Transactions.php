@@ -46,10 +46,9 @@ class Transactions extends Component
 
         // Summary metrics
         $totalRevenue = Subscription::whereNotNull('midtrans_transaction_id')->sum('amount');
-        $successCount = Subscription::where('status', 'active')->count();
+        $successCount = Subscription::whereNotNull('midtrans_transaction_id')->count();
         $pendingCount = Subscription::where('status', 'pending')->count();
-        $failedCount = Subscription::where('status', 'expired')->whereNotNull('midtrans_transaction_id')->count(); // Only genuine expired ones
-
+        $failedCount = Subscription::whereNull('midtrans_transaction_id')->where('status', 'failed')->count();
         return view('livewire.admin.transactions', compact(
             'transactions',
             'totalRevenue',

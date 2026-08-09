@@ -214,44 +214,48 @@
     </div>
 
     <!-- Midtrans Snap Script -->
+    @assets
     <script src="https://app.sandbox.midtrans.com/snap/snap.js"
         data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+    @endassets
+
+    @script
     <script>
-        document.addEventListener('livewire:initialized', () => {
-            const initSnap = (token) => {
-                const container = document.getElementById('snap-container');
-                if (container) {
-                    snap.embed(token, {
-                        embedId: 'snap-container',
-                        onSuccess: function(result) {
-                            @this.call('handlePaymentStatus', 'success');
-                        },
-                        onPending: function(result) {
-                            @this.call('handlePaymentStatus', 'pending');
-                        },
-                        onError: function(result) {
-                            document.getElementById("checkout-error").classList.remove("hidden");
-                        },
-                        onClose: function() {
-                            window.location.href = "{{ route('dashboard.billing') }}";
-                        }
-                    });
-                }
-            };
+        const initSnap = (token) => {
+            const container = document.getElementById('snap-container');
+            if (container) {
+                snap.embed(token, {
+                    embedId: 'snap-container',
+                    onSuccess: function(result) {
+                        $wire.handlePaymentStatus('success');
+                    },
+                    onPending: function(result) {
+                        $wire.handlePaymentStatus('pending');
+                    },
+                    onError: function(result) {
+                        document.getElementById("checkout-error").classList.remove("hidden");
+                    },
+                    onClose: function() {
+                        window.location.href = "{{ route('dashboard.billing') }}";
+                    }
+                });
+            }
+        };
 
-            // If token is already present on load (e.g. from ?action=checkout or pending)
-            @if ($snapToken)
-                setTimeout(() => {
-                    initSnap('{{ $snapToken }}');
-                }, 100);
-            @endif
+        // If token is already present on load
+        if ($wire.snapToken) {
+            setTimeout(() => {
+                initSnap($wire.snapToken);
+            }, 100);
+        }
 
-            // Listen for new token requests (e.g. clicking Upgrade manually)
-            window.addEventListener('snap-token-ready', event => {
-                setTimeout(() => {
-                    initSnap(event.detail.token);
-                }, 100); // Give DOM a little time to render the snap-container
-            });
+        // Listen for new token requests
+        $wire.on('snap-token-ready', (event) => {
+            let token = event.token || (event[0] && event[0].token);
+            setTimeout(() => {
+                initSnap(token);
+            }, 100);
         });
     </script>
+    @endscript
 </div>

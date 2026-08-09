@@ -38,11 +38,16 @@ class MidtransWebhookController extends Controller
             $type = $notification->payment_type;
             $orderId = $notification->order_id;
             $fraud = $notification->fraud_status;
+            $transactionId = $notification->transaction_id ?? null;
 
             $subscription = Subscription::where('midtrans_order_id', $orderId)->first();
 
             if (!$subscription) {
                 return response()->json(['message' => 'Subscription not found'], 404);
+            }
+
+            if ($transactionId && empty($subscription->midtrans_transaction_id)) {
+                $subscription->update(['midtrans_transaction_id' => $transactionId]);
             }
 
             if ($transaction == 'capture') {
