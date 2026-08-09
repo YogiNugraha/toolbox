@@ -11,6 +11,26 @@ class Register extends Component
     public $password;
     public $password_confirmation;
 
+    public bool $emailChecking = false;
+    public bool $emailValid = false;
+
+    public function updatedEmail($value)
+    {
+        $this->emailValid = false;
+        $this->resetErrorBag('email');
+
+        if (empty($value)) return;
+
+        $this->validateOnly('email', [
+            'email' => 'required|email:rfc,dns|unique:users,email',
+        ], [
+            'email.email' => 'Format email tidak valid atau domain tidak ditemukan.',
+            'email.unique' => 'Email ini sudah terdaftar. Sudah punya akun?',
+        ]);
+
+        $this->emailValid = ! $this->getErrorBag()->has('email');
+    }
+
     public function register()
     {
         $this->validate([
@@ -24,6 +44,8 @@ class Register extends Component
             'email' => $this->email,
             'password' => bcrypt($this->password),
         ]);
+
+        event(new \Illuminate\Auth\Events\Registered($user));
 
         \Illuminate\Support\Facades\Auth::login($user);
         return redirect()->route('dashboard');

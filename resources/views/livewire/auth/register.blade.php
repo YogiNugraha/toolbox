@@ -22,7 +22,15 @@
         @if(!$errors->has('name')) <div class="mb-4"></div> @endif
 
         <label for="email" class="text-xs font-mono uppercase text-ink-muted tracking-wide">Email</label>
-        <input type="email" id="email" wire:model="email" class="w-full border border-hairline rounded-sm px-4 py-2.5 text-sm mb-2 mt-1 focus:outline-none focus:border-amber focus:ring-1 focus:ring-amber bg-white" required>
+        <div class="relative">
+            <input type="email" id="email" wire:model.blur="email" class="w-full border rounded-sm px-4 py-2.5 text-sm mb-2 mt-1 focus:outline-none bg-white {{ $errors->has('email') ? 'border-red-300' : ($emailValid ? 'border-green-300' : 'border-hairline focus:border-amber focus:ring-1 focus:ring-amber') }}" required>
+            <span wire:loading wire:target="email" class="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted text-xs font-mono">
+                Memeriksa...
+            </span>
+            @if($emailValid)
+                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-green-600">✓</span>
+            @endif
+        </div>
         @error('email') <span class="text-red-500 text-xs block mb-4">{{ $message }}</span> @enderror
         @if(!$errors->has('email')) <div class="mb-4"></div> @endif
 

@@ -1,8 +1,32 @@
 <?php
 
+use App\Http\Controllers\ConfirmPendingEmailController;
+use App\Http\Controllers\MidtransWebhookController;
+use App\Http\Middleware\EnsureSingleSession;
+use App\Http\Middleware\EnsureUserIsNotBanned;
+use App\Http\Middleware\IsAdmin;
+use App\Livewire\Admin\Transactions;
+use App\Livewire\Admin\Users;
+use App\Livewire\Auth\ForgotPassword;
+use App\Livewire\Auth\Login;
+use App\Livewire\Auth\Register;
+use App\Livewire\Auth\ResetPassword;
+use App\Livewire\Auth\VerifyEmailNotice;
+use App\Livewire\Dashboard\Billing;
+use App\Livewire\Dashboard\History;
+use App\Livewire\Dashboard\Invoice;
+use App\Livewire\Dashboard\Overview;
+use App\Livewire\Dashboard\Profile;
+use App\Livewire\Admin\Overview as AdminOverview;
+use App\Livewire\Pricing;
+use App\Models\Activity;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Models\User;
 
 Route::get('/', function () {
     return view('welcome');
@@ -10,39 +34,81 @@ Route::get('/', function () {
 
 // GUEST ONLY (belum login)
 Route::middleware(['guest', 'throttle:5,1'])->group(function () {
-    Route::get('/login', \App\Livewire\Auth\Login::class)->name('login');
-    Route::get('/register', \App\Livewire\Auth\Register::class)->name('register');
+    Route::get('/login', Login::class)->name('login');
+    Route::get('/register', Register::class)->name('register');
+
+    Route::get('/forgot-password', ForgotPassword::class)->name('password.request');
+    Route::get('/reset-password/{token}', ResetPassword::class)->name('password.reset');
 });
 
 // WEBHOOK
-Route::post('/webhook/midtrans', [\App\Http\Controllers\MidtransWebhookController::class, 'handle'])->name('webhook.midtrans');
+Route::post('/webhook/midtrans', [MidtransWebhookController::class, 'handle'])->name('webhook.midtrans');
 
 // AUTH ONLY (wajib login)
-Route::middleware(['auth', \App\Http\Middleware\EnsureUserIsNotBanned::class, 'throttle:60,1'])->group(function () {
-    Route::get('/dashboard', \App\Livewire\Dashboard\Overview::class)->name('dashboard');
-    Route::get('/history', \App\Livewire\Dashboard\History::class)->name('history');
-    Route::get('/profile', \App\Livewire\Dashboard\Profile::class)->name('profile');
-    
+Route::get('/email/verify', VerifyEmailNotice::class)->middleware('auth')->name('verification.notice');
+
+Route::get('/profile/confirm-email/{user}/{hash}', ConfirmPendingEmailController::class)
+    ->middleware(['auth', 'signed'])
+    ->name('profile.confirm-email');
+
+Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
+    $user = User::find($id);
+
+    abort_if(!$user, 404);
+
+    if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+        abort(403);
+    }
+
+    if (!$user->hasVerifiedEmail()) {
+        if ($user->markEmailAsVerified()) {
+            event(new Verified($user));
+        }
+    }
+
+    if (Auth::check()) {
+        return redirect()->route('email.verified');
+    }
+
+    return redirect()->route('login')->with('status', 'Email berhasil diverifikasi! Silakan login.');
+})->middleware(['signed'])->name('verification.verify');
+
+Route::get('/email/verified', function () {
+    return view('livewire.auth.email-verified');
+})->middleware('auth')->name('email.verified');
+
+Route::post('/logout', function () {
+    Auth::logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect()->route('login');
+})->middleware('auth')->name('logout');
+
+Route::middleware(['auth', EnsureUserIsNotBanned::class, EnsureSingleSession::class, 'verified', 'throttle:60,1'])->group(function () {
+    Route::get('/dashboard', Overview::class)->name('dashboard');
+    Route::get('/history', History::class)->name('history');
+    Route::get('/profile', Profile::class)->name('profile');
+
     // Langganan & Pembayaran
-    Route::get('/pricing', \App\Livewire\Pricing::class)->name('pricing');
-    Route::get('/billing', \App\Livewire\Dashboard\Billing::class)->name('dashboard.billing');
-    Route::get('/billing/invoice/{order_id}', \App\Livewire\Dashboard\Invoice::class)->name('dashboard.invoice');
+    Route::get('/pricing', Pricing::class)->name('pricing');
+    Route::get('/billing', Billing::class)->name('dashboard.billing');
+    Route::get('/billing/invoice/{order_id}', Invoice::class)->name('dashboard.invoice');
 
     Route::get('/tool/{slug}', function ($slug) {
         $tools = config('tools');
         $tool = collect($tools)->firstWhere('slug', $slug);
-    
+
         if (!$tool) {
             abort(404);
         }
-    
+
         return view('tool_wrapper', ['tool' => $tool]);
     })->name('tool');
 
-    Route::get('/download/{activity}', function (\App\Models\Activity $activity) {
+    Route::get('/download/{activity}', function (Activity $activity) {
         abort_if($activity->user_id !== auth()->id(), 403);
         abort_if(!$activity->result_path || !Storage::disk('local')->exists($activity->result_path), 404);
-    
+
         // Construct the output filename
         $extension = pathinfo($activity->result_path, PATHINFO_EXTENSION);
         $filenameWithoutExt = pathinfo($activity->original_filename, PATHINFO_FILENAME);
@@ -50,18 +116,11 @@ Route::middleware(['auth', \App\Http\Middleware\EnsureUserIsNotBanned::class, 't
 
         return response()->download(Storage::disk('local')->path($activity->result_path), $downloadFilename);
     })->name('activity.download');
-
-    Route::post('/logout', function () {
-        \Illuminate\Support\Facades\Auth::logout();
-        request()->session()->invalidate();
-        request()->session()->regenerateToken();
-        return redirect()->route('login');
-    })->name('logout');
 });
 
 // ADMIN ONLY
-Route::middleware(['auth', \App\Http\Middleware\EnsureUserIsNotBanned::class, \App\Http\Middleware\IsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', \App\Livewire\Admin\Overview::class)->name('overview');
-    Route::get('/users', \App\Livewire\Admin\Users::class)->name('users');
-    Route::get('/transactions', \App\Livewire\Admin\Transactions::class)->name('transactions');
+Route::middleware(['auth', EnsureUserIsNotBanned::class, EnsureSingleSession::class, 'verified', IsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', AdminOverview::class)->name('overview');
+    Route::get('/users', Users::class)->name('users');
+    Route::get('/transactions', Transactions::class)->name('transactions');
 });

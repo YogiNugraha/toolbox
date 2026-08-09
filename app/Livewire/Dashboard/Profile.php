@@ -68,7 +68,6 @@ class Profile extends Component
     {
         $this->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . auth()->id(),
             'country_code' => 'nullable|string|max:10',
             'phone' => 'nullable|string|max:20',
         ]);
@@ -79,14 +78,63 @@ class Profile extends Component
             $finalPhone = $this->country_code . $cleanPhone;
         }
 
-        auth()->user()->update([
+        $user = auth()->user();
+        $isEmailChanged = $this->email !== $user->email;
+
+        $user->update([
             'name' => $this->name,
-            'email' => $this->email,
             'phone' => $finalPhone,
         ]);
 
-        $this->dispatch('profile-updated', name: $this->name);
-        LivewireAlert::title('Profil berhasil diperbarui.')->success()->toast()->position('top-end')->timer(2500)->show();
+        if ($isEmailChanged) {
+            $this->validate([
+                'email' => ['required', 'email:rfc,dns', 'unique:users,email', 'unique:users,pending_email'],
+            ]);
+
+            $user->update(['pending_email' => $this->email]);
+            $this->sendPendingEmailConfirmation($user);
+
+            LivewireAlert::title("Link konfirmasi dikirim ke {$this->email}. Email akun kamu belum berubah sampai link itu diklik.")
+                ->info()->toast(false)->position('center')->show();
+
+            $this->email = $user->email; // Revert the form UI to the current active email
+        } else {
+            $this->dispatch('profile-updated', name: $this->name);
+            LivewireAlert::title('Profil berhasil diperbarui.')->success()->toast()->position('top-end')->timer(2500)->show();
+        }
+    }
+
+    protected function sendPendingEmailConfirmation($user)
+    {
+        $url = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+            'profile.confirm-email',
+            now()->addMinutes(60),
+            ['user' => $user->id, 'hash' => sha1($user->pending_email)]
+        );
+
+        \Illuminate\Support\Facades\Mail::to($user->pending_email)->send(new \App\Mail\ConfirmNewEmailMail($user, $url));
+    }
+
+    public function cancelPendingEmail()
+    {
+        auth()->user()->update(['pending_email' => null]);
+        LivewireAlert::title('Perubahan email dibatalkan.')->info()->toast()->position('top-end')->show();
+    }
+
+    public function resendPendingEmail()
+    {
+        $key = 'resend-pending-email:' . auth()->id();
+        if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($key, 1)) {
+            $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($key);
+            LivewireAlert::title("Tunggu $seconds detik sebelum mengirim ulang.")->warning()->toast()->position('top-end')->show();
+            return;
+        }
+
+        $this->sendPendingEmailConfirmation(auth()->user());
+        \Illuminate\Support\Facades\RateLimiter::hit($key, 60);
+
+        $this->dispatch('cooldown-start', seconds: 60);
+        LivewireAlert::title('Link konfirmasi telah dikirim ulang.')->success()->toast()->position('top-end')->show();
     }
 
     public function updatePassword()

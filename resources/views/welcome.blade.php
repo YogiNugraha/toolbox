@@ -24,7 +24,7 @@
     </header>
 
     <!-- Hero -->
-    <main class="flex-grow">
+    <main class="grow">
         <section class="py-20 lg:py-32 px-4 text-center max-w-3xl mx-auto">
             <h1 class="font-display font-bold text-5xl lg:text-7xl mb-6 tracking-tight text-ink leading-tight">Compress, convert, done.</h1>
             <p class="text-lg text-ink-muted mb-10 max-w-xl mx-auto">Kumpulan perkakas simpel dan cepat untuk mengelola file Anda sehari-hari tanpa ribet.</p>

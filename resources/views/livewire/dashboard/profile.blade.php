@@ -60,6 +60,22 @@
                     <p class="text-sm text-ink-muted">Perbarui informasi profil dan alamat email akun Anda.</p>
                 </div>
                 <div class="p-6">
+                    @if(auth()->user()->pending_email)
+                    <div class="border border-steel/40 bg-steel/5 rounded-sm p-3 mb-4 text-sm text-ink flex items-center justify-between" x-data="{ cooldown: 0 }" x-on:cooldown-start.window="cooldown = $event.detail.seconds; let t = setInterval(() => { cooldown--; if (cooldown <= 0) clearInterval(t); }, 1000);">
+                        <span>Menunggu konfirmasi ke <strong>{{ auth()->user()->pending_email }}</strong></span>
+                        <div class="flex gap-3">
+                            <button wire:click="cancelPendingEmail" type="button" class="text-ink-muted underline text-xs">
+                                Batalkan
+                            </button>
+                            <button wire:click="resendPendingEmail" type="button" :disabled="cooldown > 0" class="text-steel underline text-xs disabled:opacity-50 disabled:cursor-not-allowed">
+                                <span wire:loading.remove wire:target="resendPendingEmail" x-show="cooldown === 0">Kirim Ulang</span>
+                                <span wire:loading wire:target="resendPendingEmail">Mengirim...</span>
+                                <span wire:loading.remove wire:target="resendPendingEmail" x-show="cooldown > 0" x-text="'Terkirim (' + cooldown + 's)'" style="display: none;"></span>
+                            </button>
+                        </div>
+                    </div>
+                    @endif
+
                     <form wire:submit="updateProfile" class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-ink mb-1">Nama Lengkap</label>

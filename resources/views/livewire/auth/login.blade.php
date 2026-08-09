@@ -15,14 +15,25 @@
       <h1 class="font-display font-bold text-3xl text-ink mb-1">Masuk</h1>
       <p class="text-ink-muted text-sm mb-8">Selamat datang kembali</p>
 
+      @if (session('status'))
+          <div class="mb-6 bg-green-50 border-l-4 border-green-500 p-4">
+              <p class="text-sm text-green-700">
+                  {{ session('status') }}
+              </p>
+          </div>
+      @endif
+
       <form wire:submit="login">
         <label for="email" class="text-xs font-mono uppercase text-ink-muted tracking-wide">Email</label>
         <input type="email" id="email" wire:model="email" class="w-full border border-hairline rounded-sm px-4 py-2.5 text-sm mb-2 mt-1 focus:outline-none focus:border-amber focus:ring-1 focus:ring-amber bg-white" required>
         @error('email') <span class="text-red-500 text-xs block mb-4">{{ $message }}</span> @enderror
         @if(!$errors->has('email')) <div class="mb-4"></div> @endif
 
-        <label for="password" class="text-xs font-mono uppercase text-ink-muted tracking-wide">Password</label>
-        <input type="password" id="password" wire:model="password" class="w-full border border-hairline rounded-sm px-4 py-2.5 text-sm mb-2 mt-1 focus:outline-none focus:border-amber focus:ring-1 focus:ring-amber bg-white" required>
+        <div class="flex justify-between items-center mt-1 mb-2">
+            <label for="password" class="text-xs font-mono uppercase text-ink-muted tracking-wide">Password</label>
+            <a href="{{ route('password.request') }}" class="text-xs text-steel hover:text-amber transition-colors">Lupa Password?</a>
+        </div>
+        <input type="password" id="password" wire:model="password" class="w-full border border-hairline rounded-sm px-4 py-2.5 text-sm mb-4 focus:outline-none focus:border-amber focus:ring-1 focus:ring-amber bg-white" required>
         @error('password') <span class="text-red-500 text-xs block mb-4">{{ $message }}</span> @enderror
         @if(!$errors->has('password')) <div class="mb-4"></div> @endif
 
