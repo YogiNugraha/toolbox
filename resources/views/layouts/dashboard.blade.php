@@ -12,6 +12,10 @@
     @livewireStyles
 </head>
 
+@php
+    $activeSubscription = auth()->check() ? auth()->user()->activeSubscription() : null;
+@endphp
+
 <body class="bg-paper text-ink font-sans antialiased">
     <div x-data="{ sidebarOpen: true }" class="flex h-screen overflow-hidden print:h-auto print:overflow-visible print:block">
 
@@ -41,15 +45,15 @@
                         class="whitespace-nowrap">Riwayat</span>
                 </a>
 
-                <a href="{{ route('dashboard.billing') }}" wire:navigate title="Billing & Pro"
-                    class="flex items-center gap-4 px-6 py-3 text-sm transition-colors border-l-2 {{ request()->routeIs('dashboard.billing') ? 'text-white font-medium bg-white/5 border-amber' : 'text-slate-400 hover:text-white hover:bg-white/5 border-transparent' }}">
+                <a href="{{ route('dashboard.billing') }}" wire:navigate title="Billing & Paket"
+                    class="flex items-center gap-4 px-6 py-3 text-sm transition-colors border-l-2 {{ request()->routeIs('dashboard.billing') || request()->routeIs('dashboard.invoice') ? 'text-white font-medium bg-white/5 border-amber' : 'text-slate-400 hover:text-white hover:bg-white/5 border-transparent' }}">
                     <x-lucide-credit-card class="w-5 h-5 shrink-0" />
                     <span x-show="sidebarOpen" x-transition.opacity.duration.300ms
                         class="whitespace-nowrap flex-1">Billing</span>
-                    @if (auth()->user()->activeSubscription())
-                        <span x-show="sidebarOpen"
-                            class="px-1.5 py-0.5 text-[10px] bg-amber/20 text-amber border border-amber/30 rounded-sm font-bold uppercase tracking-wider">PRO</span>
-                    @endif
+                        @if ($activeSubscription)
+                            <span x-show="sidebarOpen" x-transition.opacity.duration.300ms
+                                class="px-1.5 py-0.5 text-[10px] bg-amber/20 text-amber border border-amber/30 rounded-sm font-bold uppercase tracking-wider">{{ strtoupper($activeSubscription->plan->name ?? $activeSubscription->plan_slug) }}</span>
+                        @endif
                 </a>
 
                 <div x-data="{ toolsOpen: {{ request()->is('tool/*') ? 'true' : 'false' }} }" class="mt-2 border-t border-white/10 pt-4">
@@ -157,12 +161,10 @@
 
                         <div class="px-4 py-3 border-b border-hairline bg-paper/50">
                             <p class="text-xs text-ink-muted mb-1">Paket Saat Ini</p>
-                            @if (auth()->user()->activeSubscription())
-                                <div class="flex items-center justify-between">
-                                    <span class="text-sm font-bold text-ink">Pro</span>
-                                    <span
-                                        class="text-[10px] bg-amber/20 text-amber px-1.5 py-0.5 rounded-sm border border-amber/30">AKTIF</span>
-                                </div>
+                            @if ($activeSubscription)
+                                <span class="text-sm font-bold text-ink">{{ $activeSubscription->plan->name ?? ucfirst($activeSubscription->plan_slug) }}</span>
+                                <span
+                                    class="px-1.5 py-0.5 text-[9px] bg-green-100 text-green-700 font-bold uppercase tracking-wider rounded-sm border border-green-200">AKTIF</span>
                             @else
                                 <div class="flex items-center justify-between">
                                     <span class="text-sm font-bold text-ink">Free</span>
@@ -173,9 +175,8 @@
                         </div>
 
                         <a href="{{ route('dashboard.billing') }}" wire:navigate
-                            class="flex items-center gap-3 px-4 py-2 text-sm text-ink hover:bg-paper transition-colors mt-1">
-                            <x-lucide-credit-card class="w-4 h-4 text-ink-muted" />
-                            Billing & Pro
+                            class="flex items-center px-4 py-2 text-sm text-ink hover:bg-paper-light hover:text-amber transition-colors">
+                            Billing & Paket
                         </a>
 
                         <a href="{{ route('profile') }}" wire:navigate

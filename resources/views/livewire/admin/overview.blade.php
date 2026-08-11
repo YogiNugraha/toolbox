@@ -114,15 +114,18 @@
                                 Rp {{ number_format($transaction->amount, 0, ',', '.') }}
                             </td>
                             <td class="px-6 py-4">
-                                @if ($transaction->status === 'active')
-                                    <span
-                                        class="px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-sm">Berhasil</span>
+                                @if($transaction->status === 'active')
+                                    <span class="px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-sm">Berhasil</span>
                                 @elseif($transaction->status === 'pending')
-                                    <span
-                                        class="px-2 py-1 text-xs font-semibold bg-amber/20 text-amber rounded-sm">Pending</span>
+                                    <span class="px-2 py-1 text-xs font-semibold bg-amber/20 text-amber rounded-sm">Menunggu</span>
+                                @elseif($transaction->status === 'expired')
+                                    <span class="px-2 py-1 text-xs font-semibold bg-gray-100 text-gray-700 rounded-sm">Expired</span>
+                                @elseif($transaction->status === 'cancelled')
+                                    <span class="px-2 py-1 text-xs font-semibold bg-slate-100 text-slate-700 rounded-sm">Dibatalkan</span>
+                                @elseif($transaction->status === 'failed')
+                                    <span class="px-2 py-1 text-xs font-semibold bg-red-100 text-red-700 rounded-sm">Gagal</span>
                                 @else
-                                    <span
-                                        class="px-2 py-1 text-xs font-semibold bg-slate-100 text-slate-600 rounded-sm">{{ ucfirst($transaction->status) }}</span>
+                                    <span class="px-2 py-1 text-xs font-semibold bg-gray-100 text-gray-700 rounded-sm">{{ ucfirst($transaction->status) }}</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-ink-muted">

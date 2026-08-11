@@ -5,6 +5,7 @@ use App\Http\Controllers\MidtransWebhookController;
 use App\Http\Middleware\EnsureSingleSession;
 use App\Http\Middleware\EnsureUserIsNotBanned;
 use App\Http\Middleware\IsAdmin;
+use App\Livewire\Admin\Plans;
 use App\Livewire\Admin\Transactions;
 use App\Livewire\Admin\Users;
 use App\Livewire\Auth\ForgotPassword;
@@ -121,6 +122,7 @@ Route::middleware(['auth', EnsureUserIsNotBanned::class, EnsureSingleSession::cl
 // ADMIN ONLY
 Route::middleware(['auth', EnsureUserIsNotBanned::class, EnsureSingleSession::class, 'verified', IsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', AdminOverview::class)->name('overview');
+    Route::get('/plans', Plans::class)->name('plans');
     Route::get('/users', Users::class)->name('users');
     Route::get('/transactions', Transactions::class)->name('transactions');
 });

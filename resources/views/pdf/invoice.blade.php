@@ -235,11 +235,11 @@
                 <tbody>
                     <tr>
                         <td>
-                            <p class="item-name">Paket {{ ucfirst($subscription->plan_slug) }}</p>
+                            <p class="item-name">Paket {{ $subscription->plan->name ?? ucfirst($subscription->plan_slug) }}</p>
                             <p class="item-desc">Akses tanpa batas ke semua fitur premium.</p>
                         </td>
                         <td class="right item-val">
-                            {{ config('plans.' . $subscription->plan_slug . '.duration_days') }} Hari
+                            {{ $subscription->plan ? ($subscription->plan->duration_days ?? 'Selamanya') . ' Hari' : '30 Hari' }}
                         </td>
                         <td class="right item-price">
                             Rp {{ number_format($subscription->amount, 0, ',', '.') }}

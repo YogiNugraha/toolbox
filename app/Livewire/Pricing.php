@@ -16,7 +16,8 @@ class Pricing extends Component
     public $country_code = '+62';
     public $phone;
     public $showPhoneForm = false;
-
+    public $selectedPlanId;
+    
     public function mount()
     {
         if (auth()->check()) {
@@ -36,8 +37,14 @@ class Pricing extends Component
             }
         }
 
-        if (request()->query('action') === 'checkout') {
-            $this->checkout();
+        $pending = auth()->user()->subscriptions()
+            ->where('status', 'pending')
+            ->where('created_at', '>', now()->subHours(24))
+            ->latest()
+            ->first();
+
+        if ($pending && $pending->snap_token) {
+            $this->snapToken = $pending->snap_token;
         }
     }
 
@@ -62,6 +69,7 @@ class Pricing extends Component
 
         $pending = auth()->user()->subscriptions()
             ->where('status', 'pending')
+            ->where('snap_token', $this->snapToken)
             ->latest()
             ->first();
 
@@ -95,6 +103,11 @@ class Pricing extends Component
         $this->showPhoneForm = false;
         $this->checkout();
     }
+    public function selectPlan($planId)
+    {
+        $this->selectedPlanId = $planId;
+        $this->checkout();
+    }
 
     public function checkout()
     {
@@ -104,10 +117,12 @@ class Pricing extends Component
 
         $user = auth()->user();
 
+        $plan = \App\Models\Plan::findOrFail($this->selectedPlanId);
+
         // Check if already has active subscription and not eligible for renewal
         $activeSub = $user->activeSubscription();
-        if ($activeSub && now()->diffInDays($activeSub->expires_at, false) > 7) {
-            return redirect()->route('dashboard.billing')->with('message', 'Anda sudah memiliki paket Pro yang aktif.');
+        if ($activeSub && $activeSub->plan_id === $plan->id && now()->diffInDays($activeSub->expires_at, false) > 7) {
+            return redirect()->route('dashboard.billing')->with('message', 'Anda sudah memiliki paket ini yang aktif.');
         }
 
         if (empty($user->phone)) {
@@ -117,6 +132,7 @@ class Pricing extends Component
 
         $pending = $user->subscriptions()
             ->where('status', 'pending')
+            ->where('plan_id', $plan->id)
             ->latest()
             ->first();
 
@@ -136,13 +152,29 @@ class Pricing extends Component
         Config::$isSanitized = true;
         Config::$is3ds = true;
 
-        $orderId = 'PRO-' . $user->id . '-' . time() . '-' . Str::random(5);
-        $price = config('plans.pro.price');
+        $orderId = strtoupper($plan->slug) . '-' . $user->id . '-' . time() . '-' . Str::random(5);
+        $price = $plan->price;
+
+        if ($price == 0) {
+            // Langsung aktifkan plan gratis tanpa Midtrans
+            $subscription = Subscription::create([
+                'user_id' => $user->id,
+                'plan_id' => $plan->id,
+                'plan_slug' => $plan->slug,
+                'status' => 'active',
+                'midtrans_order_id' => $orderId,
+                'amount' => 0,
+            ]);
+            $subscription->activate();
+            session()->flash('message', 'Paket berhasil diganti.');
+            return redirect()->route('dashboard.billing');
+        }
 
         // Create pending subscription
         $subscription = Subscription::create([
             'user_id' => $user->id,
-            'plan_slug' => 'pro',
+            'plan_id' => $plan->id,
+            'plan_slug' => $plan->slug,
             'status' => 'pending',
             'midtrans_order_id' => $orderId,
             'amount' => $price,
@@ -159,10 +191,10 @@ class Pricing extends Component
                 'phone' => $user->phone,
             ],
             'item_details' => [[
-                'id' => 'pro-' . config('plans.pro.duration_days') . 'd',
+                'id' => $plan->slug . '-' . ($plan->duration_days ?? 'selamanya'),
                 'price' => $price,
                 'quantity' => 1,
-                'name' => config('plans.pro.midtrans_item_name'),
+                'name' => 'ToolBox ' . $plan->name,
             ]],
         ];
 
@@ -198,10 +230,18 @@ class Pricing extends Component
                     
                     $transactionStatus = data_get($midtransStatus, 'transaction_status');
                     $transactionId = data_get($midtransStatus, 'transaction_id');
+                    $paymentType = data_get($midtransStatus, 'payment_type');
 
                     if ($midtransStatus && in_array($transactionStatus, ['capture', 'settlement'])) {
+                        $updateData = [];
                         if (!empty($transactionId) && empty($pending->midtrans_transaction_id)) {
-                            $pending->update(['midtrans_transaction_id' => $transactionId]);
+                            $updateData['midtrans_transaction_id'] = $transactionId;
+                        }
+                        if (!empty($paymentType) && empty($pending->payment_type)) {
+                            $updateData['payment_type'] = $paymentType;
+                        }
+                        if (!empty($updateData)) {
+                            $pending->update($updateData);
                         }
                         $pending->activate();
                         session()->flash('message', 'Berhasil! Pembayaran Anda telah terverifikasi.');
@@ -231,10 +271,18 @@ class Pricing extends Component
                     
                     $transactionStatus = data_get($midtransStatus, 'transaction_status');
                     $transactionId = data_get($midtransStatus, 'transaction_id');
+                    $paymentType = data_get($midtransStatus, 'payment_type');
 
                     if ($midtransStatus && in_array($transactionStatus, ['capture', 'settlement'])) {
+                        $updateData = [];
                         if (!empty($transactionId) && empty($pending->midtrans_transaction_id)) {
-                            $pending->update(['midtrans_transaction_id' => $transactionId]);
+                            $updateData['midtrans_transaction_id'] = $transactionId;
+                        }
+                        if (!empty($paymentType) && empty($pending->payment_type)) {
+                            $updateData['payment_type'] = $paymentType;
+                        }
+                        if (!empty($updateData)) {
+                            $pending->update($updateData);
                         }
                         $pending->activate();
                     }
@@ -252,7 +300,8 @@ class Pricing extends Component
 
     public function render()
     {
-        return view('livewire.pricing')
+        $plans = \App\Models\Plan::where('is_active', true)->orderBy('sort_order')->get();
+        return view('livewire.pricing', compact('plans'))
             ->layout('layouts.dashboard')
             ->title('Upgrade ke Pro');
     }

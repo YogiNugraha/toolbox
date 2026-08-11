@@ -11,7 +11,7 @@ class Billing extends Component
     public function mount()
     {
         if (request('status') === 'success') {
-            LivewireAlert::title('Pembayaran berhasil! Akun kamu sudah Pro.')->success()->toast()->position('top-end')->timer(4000)->show();
+            LivewireAlert::title('Pembayaran berhasil! Paket kamu sudah aktif.')->success()->toast()->position('top-end')->timer(4000)->show();
         } elseif (request('status') === 'pending') {
             LivewireAlert::title('Pembayaran sedang diproses.')->info()->toast()->position('top-end')->show();
         }
@@ -20,60 +20,7 @@ class Billing extends Component
     {
         $user = auth()->user();
 
-        // Reconciliation fallback
-        $pendingSubscriptions = $user->subscriptions()->where('status', 'pending')->get();
-        if ($pendingSubscriptions->count() > 0) {
-            \Midtrans\Config::$serverKey = config('services.midtrans.server_key');
-            \Midtrans\Config::$isProduction = config('services.midtrans.is_production');
 
-            foreach ($pendingSubscriptions as $subscription) {
-                try {
-                    $status = \Midtrans\Transaction::status($subscription->midtrans_order_id);
-                    if (in_array($status->transaction_status, ['settlement', 'capture']) && ($status->fraud_status ?? 'accept') === 'accept') {
-                        $durationDays = config('plans.' . $subscription->plan_slug . '.duration_days');
-                        
-                        $activeSub = \App\Models\Subscription::where('user_id', $subscription->user_id)
-                            ->where('status', 'active')
-                            ->where('id', '!=', $subscription->id)
-                            ->where('expires_at', '>', now())
-                            ->latest('expires_at')
-                            ->first();
-
-                        $startsAt = now();
-                        $expiresAt = now()->addDays($durationDays);
-
-                        if ($activeSub) {
-                            $startsAt = $activeSub->expires_at;
-                            $expiresAt = $activeSub->expires_at->copy()->addDays($durationDays);
-                            $activeSub->update(['status' => 'expired']);
-                        } else {
-                            \App\Models\Subscription::where('user_id', $subscription->user_id)
-                                ->where('status', 'active')
-                                ->where('id', '!=', $subscription->id)
-                                ->update(['status' => 'expired']);
-                        }
-                        
-                        $subscription->update([
-                            'status' => 'active',
-                            'starts_at' => $startsAt,
-                            'expires_at' => $expiresAt,
-                        ]);
-
-                        \Illuminate\Support\Facades\Mail::to($subscription->user->email)->queue(new \App\Mail\PaymentSuccessMail($subscription));
-
-                        // Fix A: Auto-close pending transactions
-                        \App\Models\Subscription::where('user_id', $subscription->user_id)
-                            ->where('id', '!=', $subscription->id)
-                            ->where('status', 'pending')
-                            ->update(['status' => 'expired']);
-                    } elseif (in_array($status->transaction_status, ['deny', 'cancel', 'expire'])) {
-                        $subscription->update(['status' => 'failed']);
-                    }
-                } catch (\Exception $e) {
-                    // Ignore errors (e.g., order not found on midtrans)
-                }
-            }
-        }
 
         $activeSubscription = $user->activeSubscription();
         $history = $user->subscriptions()->latest()->get();
@@ -92,12 +39,65 @@ class Billing extends Component
 
     public function renew()
     {
-        return redirect()->to(route('pricing') . '?action=checkout');
+        return redirect()->to(route('pricing'));
+    }
+
+    public function syncPayment($orderId = null)
+    {
+        $pending = $orderId 
+            ? auth()->user()->subscriptions()->where('midtrans_order_id', $orderId)->first() 
+            : auth()->user()->subscriptions()->where('status', 'pending')->first();
+            
+        if ($pending) {
+            try {
+                \Midtrans\Config::$serverKey = config('services.midtrans.server_key');
+                \Midtrans\Config::$isProduction = config('services.midtrans.is_production');
+                
+                $midtransStatus = \Midtrans\Transaction::status($pending->midtrans_order_id);
+                $transactionStatus = data_get($midtransStatus, 'transaction_status');
+                
+                if (in_array($transactionStatus, ['capture', 'settlement'])) {
+                    $transactionId = data_get($midtransStatus, 'transaction_id');
+                    $paymentType = data_get($midtransStatus, 'payment_type');
+                    
+                    $updateData = [];
+                    if (!empty($transactionId) && empty($pending->midtrans_transaction_id)) {
+                        $updateData['midtrans_transaction_id'] = $transactionId;
+                    }
+                    if (!empty($paymentType) && empty($pending->payment_type)) {
+                        $updateData['payment_type'] = $paymentType;
+                    }
+                    if (!empty($updateData)) {
+                        $pending->update($updateData);
+                    }
+                    $pending->activate();
+                    session()->flash('message', 'Berhasil! Pembayaran sudah dikonfirmasi dan paket telah aktif.');
+                } else if ($transactionStatus === 'pending') {
+                    session()->flash('info', 'Status di Midtrans masih Pending. Silakan lanjutkan pembayaran.');
+                } else if ($transactionStatus === 'cancel') {
+                    $pending->update(['status' => 'cancelled']);
+                    session()->flash('error', 'Pembayaran telah dibatalkan.');
+                } else if (in_array($transactionStatus, ['deny', 'expire'])) {
+                    $pending->update(['status' => 'failed']);
+                    session()->flash('error', 'Pembayaran telah kadaluarsa atau ditolak.');
+                } else {
+                    session()->flash('info', 'Status saat ini: ' . $transactionStatus);
+                }
+            } catch (\Exception $e) {
+                if (str_contains($e->getMessage(), '404')) {
+                    session()->flash('info', 'Belum ada data di sistem Midtrans. Silakan klik Selesaikan Pembayaran.');
+                } else {
+                    session()->flash('error', 'Gagal sinkronisasi: ' . $e->getMessage());
+                }
+            }
+        }
+        
+        return redirect()->route('dashboard.billing');
     }
 
     public function confirmCancel()
     {
-        LivewireAlert::title('Yakin mau berhenti berlangganan Pro?')
+        LivewireAlert::title('Yakin mau berhenti berlangganan paket ini?')
             ->warning()
             ->toast(false)
             ->position('center')
@@ -115,13 +115,13 @@ class Billing extends Component
         if ($activeSub) {
             $activeSub->update([
                 'status' => 'expired',
-                'expires_at' => now(), // Mematikan akses Pro saat ini juga
+                'expires_at' => now(), // Mematikan akses paket saat ini juga
             ]);
 
             \Illuminate\Support\Facades\Mail::to(auth()->user()->email)
                 ->queue(new \App\Mail\SubscriptionCancelledMail(auth()->user()));
 
-            LivewireAlert::title('Langganan Pro sudah dibatalkan.')->success()->toast()->position('top-end')->timer(3000)->show();
+            LivewireAlert::title('Langganan sudah dibatalkan.')->success()->toast()->position('top-end')->timer(3000)->show();
         }
     }
 }

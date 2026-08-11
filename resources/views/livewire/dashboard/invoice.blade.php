@@ -51,11 +51,11 @@
                 <tbody>
                     <tr>
                         <td class="py-4 px-4 border-b border-hairline">
-                            <p class="font-medium text-ink">Paket {{ ucfirst($subscription->plan_slug) }}</p>
+                            <p class="font-medium text-ink">Paket {{ $subscription->plan->name ?? ucfirst($subscription->plan_slug) }}</p>
                             <p class="text-sm text-ink-muted">Akses tanpa batas ke semua fitur premium.</p>
                         </td>
                         <td class="py-4 px-4 border-b border-hairline text-right text-sm text-ink">
-                            {{ config('plans.' . $subscription->plan_slug . '.duration_days') }} Hari
+                            {{ $subscription->plan ? ($subscription->plan->duration_days ?? 'Selamanya') . ' Hari' : '30 Hari' }}
                         </td>
                         <td class="py-4 px-4 border-b border-hairline text-right font-medium text-ink">
                             Rp {{ number_format($subscription->amount, 0, ',', '.') }}

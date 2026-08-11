@@ -17,8 +17,8 @@ class Overview extends Component
             $query->where('status', 'active')->where('expires_at', '>', now());
         })->count();
 
-        $totalRevenue = Subscription::whereNotNull('midtrans_transaction_id')->sum('amount');
-        $revenueThisMonth = Subscription::whereNotNull('midtrans_transaction_id')
+        $totalRevenue = Subscription::whereNotNull('starts_at')->sum('amount');
+        $revenueThisMonth = Subscription::whereNotNull('starts_at')
             ->whereMonth('starts_at', now()->month)
             ->whereYear('starts_at', now()->year)
             ->sum('amount');

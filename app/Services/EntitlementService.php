@@ -7,15 +7,19 @@ use App\Models\Activity;
 
 class EntitlementService
 {
-    public function getCurrentPlan(User $user): string
+    public function getCurrentPlan(User $user): \App\Models\Plan
     {
-        return $user->activeSubscription() ? 'pro' : 'free';
+        $sub = $user->activeSubscription();
+        if ($sub && $sub->plan) {
+            return $sub->plan;
+        }
+        return \App\Models\Plan::where('is_default', true)->firstOrFail();
     }
 
     public function getRemainingQuota(User $user, string $toolSlug): ?int
     {
         $plan = $this->getCurrentPlan($user);
-        $limit = config("plans.{$plan}.limits.{$toolSlug}.daily_quota");
+        $limit = $plan->limits[$toolSlug]['daily_quota'] ?? null;
 
         if ($limit === null) return null; // unlimited
 
@@ -30,14 +34,14 @@ class EntitlementService
     public function isFeatureLocked(User $user, string $toolSlug, string $featureKey): bool
     {
         $plan = $this->getCurrentPlan($user);
-        $locked = config("plans.{$plan}.limits.{$toolSlug}.locked_features", []);
+        $locked = $plan->limits[$toolSlug]['locked_features'] ?? [];
         return in_array($featureKey, $locked);
     }
 
     public function canProcessFile(User $user, string $toolSlug, int $fileSizeBytes): bool
     {
         $plan = $this->getCurrentPlan($user);
-        $maxMb = config("plans.{$plan}.limits.{$toolSlug}.max_file_size_mb");
+        $maxMb = $plan->limits[$toolSlug]['max_file_size_mb'] ?? null;
         if ($maxMb === null) return true;
         
         return $fileSizeBytes <= ($maxMb * 1024 * 1024);

@@ -153,7 +153,7 @@ class ImageConverter extends Component
         
         $remainingQuota = $entitlementService->getRemainingQuota($user, $toolSlug);
         $currentPlan = $entitlementService->getCurrentPlan($user);
-        $dailyLimit = config("plans.{$currentPlan}.limits.{$toolSlug}.daily_quota");
+        $dailyLimit = $currentPlan->limits[$toolSlug]['daily_quota'] ?? null;
 
         return view('livewire.tools.image-converter', [
             'remainingQuota' => $remainingQuota,

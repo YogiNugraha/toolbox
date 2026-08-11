@@ -37,7 +37,7 @@ class PdfToWord extends Component
         $user = auth()->user();
         $entitlementService = app(\App\Services\EntitlementService::class);
         $plan = $entitlementService->getCurrentPlan($user);
-        $maxMb = config("plans.{$plan}.limits.pdf-to-word.max_file_size_mb") ?? 50; // default 50 if unlimited
+        $maxMb = $plan->limits['pdf-to-word']['max_file_size_mb'] ?? 50; // default 50 if unlimited
         $maxKb = $maxMb * 1024;
 
         try {
@@ -172,8 +172,8 @@ class PdfToWord extends Component
         
         $remainingQuota = $entitlementService->getRemainingQuota($user, $toolSlug);
         $currentPlan = $entitlementService->getCurrentPlan($user);
-        $dailyLimit = config("plans.{$currentPlan}.limits.{$toolSlug}.daily_quota");
-        $maxMb = config("plans.{$currentPlan}.limits.{$toolSlug}.max_file_size_mb");
+        $dailyLimit = $currentPlan->limits[$toolSlug]['daily_quota'] ?? null;
+        $maxMb = $currentPlan->limits[$toolSlug]['max_file_size_mb'] ?? null;
 
         return view('livewire.tools.pdf-to-word', [
             'remainingQuota' => $remainingQuota,

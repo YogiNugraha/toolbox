@@ -17,14 +17,14 @@
         <!-- Current Plan Info -->
         <div class="bg-white border {{ $activeSubscription ? 'border-amber shadow-sm' : 'border-hairline' }} rounded-sm p-6 flex flex-col justify-between relative overflow-hidden">
             @if ($activeSubscription)
-                <div class="absolute top-0 right-0 bg-amber text-ink text-xs font-bold px-3 py-1 border-b border-l border-amber">PRO</div>
+                <div class="absolute top-0 right-0 bg-amber text-ink text-xs font-bold px-3 py-1 border-b border-l border-amber">{{ strtoupper($activeSubscription->plan->name ?? $activeSubscription->plan_slug) }}</div>
             @endif
             <div>
                 <h3 class="text-sm font-medium text-ink-muted uppercase tracking-wider mb-2">Paket Saat Ini</h3>
                 @if ($activeSubscription)
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center gap-3">
-                            <span class="text-3xl font-display font-extrabold text-ink">Pro</span>
+                            <span class="text-3xl font-display font-extrabold text-ink">{{ $activeSubscription->plan->name ?? ucfirst($activeSubscription->plan_slug) }}</span>
                             <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
                                 Aktif
                             </span>
@@ -47,9 +47,15 @@
                                 <p class="text-sm text-ink font-medium">Kamu punya pembayaran yang belum diselesaikan</p>
                                 <p class="font-mono text-xs text-ink-muted mt-1">Order #{{ $pending->midtrans_order_id }} · Rp {{ number_format($pending->amount, 0, ',', '.') }}</p>
                             </div>
-                            <button wire:click="renew" class="bg-slate-700 text-white font-medium px-4 py-2 rounded-sm text-sm whitespace-nowrap hover:bg-slate-800 transition-colors">
-                                Selesaikan Pembayaran
-                            </button>
+                            <div class="flex items-center gap-2">
+                                <button wire:click="syncPayment('{{ $pending->midtrans_order_id }}')" class="bg-amber/10 text-amber hover:bg-amber/20 font-medium px-4 py-2 rounded-sm text-sm whitespace-nowrap transition-colors border border-amber/20">
+                                    <span wire:loading.remove wire:target="syncPayment('{{ $pending->midtrans_order_id }}')">Cek Status</span>
+                                    <span wire:loading wire:target="syncPayment('{{ $pending->midtrans_order_id }}')">Mengecek...</span>
+                                </button>
+                                <button wire:click="renew" class="bg-slate-700 text-white font-medium px-4 py-2 rounded-sm text-sm whitespace-nowrap hover:bg-slate-800 transition-colors">
+                                    Selesaikan
+                                </button>
+                            </div>
                         </div>
                     @elseif($daysRemaining > 7)
                         <p class="text-sm text-ink-muted">
@@ -59,7 +65,7 @@
                     @elseif($daysRemaining >= 0)
                         <div class="border border-amber/40 bg-amber/5 rounded-sm p-4 flex items-center justify-between mt-4">
                             <p class="text-sm text-ink">
-                                Langganan Pro kamu berakhir dalam <span class="font-mono font-medium">{{ $daysRemaining }} hari</span> 
+                                Langganan <strong>{{ $activeSubscription->plan->name ?? 'Premium' }}</strong> kamu berakhir dalam <span class="font-mono font-medium">{{ $daysRemaining }} hari</span> 
                                 ({{ $activeSubscription->expires_at->translatedFormat('d F Y') }})
                             </p>
                             <button wire:click="renew" class="bg-amber text-ink font-medium px-4 py-2 rounded-sm text-sm whitespace-nowrap hover:bg-amber/90 transition-colors">
@@ -68,7 +74,7 @@
                         </div>
                     @else
                         <div class="border border-red-300 bg-red-50 rounded-sm p-4 flex items-center justify-between mt-4">
-                            <p class="text-sm text-ink">Langganan Pro kamu sudah berakhir.</p>
+                            <p class="text-sm text-ink">Langganan <strong>{{ $activeSubscription->plan->name ?? 'Premium' }}</strong> kamu sudah berakhir.</p>
                             <button wire:click="renew" class="bg-amber text-ink font-medium px-4 py-2 rounded-sm text-sm whitespace-nowrap hover:bg-amber/90 transition-colors">
                                 Perpanjang Langganan
                             </button>
@@ -89,13 +95,19 @@
                                 <p class="text-sm text-ink font-medium">Kamu punya pembayaran yang belum diselesaikan</p>
                                 <p class="font-mono text-xs text-ink-muted mt-1">Order #{{ $pending->midtrans_order_id }} · Rp {{ number_format($pending->amount, 0, ',', '.') }}</p>
                             </div>
-                            <button wire:click="renew" class="bg-slate-700 text-white font-medium px-4 py-2 rounded-sm text-sm whitespace-nowrap hover:bg-slate-800 transition-colors">
-                                Selesaikan Pembayaran
-                            </button>
+                            <div class="flex items-center gap-2">
+                                <button wire:click="syncPayment('{{ $pending->midtrans_order_id }}')" class="bg-amber/10 text-amber hover:bg-amber/20 font-medium px-4 py-2 rounded-sm text-sm whitespace-nowrap transition-colors border border-amber/20">
+                                    <span wire:loading.remove wire:target="syncPayment('{{ $pending->midtrans_order_id }}')">Cek Status</span>
+                                    <span wire:loading wire:target="syncPayment('{{ $pending->midtrans_order_id }}')">Mengecek...</span>
+                                </button>
+                                <button wire:click="renew" class="bg-slate-700 text-white font-medium px-4 py-2 rounded-sm text-sm whitespace-nowrap hover:bg-slate-800 transition-colors">
+                                    Selesaikan
+                                </button>
+                            </div>
                         </div>
                     @else
                         <a href="{{ route('pricing') }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent bg-amber text-ink hover:bg-amber/90 font-medium rounded-sm transition-colors shadow-sm text-sm">
-                            Upgrade ke Pro
+                            Upgrade Paket
                         </a>
                     @endif
                 @endif
@@ -129,10 +141,13 @@
                         @foreach ($history as $trx)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-ink-muted">
-                                    <a href="{{ route('dashboard.invoice', ['order_id' => $trx->midtrans_order_id]) }}" class="hover:text-amber hover:underline transition-colors flex items-center gap-1 group">
+                                    <a href="{{ route('dashboard.invoice', ['order_id' => $trx->midtrans_order_id]) }}" class="hover:text-amber hover:underline transition-colors flex items-center gap-1 group" title="Order ID">
                                         {{ $trx->midtrans_order_id }}
                                         <svg class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                     </a>
+                                    @if($trx->midtrans_transaction_id)
+                                        <div class="text-[10px] mt-0.5" title="Midtrans Transaction ID">{{ $trx->midtrans_transaction_id }}</div>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-ink">
                                     {{ $trx->created_at->translatedFormat('d M Y, H:i') }}
@@ -145,15 +160,17 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                                     @if($trx->status === 'active')
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Aktif</span>
+                                        <span class="px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-sm">Berhasil</span>
                                     @elseif($trx->status === 'pending')
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                                        <span class="px-2 py-1 text-xs font-semibold bg-amber/20 text-amber rounded-sm">Menunggu</span>
                                     @elseif($trx->status === 'expired')
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Expired</span>
+                                        <span class="px-2 py-1 text-xs font-semibold bg-gray-100 text-gray-700 rounded-sm">Expired</span>
+                                    @elseif($trx->status === 'cancelled')
+                                        <span class="px-2 py-1 text-xs font-semibold bg-slate-100 text-slate-700 rounded-sm">Dibatalkan</span>
                                     @elseif($trx->status === 'failed')
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Gagal</span>
+                                        <span class="px-2 py-1 text-xs font-semibold bg-red-100 text-red-700 rounded-sm">Gagal</span>
                                     @else
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">{{ $trx->status }}</span>
+                                        <span class="px-2 py-1 text-xs font-semibold bg-gray-100 text-gray-700 rounded-sm">{{ ucfirst($trx->status) }}</span>
                                     @endif
                                 </td>
                             </tr>

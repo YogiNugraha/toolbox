@@ -47,7 +47,12 @@ class MidtransWebhookController extends Controller
             }
 
             if ($transactionId && empty($subscription->midtrans_transaction_id)) {
-                $subscription->update(['midtrans_transaction_id' => $transactionId]);
+                $subscription->update([
+                    'midtrans_transaction_id' => $transactionId,
+                    'payment_type' => $type
+                ]);
+            } else if ($type && empty($subscription->payment_type)) {
+                $subscription->update(['payment_type' => $type]);
             }
 
             if ($transaction == 'capture') {
@@ -62,7 +67,9 @@ class MidtransWebhookController extends Controller
                 $subscription->activate();
             } else if ($transaction == 'pending') {
                 $subscription->update(['status' => 'pending']);
-            } else if ($transaction == 'deny' || $transaction == 'expire' || $transaction == 'cancel') {
+            } else if ($transaction == 'cancel') {
+                $subscription->update(['status' => 'cancelled']);
+            } else if ($transaction == 'deny' || $transaction == 'expire') {
                 $subscription->update(['status' => 'failed']);
             }
 

@@ -184,7 +184,7 @@ class ImageCompressor extends Component
         $remainingQuota = $entitlementService->getRemainingQuota($user, $toolSlug);
         $isCustomLocked = $entitlementService->isFeatureLocked($user, $toolSlug, 'preset_custom');
         $currentPlan = $entitlementService->getCurrentPlan($user);
-        $dailyLimit = config("plans.{$currentPlan}.limits.{$toolSlug}.daily_quota");
+        $dailyLimit = $currentPlan->limits[$toolSlug]['daily_quota'] ?? null;
 
         return view('livewire.tools.image-compressor', [
             'remainingQuota' => $remainingQuota,

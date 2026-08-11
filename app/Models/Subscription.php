@@ -8,12 +8,14 @@ class Subscription extends Model
 {
     protected $fillable = [
         'user_id', 
+        'plan_id',
         'plan_slug', 
         'status', 
         'starts_at', 
         'expires_at', 
         'midtrans_order_id', 
         'midtrans_transaction_id', 
+        'payment_type',
         'amount',
         'snap_token'
     ];
@@ -28,6 +30,11 @@ class Subscription extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function plan()
+    {
+        return $this->belongsTo(Plan::class);
+    }
+
     public function activate()
     {
         // Idempotency: Jika langganan ini sudah aktif, abaikan
@@ -35,8 +42,9 @@ class Subscription extends Model
             return;
         }
 
-        $durationDays = config('plans.' . $this->plan_slug . '.duration_days');
-        
+        $plan = $this->plan ?? \App\Models\Plan::where('slug', $this->plan_slug)->first();
+        $durationDays = $plan ? $plan->duration_days : 30; // fallback
+
         // Cek apakah ada langganan aktif lainnya yang belum expired (Stacking)
         $activeSub = Subscription::where('user_id', $this->user_id)
             ->where('status', 'active')
@@ -46,11 +54,11 @@ class Subscription extends Model
             ->first();
 
         $startsAt = now();
-        $expiresAt = now()->addDays($durationDays);
+        $expiresAt = $durationDays ? now()->addDays($durationDays) : null;
 
         if ($activeSub) {
-            $startsAt = $activeSub->expires_at;
-            $expiresAt = $activeSub->expires_at->addDays($durationDays);
+            $startsAt = $activeSub->expires_at ?? now();
+            $expiresAt = $durationDays ? $startsAt->copy()->addDays($durationDays) : null;
             $activeSub->update(['status' => 'expired']);
         } else {
             Subscription::where('user_id', $this->user_id)
@@ -71,6 +79,6 @@ class Subscription extends Model
         Subscription::where('user_id', $this->user_id)
             ->where('id', '!=', $this->id)
             ->where('status', 'pending')
-            ->update(['status' => 'expired']);
+            ->update(['status' => 'failed']);
     }
 }

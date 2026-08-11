@@ -12,6 +12,10 @@
     @livewireStyles
 </head>
 
+@php
+    $activeSubscription = auth()->check() ? auth()->user()->activeSubscription() : null;
+@endphp
+
 <body class="bg-paper text-ink font-sans antialiased">
     <div x-data="{ sidebarOpen: true }" class="flex h-screen overflow-hidden print:h-auto print:overflow-visible print:block">
 
@@ -44,6 +48,13 @@
                     <x-lucide-users class="w-5 h-5 shrink-0" />
                     <span x-show="sidebarOpen" x-transition.opacity.duration.300ms
                         class="whitespace-nowrap">Pengguna</span>
+                </a>
+
+                <a href="{{ route('admin.plans') }}" wire:navigate title="Paket"
+                    class="flex items-center gap-4 px-6 py-3 text-sm transition-colors border-l-2 {{ request()->routeIs('admin.plans') ? 'text-white font-medium bg-white/5 border-amber' : 'text-slate-400 hover:text-white hover:bg-white/5 border-transparent' }}">
+                    <x-lucide-layers class="w-5 h-5 shrink-0" />
+                    <span x-show="sidebarOpen" x-transition.opacity.duration.300ms
+                        class="whitespace-nowrap">Paket</span>
                 </a>
 
                 <a href="{{ route('admin.transactions') }}" wire:navigate title="Transaksi"
@@ -122,11 +133,10 @@
 
                         <div class="px-4 py-3 border-b border-hairline bg-paper/50">
                             <p class="text-xs text-ink-muted mb-1">Paket Saat Ini</p>
-                            @if (auth()->user()->activeSubscription())
+                            @if ($activeSubscription)
                                 <div class="flex items-center justify-between">
-                                    <span class="text-sm font-bold text-ink">Pro</span>
-                                    <span
-                                        class="text-[10px] bg-amber/20 text-amber px-1.5 py-0.5 rounded-sm border border-amber/30">AKTIF</span>
+                                    <span class="text-sm font-bold text-ink">{{ $activeSubscription->plan->name ?? ucfirst($activeSubscription->plan_slug) }}</span>
+                                    <span class="px-1.5 py-0.5 text-[9px] bg-green-100 text-green-700 font-bold uppercase tracking-wider rounded-sm border border-green-200">AKTIF</span>
                                 </div>
                             @else
                                 <div class="flex items-center justify-between">
@@ -138,9 +148,8 @@
                         </div>
 
                         <a href="{{ route('dashboard.billing') }}" wire:navigate
-                            class="flex items-center gap-3 px-4 py-2 text-sm text-ink hover:bg-paper transition-colors mt-1">
-                            <x-lucide-credit-card class="w-4 h-4 text-ink-muted" />
-                            Billing & Pro
+                            class="flex items-center px-4 py-2 text-sm text-ink hover:bg-paper-light hover:text-amber transition-colors">
+                            Billing & Paket
                         </a>
 
                         <a href="{{ route('profile') }}" wire:navigate

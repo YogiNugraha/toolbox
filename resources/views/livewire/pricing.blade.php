@@ -1,5 +1,5 @@
 <div class="py-12 bg-paper min-h-screen">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         @if (session()->has('error'))
             <div class="mb-8 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-sm text-sm" role="alert">
@@ -9,7 +9,7 @@
 
         @if ($snapToken)
             <!-- Snap Container Wrapper -->
-            <div id="snap-container-wrapper" class="mb-12 max-w-5xl mx-auto">
+            <div id="snap-container-wrapper" class="mb-12 max-w-7xl mx-auto">
                 <div wire:poll.10s="checkPaymentStatus" class="hidden"></div>
 
                 <div class="flex justify-between items-center mb-6">
@@ -39,24 +39,25 @@
                         </p>
 
                         <div class="flex justify-between items-center pb-4 border-b border-hairline mb-4">
-                            <span class="font-display font-bold text-lg text-ink">Paket Pro</span>
+                            @php
+                                $pendingSub = auth()->user()->subscriptions()->where('snap_token', $snapToken)->first();
+                                $pendingPlan = $pendingSub ? $pendingSub->plan : null;
+                            @endphp
+                            <span class="font-display font-bold text-lg text-ink">{{ $pendingPlan ? $pendingPlan->name : 'Paket' }}</span>
                             <span class="font-mono font-bold text-2xl text-ink">Rp
-                                {{ number_format(config('plans.pro.price'), 0, ',', '.') }}</span>
+                                {{ number_format($pendingPlan ? $pendingPlan->price : 0, 0, ',', '.') }}</span>
                         </div>
 
                         <ul class="space-y-2 text-sm text-ink-muted mb-6">
-                            <li class="flex gap-2">
-                                <span class="text-amber">✓</span> Semua tools unlimited
-                            </li>
-                            <li class="flex gap-2">
-                                <span class="text-amber">✓</span> Semua preset & fitur terbuka
-                            </li>
-                            <li class="flex gap-2">
-                                <span class="text-amber">✓</span> Ukuran file maksimal lebih besar
-                            </li>
-                            <li class="flex gap-2">
-                                <span class="text-amber">✓</span> Aktif {{ config('plans.pro.duration_days') }} hari
-                            </li>
+                            @if($pendingPlan)
+                                @foreach($pendingPlan->features ?? [] as $feature)
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-amber mt-0.5">✓</span>
+                                        <span>{{ $feature }}</span>
+                                    </li>
+                                @endforeach
+
+                            @endif
                         </ul>
 
                         <p class="font-mono text-xs text-ink-muted">
@@ -116,99 +117,65 @@
             </div>
 
             <!-- Pricing Tiers -->
-            <div id="pricing-tiers" class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-
-                <!-- Free Plan -->
-                <div class="border border-hairline rounded-sm bg-white overflow-hidden flex flex-col h-full">
-                    <div class="px-6 py-8 border-b border-hairline">
-                        <h3 class="font-bold text-lg text-ink uppercase tracking-wider mb-4">Free</h3>
-                        <div class="flex items-baseline text-ink font-mono tracking-tighter">
-                            <span class="text-5xl font-bold">Rp 0</span>
-                            <span class="ml-2 text-sm text-ink-muted font-sans font-medium">/ selamanya</span>
+            @php
+                $currentPlan = app(\App\Services\EntitlementService::class)->getCurrentPlan(auth()->user());
+                $cols = min($plans->count(), 4);
+            @endphp
+            <div id="pricing-tiers" class="grid grid-cols-1 md:grid-cols-{{ $cols }} gap-6 items-start">
+                @foreach($plans as $plan)
+                    @php
+                        $isCurrent = $currentPlan && $currentPlan->id === $plan->id;
+                        $hasPending = auth()->check() && auth()->user()->subscriptions()
+                                        ->where('status', 'pending')
+                                        ->where('plan_id', $plan->id)
+                                        ->where('created_at', '>', now()->subHours(24))
+                                        ->exists();
+                    @endphp
+                    <div class="border {{ $isCurrent ? 'border-amber shadow-sm' : 'border-hairline' }} rounded-sm bg-white overflow-hidden flex flex-col h-full relative">
+                        @if($isCurrent)
+                        <div class="absolute top-0 right-0 bg-amber text-ink text-xs font-bold px-3 py-1 border-b border-l border-amber">
+                            AKTIF
                         </div>
-                        <p class="mt-4 text-sm text-ink-muted">Cocok untuk penggunaan kasual.</p>
-                    </div>
-                    <div class="px-6 py-6 bg-paper/30 flex-1">
-                        <ul class="space-y-4 text-sm text-ink-muted">
-                            <li class="flex items-start">
-                                <span class="text-green-500 mr-3">✓</span> Compress Gambar: 5x/hari (Basic)
-                            </li>
-                            <li class="flex items-start">
-                                <span class="text-green-500 mr-3">✓</span> Convert Gambar: 5x/hari
-                            </li>
-                            <li class="flex items-start">
-                                <span class="text-green-500 mr-3">✓</span> PDF ke Word: 2x/hari (Max 5MB)
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="p-6 bg-white border-t border-hairline">
-                        <a href="{{ route('dashboard') }}"
-                            class="block w-full text-center border border-hairline rounded-sm px-6 py-3 text-sm font-bold text-ink hover:border-amber transition-colors">
-                            Lanjutkan Free
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Pro Plan -->
-                <div
-                    class="border border-amber rounded-sm bg-white overflow-hidden flex flex-col h-full relative shadow-sm">
-                    <div
-                        class="absolute top-0 right-0 bg-amber text-ink text-xs font-bold px-3 py-1 border-b border-l border-amber">
-                        PRO
-                    </div>
-                    <div class="px-6 py-8 border-b border-hairline">
-                        <h3 class="font-bold text-lg text-amber uppercase tracking-wider mb-4">Pro</h3>
-                        <div class="flex items-baseline text-ink font-mono tracking-tighter">
-                            <span class="text-5xl font-bold">Rp
-                                {{ number_format(config('plans.pro.price'), 0, ',', '.') }}</span>
-                            <span class="ml-2 text-sm text-ink-muted font-sans font-medium">/
-                                {{ config('plans.pro.duration_days') }} hr</span>
-                        </div>
-                        <p class="mt-4 text-sm text-ink-muted">Buka semua fitur tanpa batasan apapun.</p>
-                    </div>
-                    <div class="px-6 py-6 bg-paper/30 flex-1">
-                        <ul class="space-y-4 text-sm text-ink-muted">
-                            <li class="flex items-start">
-                                <span class="text-amber mr-3 font-bold">✓</span> <span
-                                    class="font-medium text-ink">Unlimited</span> Compress Gambar
-                            </li>
-                            <li class="flex items-start">
-                                <span class="text-amber mr-3 font-bold">✓</span> <span
-                                    class="font-medium text-ink">Unlimited</span> Convert Gambar
-                            </li>
-                            <li class="flex items-start">
-                                <span class="text-amber mr-3 font-bold">✓</span> <span
-                                    class="font-medium text-ink">Unlimited</span> PDF ke Word
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="p-6 bg-white border-t border-hairline">
-                        @php
-                            $hasPending =
-                                auth()->check() &&
-                                auth()
-                                    ->user()
-                                    ->subscriptions()
-                                    ->where('status', 'pending')
-                                    ->where('created_at', '>', now()->subHours(24))
-                                    ->exists();
-                        @endphp
-                        @if (auth()->check() && auth()->user()->activeSubscription())
-                            <a href="{{ route('dashboard.billing') }}"
-                                class="block w-full text-center border border-hairline bg-paper text-ink-muted rounded-sm px-6 py-3 text-sm font-bold cursor-not-allowed">
-                                Paket Pro Aktif
-                            </a>
-                        @else
-                            <button wire:click="checkout" wire:loading.attr="disabled"
-                                class="w-full text-center bg-amber text-ink rounded-sm px-6 py-3 text-sm font-bold hover:bg-amber/90 transition-colors shadow-sm relative">
-                                <span wire:loading.remove wire:target="checkout">
-                                    {{ $hasPending ? 'Selesaikan Pembayaran' : 'Upgrade ke Pro' }}
-                                </span>
-                                <span wire:loading wire:target="checkout">Memproses...</span>
-                            </button>
                         @endif
+                        
+                        <div class="px-6 py-8 border-b border-hairline">
+                            <h3 class="font-bold text-lg {{ $isCurrent ? 'text-amber' : 'text-ink' }} uppercase tracking-wider mb-4">{{ $plan->name }}</h3>
+                            <div class="flex items-baseline text-ink font-mono tracking-tighter">
+                                <span class="text-5xl font-bold">Rp {{ number_format($plan->price, 0, ',', '.') }}</span>
+                                <span class="ml-2 text-sm text-ink-muted font-sans font-medium">/ {{ $plan->duration_days ? $plan->duration_days . ' hr' : 'selamanya' }}</span>
+                            </div>
+                            <p class="mt-4 text-sm text-ink-muted">{{ $plan->description }}</p>
+                        </div>
+                        
+                        <div class="px-6 py-6 bg-paper/30 flex-1">
+                            <ul class="space-y-4 text-sm text-ink-muted">
+                                @foreach($plan->features ?? [] as $feature)
+                                    <li class="flex items-start">
+                                        <span class="{{ $isCurrent ? 'text-amber font-bold' : 'text-green-500' }} mr-3 mt-0.5">✓</span> 
+                                        <span class="text-ink">{{ $feature }}</span>
+                                    </li>
+                                @endforeach
+
+                            </ul>
+                        </div>
+                        
+                        <div class="p-6 bg-white border-t border-hairline">
+                            @if($isCurrent)
+                                <a href="{{ route('dashboard.billing') }}" class="block w-full text-center border border-hairline bg-paper text-ink-muted rounded-sm px-6 py-3 text-sm font-bold cursor-not-allowed">
+                                    Paket Aktif
+                                </a>
+                            @else
+                                <button wire:click="selectPlan({{ $plan->id }})" wire:loading.attr="disabled"
+                                    class="w-full text-center {{ $plan->price > 0 ? 'bg-amber text-ink hover:bg-amber/90 shadow-sm' : 'border border-hairline text-ink hover:border-amber' }} rounded-sm px-6 py-3 text-sm font-bold transition-colors relative">
+                                    <span wire:loading.remove wire:target="selectPlan({{ $plan->id }})">
+                                        {{ $hasPending ? 'Selesaikan Pembayaran' : ($plan->price > 0 ? 'Pilih Paket' : 'Lanjutkan') }}
+                                    </span>
+                                    <span wire:loading wire:target="selectPlan({{ $plan->id }})">Memproses...</span>
+                                </button>
+                            @endif
+                        </div>
                     </div>
-                </div>
+                @endforeach
             </div>
         @endif
     </div>
