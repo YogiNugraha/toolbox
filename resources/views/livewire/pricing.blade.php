@@ -43,6 +43,8 @@
                                 $pendingSub = auth()->user()->subscriptions()->where('snap_token', $snapToken)->first();
                                 $pendingPlan = $pendingSub ? $pendingSub->plan : null;
                                 $basePrice = $pendingSub ? ($pendingSub->subtotal + $pendingSub->discount) : 0;
+                                $taxPercent = $pendingSub && $pendingSub->subtotal > 0 ? round(($pendingSub->tax / $pendingSub->subtotal) * 100) : 0;
+                                $discountPercent = $basePrice > 0 ? round(($pendingSub->discount / $basePrice) * 100) : 0;
                             @endphp
                             <p class="font-display font-bold text-lg text-ink mb-3">{{ $pendingPlan ? $pendingPlan->name : 'Paket' }}</p>
                             
@@ -53,7 +55,7 @@
                                 </div>
                                 @if($pendingSub && $pendingSub->discount > 0)
                                 <div class="flex justify-between text-green-600">
-                                    <span>Diskon</span>
+                                    <span>Diskon ({{ $discountPercent }}%)</span>
                                     <span class="font-mono">-Rp {{ number_format($pendingSub->discount,0,',','.') }}</span>
                                 </div>
                                 @endif
@@ -65,7 +67,7 @@
                                 @endif
                                 @if($pendingSub && $pendingSub->tax > 0)
                                 <div class="flex justify-between">
-                                    <span class="text-ink-muted">Pajak</span>
+                                    <span class="text-ink-muted">Pajak ({{ $taxPercent }}%)</span>
                                     <span class="font-mono">Rp {{ number_format($pendingSub->tax,0,',','.') }}</span>
                                 </div>
                                 @endif

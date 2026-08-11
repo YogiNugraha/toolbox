@@ -58,9 +58,39 @@
                             {{ $subscription->plan ? ($subscription->plan->duration_days ?? 'Selamanya') . ' Hari' : '30 Hari' }}
                         </td>
                         <td class="py-4 px-4 border-b border-hairline text-right font-medium text-ink">
-                            Rp {{ number_format($subscription->amount, 0, ',', '.') }}
+                            @if($subscription->subtotal > 0 || $subscription->amount == 0)
+                                Rp {{ number_format($subscription->subtotal + $subscription->discount, 0, ',', '.') }}
+                            @else
+                                Rp {{ number_format($subscription->amount, 0, ',', '.') }}
+                            @endif
                         </td>
                     </tr>
+                    
+                    @if($subscription->subtotal > 0 || $subscription->amount == 0)
+                        @php
+                            $basePrice = $subscription->subtotal + $subscription->discount;
+                            $taxPercent = $subscription->subtotal > 0 ? round(($subscription->tax / $subscription->subtotal) * 100) : 0;
+                            $discountPercent = $basePrice > 0 ? round(($subscription->discount / $basePrice) * 100) : 0;
+                        @endphp
+                        @if($subscription->discount > 0)
+                        <tr>
+                            <td colspan="2" class="py-3 px-4 text-right text-xs font-bold text-green-600 uppercase tracking-wider border-b border-hairline">Diskon ({{ $discountPercent }}%)</td>
+                            <td class="py-3 px-4 text-right font-medium text-green-600 border-b border-hairline">-Rp {{ number_format($subscription->discount, 0, ',', '.') }}</td>
+                        </tr>
+                        @endif
+                        @if($subscription->service_fee > 0)
+                        <tr>
+                            <td colspan="2" class="py-3 px-4 text-right text-xs font-bold text-ink-muted uppercase tracking-wider border-b border-hairline">Biaya Layanan</td>
+                            <td class="py-3 px-4 text-right font-medium text-ink border-b border-hairline">Rp {{ number_format($subscription->service_fee, 0, ',', '.') }}</td>
+                        </tr>
+                        @endif
+                        @if($subscription->tax > 0)
+                        <tr>
+                            <td colspan="2" class="py-3 px-4 text-right text-xs font-bold text-ink-muted uppercase tracking-wider border-b border-hairline">Pajak ({{ $taxPercent }}%)</td>
+                            <td class="py-3 px-4 text-right font-medium text-ink border-b border-hairline">Rp {{ number_format($subscription->tax, 0, ',', '.') }}</td>
+                        </tr>
+                        @endif
+                    @endif
                 </tbody>
                 <tfoot>
                     <tr>

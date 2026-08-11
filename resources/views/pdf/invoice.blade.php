@@ -251,9 +251,14 @@
                     </tr>
                     
                     @if($subscription->subtotal > 0 || $subscription->amount == 0)
+                        @php
+                            $basePrice = $subscription->subtotal + $subscription->discount;
+                            $taxPercent = $subscription->subtotal > 0 ? round(($subscription->tax / $subscription->subtotal) * 100) : 0;
+                            $discountPercent = $basePrice > 0 ? round(($subscription->discount / $basePrice) * 100) : 0;
+                        @endphp
                         @if($subscription->discount > 0)
                         <tr>
-                            <td colspan="2" class="right total-label" style="color: #16a34a; font-size: 12px;">Diskon</td>
+                            <td colspan="2" class="right total-label" style="color: #16a34a; font-size: 12px;">Diskon ({{ $discountPercent }}%)</td>
                             <td class="right item-price" style="color: #16a34a;">-Rp {{ number_format($subscription->discount, 0, ',', '.') }}</td>
                         </tr>
                         @endif
@@ -265,7 +270,7 @@
                         @endif
                         @if($subscription->tax > 0)
                         <tr>
-                            <td colspan="2" class="right total-label" style="font-size: 12px; color: #6b7280;">Pajak</td>
+                            <td colspan="2" class="right total-label" style="font-size: 12px; color: #6b7280;">Pajak ({{ $taxPercent }}%)</td>
                             <td class="right item-price">Rp {{ number_format($subscription->tax, 0, ',', '.') }}</td>
                         </tr>
                         @endif
