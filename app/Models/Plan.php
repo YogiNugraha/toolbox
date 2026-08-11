@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Plan extends Model
 {
-    protected $fillable = ['slug','name','price','duration_days','description','limits','is_default','is_active','sort_order', 'features'];
+    protected $fillable = ['slug','name','price','duration_days','description','limits','is_default','is_active','sort_order', 'features', 'discount_type', 'discount_value'];
     
     protected $casts = [
         'price' => 'integer',

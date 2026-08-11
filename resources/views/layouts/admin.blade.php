@@ -63,6 +63,13 @@
                     <span x-show="sidebarOpen" x-transition.opacity.duration.300ms
                         class="whitespace-nowrap flex-1">Transaksi</span>
                 </a>
+
+                <a href="{{ route('admin.settings') }}" wire:navigate title="Pengaturan"
+                    class="flex items-center gap-4 px-6 py-3 text-sm transition-colors border-l-2 {{ request()->routeIs('admin.settings') ? 'text-white font-medium bg-white/5 border-amber' : 'text-slate-400 hover:text-white hover:bg-white/5 border-transparent' }}">
+                    <x-lucide-settings class="w-5 h-5 shrink-0" />
+                    <span x-show="sidebarOpen" x-transition.opacity.duration.300ms
+                        class="whitespace-nowrap">Pengaturan</span>
+                </a>
             </nav>
 
             <div class="py-4 border-t border-white/10 shrink-0 overflow-hidden">

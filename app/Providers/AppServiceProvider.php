@@ -20,5 +20,16 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         \Carbon\Carbon::setLocale('id');
+
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
+                $brandName = \App\Models\Setting::get('brand_name');
+                if ($brandName) {
+                    config(['app.name' => $brandName]);
+                }
+            }
+        } catch (\Exception $e) {
+            // Abaikan jika database belum siap
+        }
     }
 }

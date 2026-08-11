@@ -38,14 +38,42 @@
                             Ringkasan Pesanan
                         </p>
 
-                        <div class="flex justify-between items-center pb-4 border-b border-hairline mb-4">
+                        <div class="mb-6">
                             @php
                                 $pendingSub = auth()->user()->subscriptions()->where('snap_token', $snapToken)->first();
                                 $pendingPlan = $pendingSub ? $pendingSub->plan : null;
+                                $basePrice = $pendingSub ? ($pendingSub->subtotal + $pendingSub->discount) : 0;
                             @endphp
-                            <span class="font-display font-bold text-lg text-ink">{{ $pendingPlan ? $pendingPlan->name : 'Paket' }}</span>
-                            <span class="font-mono font-bold text-2xl text-ink">Rp
-                                {{ number_format($pendingPlan ? $pendingPlan->price : 0, 0, ',', '.') }}</span>
+                            <p class="font-display font-bold text-lg text-ink mb-3">{{ $pendingPlan ? $pendingPlan->name : 'Paket' }}</p>
+                            
+                            <div class="space-y-1.5 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-ink-muted">Harga Paket</span>
+                                    <span class="font-mono">Rp {{ number_format($basePrice,0,',','.') }}</span>
+                                </div>
+                                @if($pendingSub && $pendingSub->discount > 0)
+                                <div class="flex justify-between text-green-600">
+                                    <span>Diskon</span>
+                                    <span class="font-mono">-Rp {{ number_format($pendingSub->discount,0,',','.') }}</span>
+                                </div>
+                                @endif
+                                @if($pendingSub && $pendingSub->service_fee > 0)
+                                <div class="flex justify-between">
+                                    <span class="text-ink-muted">Biaya Layanan</span>
+                                    <span class="font-mono">Rp {{ number_format($pendingSub->service_fee,0,',','.') }}</span>
+                                </div>
+                                @endif
+                                @if($pendingSub && $pendingSub->tax > 0)
+                                <div class="flex justify-between">
+                                    <span class="text-ink-muted">Pajak</span>
+                                    <span class="font-mono">Rp {{ number_format($pendingSub->tax,0,',','.') }}</span>
+                                </div>
+                                @endif
+                                <div class="flex justify-between font-bold border-t border-hairline pt-2 mt-2">
+                                    <span>Total</span>
+                                    <span class="font-mono text-lg">Rp {{ number_format($pendingSub ? $pendingSub->amount : 0,0,',','.') }}</span>
+                                </div>
+                            </div>
                         </div>
 
                         <ul class="space-y-2 text-sm text-ink-muted mb-6">
@@ -139,10 +167,21 @@
                         @endif
                         
                         <div class="px-6 py-8 border-b border-hairline">
+                            @php
+                                $breakdown = app(\App\Services\PriceCalculator::class)->breakdown($plan);
+                            @endphp
                             <h3 class="font-bold text-lg {{ $isCurrent ? 'text-amber' : 'text-ink' }} uppercase tracking-wider mb-4">{{ $plan->name }}</h3>
-                            <div class="flex items-baseline text-ink font-mono tracking-tighter">
-                                <span class="text-5xl font-bold">Rp {{ number_format($plan->price, 0, ',', '.') }}</span>
-                                <span class="ml-2 text-sm text-ink-muted font-sans font-medium">/ {{ $plan->duration_days ? $plan->duration_days . ' hr' : 'selamanya' }}</span>
+                            <div class="flex flex-col mb-4">
+                                @if($breakdown['discount'] > 0)
+                                    <span class="text-ink-muted line-through text-sm font-mono text-left">Rp {{ number_format($breakdown['basePrice'],0,',','.') }}</span>
+                                @endif
+                                <div class="flex items-baseline text-ink font-mono tracking-tighter">
+                                    <span class="text-5xl font-bold">Rp {{ number_format($breakdown['subtotal'], 0, ',', '.') }}</span>
+                                    <span class="ml-2 text-sm text-ink-muted font-sans font-medium">/ {{ $plan->duration_days ? $plan->duration_days . ' hr' : 'selamanya' }}</span>
+                                </div>
+                                @if($breakdown['tax'] > 0 || $breakdown['serviceFee'] > 0)
+                                    <span class="text-[10px] text-ink-muted font-sans mt-1">* Belum termasuk pajak & biaya layanan</span>
+                                @endif
                             </div>
                             <p class="mt-4 text-sm text-ink-muted">{{ $plan->description }}</p>
                         </div>

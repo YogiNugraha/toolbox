@@ -153,9 +153,10 @@ class Pricing extends Component
         Config::$is3ds = true;
 
         $orderId = strtoupper($plan->slug) . '-' . $user->id . '-' . time() . '-' . Str::random(5);
-        $price = $plan->price;
+        $breakdown = app(\App\Services\PriceCalculator::class)->breakdown($plan);
+        $totalAmount = $breakdown['total'];
 
-        if ($price == 0) {
+        if ($totalAmount == 0) {
             // Langsung aktifkan plan gratis tanpa Midtrans
             $subscription = Subscription::create([
                 'user_id' => $user->id,
@@ -177,13 +178,17 @@ class Pricing extends Component
             'plan_slug' => $plan->slug,
             'status' => 'pending',
             'midtrans_order_id' => $orderId,
-            'amount' => $price,
+            'amount' => $totalAmount,
+            'subtotal' => $breakdown['subtotal'],
+            'discount' => $breakdown['discount'],
+            'service_fee' => $breakdown['serviceFee'],
+            'tax' => $breakdown['tax'],
         ]);
 
         $params = [
             'transaction_details' => [
                 'order_id' => $orderId,
-                'gross_amount' => $price,
+                'gross_amount' => $totalAmount,
             ],
             'customer_details' => [
                 'first_name' => $user->name,
@@ -192,9 +197,9 @@ class Pricing extends Component
             ],
             'item_details' => [[
                 'id' => $plan->slug . '-' . ($plan->duration_days ?? 'selamanya'),
-                'price' => $price,
+                'price' => $totalAmount,
                 'quantity' => 1,
-                'name' => 'ToolBox ' . $plan->name,
+                'name' => 'ToolBox ' . $plan->name . ' (inc. pajak & biaya)',
             ]],
         ];
 

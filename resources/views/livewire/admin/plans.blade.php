@@ -6,12 +6,78 @@
         </button>
     </div>
 
+    <!-- Global Pricing Settings -->
+    <div class="bg-white border border-hairline rounded-sm overflow-hidden mb-8">
+        <div class="px-6 py-4 border-b border-hairline bg-paper-light">
+            <h2 class="font-mono text-lg font-bold text-ink">Pengaturan Pajak & Biaya Layanan</h2>
+            <p class="text-xs text-ink-muted mt-1 font-mono">Diterapkan secara global untuk semua pembayaran paket.</p>
+        </div>
+        <div class="p-6">
+            <form wire:submit="saveSettings">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-4 border border-hairline rounded-sm bg-paper-light">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm font-bold text-ink">Aktifkan Pajak (PPN)</span>
+                            <button wire:click="$toggle('is_tax_enabled')" type="button" class="relative inline-flex items-center h-5 w-9 rounded-full transition-colors {{ $is_tax_enabled ? 'bg-amber' : 'bg-gray-300' }}">
+                                <span class="inline-block w-3 h-3 transform rounded-full bg-white transition-transform {{ $is_tax_enabled ? 'translate-x-5' : 'translate-x-1' }}"></span>
+                            </button>
+                        </div>
+                        
+                        @if($is_tax_enabled)
+                        <div class="mt-4 pt-4 border-t border-hairline border-dashed">
+                            <label class="block text-sm font-medium text-ink mb-2">Pajak PPN (%)</label>
+                            <input type="number" wire:model="tax_percent" class="w-full rounded-sm border-hairline focus:border-amber focus:ring-amber/20 text-sm" min="0" max="100">
+                            @error('tax_percent') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+                        @endif
+                    </div>
+
+                    <div class="p-4 border border-hairline rounded-sm bg-paper-light">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm font-bold text-ink">Aktifkan Biaya Layanan</span>
+                            <button wire:click="$toggle('is_service_fee_enabled')" type="button" class="relative inline-flex items-center h-5 w-9 rounded-full transition-colors {{ $is_service_fee_enabled ? 'bg-amber' : 'bg-gray-300' }}">
+                                <span class="inline-block w-3 h-3 transform rounded-full bg-white transition-transform {{ $is_service_fee_enabled ? 'translate-x-5' : 'translate-x-1' }}"></span>
+                            </button>
+                        </div>
+                        
+                        @if($is_service_fee_enabled)
+                        <div class="mt-4 pt-4 border-t border-hairline border-dashed space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-ink mb-2">Tipe Biaya Layanan</label>
+                                <select wire:model="service_fee_type" class="w-full rounded-sm border-hairline focus:border-amber focus:ring-amber/20 text-sm">
+                                    <option value="fixed">Nominal Tetap (Rp)</option>
+                                    <option value="percent">Persentase (%)</option>
+                                </select>
+                                @error('service_fee_type') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-ink mb-2">Nilai Biaya Layanan</label>
+                                <input type="number" wire:model="service_fee_value" class="w-full rounded-sm border-hairline focus:border-amber focus:ring-amber/20 text-sm" min="0">
+                                @error('service_fee_value') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end">
+                    <button type="submit" class="bg-amber hover:bg-amber/90 text-ink font-bold font-mono py-2 px-6 rounded-sm text-sm transition-colors">
+                        <span wire:loading.remove wire:target="saveSettings">Simpan Pengaturan Biaya</span>
+                        <span wire:loading wire:target="saveSettings">Menyimpan...</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="bg-paper border border-hairline rounded-sm overflow-hidden">
         <table class="w-full text-left border-collapse">
             <thead>
                 <tr class="bg-paper-light border-b border-hairline font-mono text-sm text-ink-muted">
                     <th class="p-4 font-normal">Nama / Slug</th>
                     <th class="p-4 font-normal">Harga</th>
+                    <th class="p-4 font-normal">Diskon</th>
                     <th class="p-4 font-normal">Durasi</th>
                     <th class="p-4 font-normal">Urutan</th>
                     <th class="p-4 font-normal">Status</th>
@@ -29,7 +95,22 @@
                             @endif
                         </td>
                         <td class="p-4 font-mono">
-                            Rp {{ number_format($plan->price, 0, ',', '.') }}
+                            @php
+                                $breakdown = app(\App\Services\PriceCalculator::class)->breakdown($plan);
+                            @endphp
+                            @if($breakdown['discount'] > 0)
+                                <div class="text-xs line-through text-ink-muted">Rp {{ number_format($breakdown['basePrice'], 0, ',', '.') }}</div>
+                            @endif
+                            Rp {{ number_format($breakdown['subtotal'], 0, ',', '.') }}
+                        </td>
+                        <td class="p-4 font-mono text-sm text-green-600">
+                            @if($plan->discount_type === 'percent')
+                                {{ $plan->discount_value }}%
+                            @elseif($plan->discount_type === 'fixed')
+                                Rp {{ number_format($plan->discount_value, 0, ',', '.') }}
+                            @else
+                                -
+                            @endif
                         </td>
                         <td class="p-4 text-ink-muted">
                             {{ $plan->duration_days ? $plan->duration_days . ' hari' : 'Selamanya' }}
@@ -49,7 +130,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="p-8 text-center text-ink-muted">Belum ada paket.</td>
+                        <td colspan="7" class="p-8 text-center text-ink-muted">Belum ada paket.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -89,6 +170,27 @@
                         <input type="number" wire:model="duration_days" placeholder="Kosong = Selamanya" class="w-full border-hairline bg-paper-light rounded-sm px-3 py-2 text-ink focus:border-amber focus:ring-0">
                         @error('duration_days') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-bold text-ink mb-1">Jenis Diskon</label>
+                        <select wire:model.live="discount_type" class="w-full border-hairline bg-paper-light rounded-sm px-3 py-2 text-ink focus:border-amber focus:ring-0">
+                            <option value="none">Tidak Ada</option>
+                            <option value="percent">Persentase (%)</option>
+                            <option value="fixed">Nominal Tetap (Rp)</option>
+                        </select>
+                        @error('discount_type') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    </div>
+                    @if($discount_type !== 'none')
+                    <div>
+                        <label class="block text-sm font-bold text-ink mb-1">Nilai Diskon</label>
+                        <input type="number" wire:model="discount_value" class="w-full border-hairline bg-paper-light rounded-sm px-3 py-2 text-ink focus:border-amber focus:ring-0">
+                        @error('discount_value') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    </div>
+                    @else
+                    <div></div>
+                    @endif
                 </div>
 
                 <div class="mb-6">

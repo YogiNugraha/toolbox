@@ -125,4 +125,5 @@ Route::middleware(['auth', EnsureUserIsNotBanned::class, EnsureSingleSession::cl
     Route::get('/plans', Plans::class)->name('plans');
     Route::get('/users', Users::class)->name('users');
     Route::get('/transactions', Transactions::class)->name('transactions');
+    Route::get('/settings', \App\Livewire\Admin\Settings::class)->name('settings');
 });

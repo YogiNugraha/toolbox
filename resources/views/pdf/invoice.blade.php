@@ -242,9 +242,35 @@
                             {{ $subscription->plan ? ($subscription->plan->duration_days ?? 'Selamanya') . ' Hari' : '30 Hari' }}
                         </td>
                         <td class="right item-price">
-                            Rp {{ number_format($subscription->amount, 0, ',', '.') }}
+                            @if($subscription->subtotal > 0 || $subscription->amount == 0)
+                                Rp {{ number_format($subscription->subtotal + $subscription->discount, 0, ',', '.') }}
+                            @else
+                                Rp {{ number_format($subscription->amount, 0, ',', '.') }}
+                            @endif
                         </td>
                     </tr>
+                    
+                    @if($subscription->subtotal > 0 || $subscription->amount == 0)
+                        @if($subscription->discount > 0)
+                        <tr>
+                            <td colspan="2" class="right total-label" style="color: #16a34a; font-size: 12px;">Diskon</td>
+                            <td class="right item-price" style="color: #16a34a;">-Rp {{ number_format($subscription->discount, 0, ',', '.') }}</td>
+                        </tr>
+                        @endif
+                        @if($subscription->service_fee > 0)
+                        <tr>
+                            <td colspan="2" class="right total-label" style="font-size: 12px; color: #6b7280;">Biaya Layanan</td>
+                            <td class="right item-price">Rp {{ number_format($subscription->service_fee, 0, ',', '.') }}</td>
+                        </tr>
+                        @endif
+                        @if($subscription->tax > 0)
+                        <tr>
+                            <td colspan="2" class="right total-label" style="font-size: 12px; color: #6b7280;">Pajak</td>
+                            <td class="right item-price">Rp {{ number_format($subscription->tax, 0, ',', '.') }}</td>
+                        </tr>
+                        @endif
+                    @endif
+                    
                     <tr class="total">
                         <td colspan="2" class="right total-label">
                             Total Pembayaran

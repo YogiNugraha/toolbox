@@ -17,6 +17,10 @@ class Subscription extends Model
         'midtrans_transaction_id', 
         'payment_type',
         'amount',
+        'subtotal',
+        'discount',
+        'service_fee',
+        'tax',
         'snap_token'
     ];
     

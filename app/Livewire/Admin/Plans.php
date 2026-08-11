@@ -21,14 +21,30 @@ class Plans extends Component
     public $is_default = false;
     public $is_active = true;
     public $sort_order = 0;
+    
+    public $discount_type = 'none';
+    public $discount_value = 0;
 
     public $limits = [];
     public $features = []; // Array of string features
     public $toolsConfig = [];
 
+    // Global Settings for Pricing
+    public $is_tax_enabled;
+    public $tax_percent;
+    public $is_service_fee_enabled;
+    public $service_fee_type;
+    public $service_fee_value;
+
     public function mount()
     {
         $this->toolsConfig = config('tools', []);
+        
+        $this->is_tax_enabled = filter_var(\App\Models\Setting::get('is_tax_enabled', true), FILTER_VALIDATE_BOOLEAN);
+        $this->tax_percent = \App\Models\Setting::get('tax_percent', 11);
+        $this->is_service_fee_enabled = filter_var(\App\Models\Setting::get('is_service_fee_enabled', true), FILTER_VALIDATE_BOOLEAN);
+        $this->service_fee_type = \App\Models\Setting::get('service_fee_type', 'fixed');
+        $this->service_fee_value = \App\Models\Setting::get('service_fee_value', 2500);
     }
 
     public function create()
@@ -50,6 +66,8 @@ class Plans extends Component
         $this->is_default = $plan->is_default;
         $this->is_active = $plan->is_active;
         $this->sort_order = $plan->sort_order;
+        $this->discount_type = $plan->discount_type;
+        $this->discount_value = $plan->discount_value;
         $this->limits = $plan->limits ?? [];
         $this->features = $plan->features ?? [];
 
@@ -88,6 +106,8 @@ class Plans extends Component
             'is_default' => 'boolean',
             'is_active' => 'boolean',
             'sort_order' => 'required|integer',
+            'discount_type' => 'required|in:none,percent,fixed',
+            'discount_value' => 'required|integer|min:0',
             'features' => 'nullable|array',
             'features.*' => 'nullable|string'
         ]);
@@ -136,6 +156,8 @@ class Plans extends Component
             'is_default' => $this->is_default,
             'is_active' => $this->is_active,
             'sort_order' => (int) $this->sort_order,
+            'discount_type' => $this->discount_type,
+            'discount_value' => (int) $this->discount_value,
             'limits' => $this->limits,
             'features' => $this->features,
         ]);
@@ -186,6 +208,8 @@ class Plans extends Component
         $this->is_default = false;
         $this->is_active = true;
         $this->sort_order = 0;
+        $this->discount_type = 'none';
+        $this->discount_value = 0;
         
         $this->features = [];
         $this->limits = [];
@@ -203,6 +227,25 @@ class Plans extends Component
         $plan = Plan::findOrFail($id);
         $plan->update(['is_active' => !$plan->is_active]);
         LivewireAlert::title('Status paket diubah')->success()->toast()->position('top-end')->timer(3000)->show();
+    }
+
+    public function saveSettings()
+    {
+        $this->validate([
+            'is_tax_enabled' => 'boolean',
+            'tax_percent' => 'required|numeric|min:0|max:100',
+            'is_service_fee_enabled' => 'boolean',
+            'service_fee_type' => 'required|in:fixed,percent',
+            'service_fee_value' => 'required|numeric|min:0',
+        ]);
+
+        \App\Models\Setting::set('is_tax_enabled', $this->is_tax_enabled);
+        \App\Models\Setting::set('tax_percent', $this->tax_percent);
+        \App\Models\Setting::set('is_service_fee_enabled', $this->is_service_fee_enabled);
+        \App\Models\Setting::set('service_fee_type', $this->service_fee_type);
+        \App\Models\Setting::set('service_fee_value', $this->service_fee_value);
+
+        LivewireAlert::title('Pengaturan biaya berhasil disimpan!')->success()->toast()->position('top-end')->timer(3000)->show();
     }
 
     public function render()
