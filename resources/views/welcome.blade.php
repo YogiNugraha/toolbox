@@ -4,83 +4,126 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name') }} - Compress, convert, done.</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-paper text-ink font-sans antialiased min-h-screen flex flex-col">
+<body x-data class="is-header-blur" x-bind="$store.global.documentBody">
 
-    <!-- Header -->
-    <header class="border-b border-hairline bg-white">
-        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="font-display font-bold text-xl tracking-tight">{{ config('app.name') }}</div>
-            <nav class="flex items-center gap-3">
-                @auth
-                    <a href="{{ route('dashboard') }}" class="text-sm font-medium hover:text-amber transition-colors">Dashboard</a>
+    {{-- App preloader --}}
+    <div class="app-preloader fixed z-50 grid h-full w-full place-content-center bg-slate-50 dark:bg-navy-900">
+        <div class="app-preloader-inner relative inline-block size-48"></div>
+    </div>
+
+    {{-- Page Wrapper --}}
+    <div id="root" class="min-h-100vh flex grow bg-slate-50 dark:bg-navy-900" x-cloak>
+        
+        <main class="w-full flex flex-col items-center">
+            {{-- Header --}}
+            <header class="w-full max-w-5xl mx-auto px-4 py-6 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <div class="flex size-10 items-center justify-center rounded-lg bg-primary text-white dark:bg-accent">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold uppercase tracking-wider text-slate-800 dark:text-navy-50">{{ config('app.name') }}</span>
+                </div>
+                
+                <nav class="flex items-center space-x-3 sm:space-x-4">
+                    @auth
+                        <a href="{{ route('dashboard') }}" class="btn font-medium text-slate-700 hover:text-primary dark:text-navy-100 dark:hover:text-accent">Dashboard</a>
+                    @else
+                        <a href="{{ route('login') }}" class="btn font-medium text-slate-700 hover:text-primary dark:text-navy-100 dark:hover:text-accent">Masuk</a>
+                        <a href="{{ route('register') }}" class="btn border border-slate-300 font-medium text-slate-800 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-50 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90 hidden sm:inline-flex">Daftar Gratis</a>
+                    @endauth
+                </nav>
+            </header>
+
+            {{-- Hero --}}
+            <section class="w-full max-w-4xl mx-auto px-4 py-20 lg:py-32 text-center">
+                <h1 class="text-5xl lg:text-7xl font-bold tracking-tight text-slate-800 dark:text-navy-50 leading-tight mb-6">
+                    Compress, <span class="text-primary dark:text-accent-light">convert,</span> done.
+                </h1>
+                <p class="text-lg text-slate-500 dark:text-navy-300 max-w-xl mx-auto mb-10">
+                    Kumpulan perkakas simpel dan cepat untuk mengelola file Anda sehari-hari tanpa ribet.
+                </p>
+                
+                @guest
+                    <a href="{{ route('register') }}" class="btn bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90 px-8 py-3 text-lg shadow-lg shadow-primary/30">
+                        Daftar Gratis Sekarang
+                    </a>
                 @else
-                    <a href="{{ route('login') }}" class="text-sm font-medium hover:text-amber transition-colors px-3 py-1.5">Masuk</a>
-                    <a href="{{ route('register') }}" class="text-sm font-medium bg-white border border-hairline hover:border-amber rounded-sm px-4 py-1.5 transition-colors">Daftar Gratis</a>
-                @endauth
-            </nav>
-        </div>
-    </header>
+                    <a href="{{ route('dashboard') }}" class="btn bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90 px-8 py-3 text-lg shadow-lg shadow-primary/30">
+                        Buka Dashboard
+                    </a>
+                @endguest
+            </section>
 
-    <!-- Hero -->
-    <main class="grow">
-        <section class="py-20 lg:py-32 px-4 text-center max-w-3xl mx-auto">
-            <h1 class="font-display font-bold text-5xl lg:text-7xl mb-6 tracking-tight text-ink leading-tight">Compress, convert, done.</h1>
-            <p class="text-lg text-ink-muted mb-10 max-w-xl mx-auto">Kumpulan perkakas simpel dan cepat untuk mengelola file Anda sehari-hari tanpa ribet.</p>
-            @guest
-                <a href="{{ route('register') }}" class="inline-block bg-amber text-ink font-bold px-8 py-4 rounded-sm shadow-sm hover:bg-amber/90 transition-colors text-lg">Daftar Gratis Sekarang</a>
-            @else
-                <a href="{{ route('dashboard') }}" class="inline-block bg-amber text-ink font-bold px-8 py-4 rounded-sm shadow-sm hover:bg-amber/90 transition-colors text-lg">Buka Dashboard</a>
-            @endguest
-        </section>
-
-        <!-- Tools Preview -->
-        <section class="py-16 bg-white border-y border-hairline px-4">
-            <div class="max-w-5xl mx-auto">
-                <div class="text-center mb-12">
-                    <h2 class="font-display font-bold text-3xl mb-3">Satu Tempat, Banyak Solusi</h2>
-                    <p class="text-ink-muted">Akses berbagai tools andalan langsung dari browser Anda.</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach (config('tools') as $tool)
-                        <div class="border border-hairline rounded-sm p-6 hover:border-amber transition-colors bg-paper/50 flex flex-col items-center text-center">
-                            <div class="w-12 h-12 bg-white border border-hairline rounded-sm flex items-center justify-center mb-4 text-amber">
-                                <!-- Icon placeholder (Heroicons simplified) -->
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            {{-- Tools Preview --}}
+            <section class="w-full bg-white dark:bg-navy-800 py-20 px-4 border-y border-slate-200 dark:border-navy-600">
+                <div class="max-w-5xl mx-auto">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl font-bold text-slate-800 dark:text-navy-50 mb-4">Satu Tempat, Banyak Solusi</h2>
+                        <p class="text-slate-500 dark:text-navy-300">Akses berbagai tools andalan langsung dari browser Anda.</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach (config('tools') as $tool)
+                            <div class="card p-6 flex flex-col items-center text-center transition-all hover:shadow-lg hover:shadow-primary/10 hover:border-primary/50 dark:hover:border-accent/50 dark:hover:shadow-accent/10 border border-slate-150 dark:border-navy-600">
+                                <div class="mx-auto flex size-14 items-center justify-center rounded-xl bg-primary/10 text-primary mb-5 dark:bg-accent-light/10 dark:text-accent-light">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-semibold text-slate-800 dark:text-navy-50 mb-2">{{ $tool['name'] }}</h3>
+                                <p class="text-sm text-slate-500 dark:text-navy-300">{{ $tool['description'] }}</p>
                             </div>
-                            <h3 class="font-display font-bold text-lg mb-2">{{ $tool['name'] }}</h3>
-                            <p class="text-sm text-ink-muted">{{ $tool['description'] }}</p>
+                        @endforeach
+                    </div>
+                </div>
+            </section>
+
+            {{-- Pricing Mini --}}
+            <section class="w-full max-w-4xl mx-auto px-4 py-24 text-center">
+                <h2 class="text-3xl font-bold text-slate-800 dark:text-navy-50 mb-4">Mulai Gratis, Upgrade Kapan Saja</h2>
+                <p class="text-slate-500 dark:text-navy-300 mb-12">Pilih paket sesuai kebutuhan Anda. Paket Pro untuk akses tanpa batas.</p>
+                
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-6 sm:gap-8">
+                    {{-- Free Tier --}}
+                    <div class="card w-full sm:w-64 p-8">
+                        <div class="text-lg font-semibold text-slate-700 dark:text-navy-100 mb-2">Free</div>
+                        <div class="text-4xl font-bold text-slate-800 dark:text-navy-50 mb-4 tracking-tight">Rp 0</div>
+                        <p class="text-sm text-slate-500 dark:text-navy-300">Batasan penggunaan harian.</p>
+                    </div>
+                    
+                    {{-- Pro Tier --}}
+                    <div class="card w-full sm:w-64 p-8 border-2 border-primary dark:border-accent shadow-lg shadow-primary/20 relative">
+                        <div class="absolute -top-4 left-1/2 -translate-x-1/2">
+                            <div class="badge rounded-full bg-primary text-white dark:bg-accent px-4 py-1.5 font-bold tracking-wider text-xs">
+                                PRO
+                            </div>
                         </div>
-                    @endforeach
+                        <div class="text-lg font-semibold text-primary dark:text-accent-light mb-2">Unlimited</div>
+                        <div class="flex items-baseline justify-center text-slate-800 dark:text-navy-50 mb-4">
+                            <span class="text-4xl font-bold tracking-tight">Rp 49K</span>
+                            <span class="ml-1 text-sm text-slate-500 dark:text-navy-300 font-medium">/30hr</span>
+                        </div>
+                        <p class="text-sm text-slate-500 dark:text-navy-300">Akses semua fitur tanpa batas.</p>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- Pricing Mini -->
-        <section class="py-20 px-4 max-w-3xl mx-auto text-center">
-            <h2 class="font-display font-bold text-3xl mb-4">Mulai Gratis, Upgrade Kapan Saja</h2>
-            <p class="text-ink-muted mb-8">Pilih paket sesuai kebutuhan Anda. Paket Pro untuk akses tanpa batas.</p>
-            <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
-                <div class="border border-hairline bg-white p-6 rounded-sm w-full sm:w-64">
-                    <div class="font-bold mb-2">Free</div>
-                    <div class="font-mono text-2xl mb-4">Rp 0</div>
-                    <p class="text-xs text-ink-muted">Batasan penggunaan harian.</p>
-                </div>
-                <div class="border border-amber bg-white p-6 rounded-sm w-full sm:w-64 relative shadow-sm">
-                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber text-xs font-bold px-3 py-1">PRO</div>
-                    <div class="font-bold mb-2">Unlimited</div>
-                    <div class="font-mono text-2xl mb-4">Rp 49K<span class="text-xs text-ink-muted font-sans">/30hr</span></div>
-                    <p class="text-xs text-ink-muted">Akses semua fitur tanpa batas.</p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="border-t border-hairline py-8 bg-white text-center">
-        <p class="font-mono text-xs text-slate-500">&copy; {{ date('Y') }} {{ config('app.name') }}.</p>
-    </footer>
+            {{-- Footer --}}
+            <footer class="w-full border-t border-slate-200 dark:border-navy-600 bg-white dark:bg-navy-800 py-8 text-center mt-auto">
+                <p class="text-sm text-slate-500 dark:text-navy-300">&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
+            </footer>
+        </main>
+    </div>
 
 </body>
 </html>

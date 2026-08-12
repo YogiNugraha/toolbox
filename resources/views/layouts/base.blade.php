@@ -1,17 +1,4 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', config('app.name'))</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @livewireStyles
-</head>
-<body class="bg-paper text-ink font-sans antialiased min-h-screen">
+<x-base-layout>
     {{ $slot ?? '' }}
     @yield('content')
-    
-    @livewireScripts
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</body>
-</html>
+</x-base-layout>

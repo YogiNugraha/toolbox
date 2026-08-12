@@ -1,38 +1,72 @@
-<div class="min-h-screen flex font-sans">
-  <!-- Panel kiri: brand, disembunyikan di mobile -->
-  <div class="hidden lg:flex w-1/2 bg-ink text-white flex-col justify-between p-12">
-    <span class="font-display font-bold text-xl"><a href="/">{{ config('app.name') }}</a></span>
-    <div>
-      <p class="font-display text-4xl font-bold mb-3 leading-tight">Lupa Password?</p>
-      <p class="text-slate-400 text-sm">Jangan khawatir, kami akan membantu memulihkan akses Anda.</p>
+<div class="flex w-full grow">
+    <div class="fixed top-0 hidden p-6 lg:block lg:px-12">
+        <a href="/" class="flex items-center space-x-2">
+            <img class="size-12" src="{{ asset('images/app-logo.svg') }}" alt="logo" />
+            <p class="text-xl font-semibold uppercase text-slate-700 dark:text-navy-100">
+                {{ config('app.name') }}
+            </p>
+        </a>
     </div>
-    <p class="font-mono text-xs text-slate-500">© {{ date('Y') }} {{ config('app.name') }}</p>
-  </div>
-
-  <!-- Panel kanan: form -->
-  <div class="w-full lg:w-1/2 flex items-center justify-center bg-paper p-8">
-    <div class="w-full max-w-sm">
-      <h1 class="font-display font-bold text-3xl text-ink mb-1">Reset Password</h1>
-      <p class="text-ink-muted text-sm mb-8">Masukkan email yang terdaftar untuk menerima link reset password.</p>
-
-      <form wire:submit="sendResetLink" x-data="{ cooldown: 0 }" x-on:cooldown-start.window="cooldown = $event.detail.seconds; let t = setInterval(() => { cooldown--; if (cooldown <= 0) clearInterval(t); }, 1000);">
-        <label for="email" class="text-xs font-mono uppercase text-ink-muted tracking-wide">Email</label>
-        <input type="email" id="email" wire:model="email" class="w-full border border-hairline rounded-sm px-4 py-2.5 text-sm mb-2 mt-1 focus:outline-none focus:border-amber focus:ring-1 focus:ring-amber bg-white" required>
-        @error('email') <span class="text-red-500 text-xs block mb-4">{{ $message }}</span> @enderror
-        @if(!$errors->has('email')) <div class="mb-4"></div> @endif
-
-        <button type="submit" 
-                x-bind:disabled="cooldown > 0"
-                class="w-full bg-amber text-ink font-medium py-3 rounded-sm hover:bg-amber/90 transition-colors shadow-sm mb-4 disabled:opacity-50 disabled:cursor-not-allowed">
-            <span wire:loading.remove wire:target="sendResetLink" x-show="cooldown === 0">Kirim Link Reset</span>
-            <span wire:loading wire:target="sendResetLink">Mengirim...</span>
-            <span wire:loading.remove wire:target="sendResetLink" x-show="cooldown > 0" x-text="'Terkirim — Kirim Ulang (' + cooldown + 's)'" style="display: none;"></span>
-        </button>
-      </form>
-      
-      <p class="text-center text-sm text-ink-muted mt-8">
-        Ingat password Anda? <a href="{{ route('login') }}" class="text-steel font-medium hover:text-amber transition-colors">Kembali ke Login</a>
-      </p>
+    <div class="hidden w-full place-items-center lg:grid">
+        <div class="w-full max-w-lg p-6">
+            <img class="w-full" x-show="!$store.global.isDarkModeEnabled"
+                src="{{ asset('images/illustrations/dashboard-check.svg') }}" alt="image" />
+            <img class="w-full" x-show="$store.global.isDarkModeEnabled"
+                src="{{ asset('images/illustrations/dashboard-check-dark.svg') }}" alt="image" />
+        </div>
     </div>
-  </div>
+    <main class="flex w-full flex-col items-center bg-white dark:bg-navy-700 lg:max-w-md">
+        <div class="flex w-full max-w-sm grow flex-col justify-center p-5">
+            <div class="text-center">
+                <img class="mx-auto size-16 lg:hidden" src="{{ asset('images/app-logo.svg') }}" alt="logo" />
+                <div class="mt-4">
+                    <h2 class="text-2xl font-semibold text-slate-600 dark:text-navy-100">
+                        Lupa Password?
+                    </h2>
+                    <p class="text-slate-400 dark:text-navy-300">
+                        Masukkan email Anda untuk menerima link reset
+                    </p>
+                </div>
+            </div>
+
+            <form class="mt-10" wire:submit="sendResetLink"
+                x-data="{ cooldown: 0 }"
+                x-on:cooldown-start.window="cooldown = $event.detail.seconds; let t = setInterval(() => { cooldown--; if (cooldown <= 0) clearInterval(t); }, 1000);">
+                <div>
+                    <label class="relative flex">
+                        <input wire:model="email"
+                            class="form-input peer w-full rounded-lg bg-slate-150 px-3 py-2 pl-9 ring-primary/50 placeholder:text-slate-400 hover:bg-slate-200 focus:ring-3 dark:bg-navy-900/90 dark:ring-accent/50 dark:placeholder:text-navy-300 dark:hover:bg-navy-900 dark:focus:bg-navy-900"
+                            placeholder="Email terdaftar" type="email" required />
+                        <span class="pointer-events-none absolute flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </span>
+                    </label>
+                    @error('email')
+                        <span class="text-tiny-plus text-error">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <button type="submit"
+                    x-bind:disabled="cooldown > 0"
+                    class="btn mt-10 h-10 w-full bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span wire:loading.remove wire:target="sendResetLink" x-show="cooldown === 0">Kirim Link Reset</span>
+                    <span wire:loading wire:target="sendResetLink">Mengirim...</span>
+                    <span wire:loading.remove wire:target="sendResetLink" x-show="cooldown > 0" x-text="'Terkirim — Kirim Ulang (' + cooldown + 's)'" style="display: none;"></span>
+                </button>
+            </form>
+
+            <div class="mt-4 text-center text-xs-plus">
+                <p class="line-clamp-1">
+                    <span>Ingat password Anda?</span>
+                    <a class="text-primary transition-colors hover:text-primary-focus dark:text-accent-light dark:hover:text-accent"
+                        href="{{ route('login') }}">Kembali ke Login</a>
+                </p>
+            </div>
+        </div>
+        <div class="my-5 flex justify-center text-xs text-slate-400 dark:text-navy-300">
+            <span>&copy; {{ date('Y') }} {{ config('app.name') }}</span>
+        </div>
+    </main>
 </div>

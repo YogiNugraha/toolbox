@@ -1,53 +1,119 @@
-<div class="min-h-screen flex font-sans">
-  <!-- Panel kiri: brand, disembunyikan di mobile -->
-  <div class="hidden lg:flex w-1/2 bg-ink text-white flex-col justify-between p-12">
-    <span class="font-display font-bold text-xl"><a href="/">{{ config('app.name') }}</a></span>
-    <div>
-      <p class="font-display text-4xl font-bold mb-3 leading-tight">Mulai lebih cepat.</p>
-      <p class="text-slate-400 text-sm">Bergabunglah dengan ribuan pengguna {{ config('app.name') }} lainnya.</p>
+<div class="flex w-full grow">
+    <div class="fixed top-0 hidden p-6 lg:block lg:px-12">
+        <a href="/" class="flex items-center space-x-2">
+            <img class="size-12" src="{{ asset('images/app-logo.svg') }}" alt="logo" />
+            <p class="text-xl font-semibold uppercase text-slate-700 dark:text-navy-100">
+                {{ config('app.name') }}
+            </p>
+        </a>
     </div>
-    <p class="font-mono text-xs text-slate-500">© {{ date('Y') }} {{ config('app.name') }}</p>
-  </div>
-
-  <!-- Panel kanan: form -->
-  <div class="w-full lg:w-1/2 flex items-center justify-center bg-paper p-8">
-    <div class="w-full max-w-sm">
-      <h1 class="font-display font-bold text-3xl text-ink mb-1">Daftar Akun</h1>
-      <p class="text-ink-muted text-sm mb-8">Buat akun gratis Anda sekarang</p>
-
-      <form wire:submit="register">
-        <label for="name" class="text-xs font-mono uppercase text-ink-muted tracking-wide">Nama</label>
-        <input type="text" id="name" wire:model="name" class="w-full border border-hairline rounded-sm px-4 py-2.5 text-sm mb-2 mt-1 focus:outline-none focus:border-amber focus:ring-1 focus:ring-amber bg-white" required>
-        @error('name') <span class="text-red-500 text-xs block mb-4">{{ $message }}</span> @enderror
-        @if(!$errors->has('name')) <div class="mb-4"></div> @endif
-
-        <label for="email" class="text-xs font-mono uppercase text-ink-muted tracking-wide">Email</label>
-        <div class="relative">
-            <input type="email" id="email" wire:model.blur="email" class="w-full border rounded-sm px-4 py-2.5 text-sm mb-2 mt-1 focus:outline-none bg-white {{ $errors->has('email') ? 'border-red-300' : ($emailValid ? 'border-green-300' : 'border-hairline focus:border-amber focus:ring-1 focus:ring-amber') }}" required>
-            <span wire:loading wire:target="email" class="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted text-xs font-mono">
-                Memeriksa...
-            </span>
-            @if($emailValid)
-                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-green-600">✓</span>
-            @endif
+    <div class="hidden w-full place-items-center lg:grid">
+        <div class="w-full max-w-lg p-6">
+            <img class="w-full" x-show="!$store.global.isDarkModeEnabled"
+                src="{{ asset('images/illustrations/dashboard-meet.svg') }}" alt="image" />
+            <img class="w-full" x-show="$store.global.isDarkModeEnabled"
+                src="{{ asset('images/illustrations/dashboard-meet-dark.svg') }}" alt="image" />
         </div>
-        @error('email') <span class="text-red-500 text-xs block mb-4">{{ $message }}</span> @enderror
-        @if(!$errors->has('email')) <div class="mb-4"></div> @endif
-
-        <label for="password" class="text-xs font-mono uppercase text-ink-muted tracking-wide">Password</label>
-        <input type="password" id="password" wire:model="password" class="w-full border border-hairline rounded-sm px-4 py-2.5 text-sm mb-2 mt-1 focus:outline-none focus:border-amber focus:ring-1 focus:ring-amber bg-white" required>
-        @error('password') <span class="text-red-500 text-xs block mb-4">{{ $message }}</span> @enderror
-        @if(!$errors->has('password')) <div class="mb-4"></div> @endif
-
-        <label for="password_confirmation" class="text-xs font-mono uppercase text-ink-muted tracking-wide">Konfirmasi Password</label>
-        <input type="password" id="password_confirmation" wire:model="password_confirmation" class="w-full border border-hairline rounded-sm px-4 py-2.5 text-sm mb-8 mt-1 focus:outline-none focus:border-amber focus:ring-1 focus:ring-amber bg-white" required>
-
-        <button type="submit" class="w-full bg-amber text-ink font-medium py-3 rounded-sm hover:bg-amber/90 transition-colors shadow-sm">Daftar</button>
-      </form>
-      
-      <p class="text-center text-sm text-ink-muted mt-8">
-        Sudah punya akun? <a href="{{ route('login') }}" class="text-steel font-medium hover:text-amber transition-colors">Login</a>
-      </p>
     </div>
-  </div>
+    <main class="flex w-full flex-col items-center bg-white dark:bg-navy-700 lg:max-w-md">
+        <div class="flex w-full max-w-sm grow flex-col justify-center p-5">
+            <div class="text-center">
+                <img class="mx-auto size-16 lg:hidden" src="{{ asset('images/app-logo.svg') }}" alt="logo" />
+                <div class="mt-4">
+                    <h2 class="text-2xl font-semibold text-slate-600 dark:text-navy-100">
+                        Daftar Akun
+                    </h2>
+                    <p class="text-slate-400 dark:text-navy-300">
+                        Buat akun gratis Anda sekarang
+                    </p>
+                </div>
+            </div>
+
+            <form class="mt-10" wire:submit="register">
+                <div>
+                    <label class="relative flex">
+                        <input wire:model="name"
+                            class="form-input peer w-full rounded-lg bg-slate-150 px-3 py-2 pl-9 ring-primary/50 placeholder:text-slate-400 hover:bg-slate-200 focus:ring-3 dark:bg-navy-900/90 dark:ring-accent/50 dark:placeholder:text-navy-300 dark:hover:bg-navy-900 dark:focus:bg-navy-900"
+                            placeholder="Nama Lengkap" type="text" required />
+                        <span class="pointer-events-none absolute flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                            </svg>
+                        </span>
+                    </label>
+                    @error('name')
+                        <span class="text-tiny-plus text-error">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="mt-4">
+                    <label class="relative flex">
+                        <input wire:model.blur="email"
+                            class="form-input peer w-full rounded-lg bg-slate-150 px-3 py-2 pl-9 ring-primary/50 placeholder:text-slate-400 hover:bg-slate-200 focus:ring-3 dark:bg-navy-900/90 dark:ring-accent/50 dark:placeholder:text-navy-300 dark:hover:bg-navy-900 dark:focus:bg-navy-900"
+                            placeholder="Email" type="email" required />
+                        <span class="pointer-events-none absolute flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </span>
+                        <span wire:loading wire:target="email" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
+                            Memeriksa...
+                        </span>
+                        @if($emailValid)
+                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-success">
+                                <svg class="size-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            </span>
+                        @endif
+                    </label>
+                    @error('email')
+                        <span class="text-tiny-plus text-error">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="mt-4">
+                    <label class="relative flex">
+                        <input wire:model="password"
+                            class="form-input peer w-full rounded-lg bg-slate-150 px-3 py-2 pl-9 ring-primary/50 placeholder:text-slate-400 hover:bg-slate-200 focus:ring-3 dark:bg-navy-900/90 dark:ring-accent/50 dark:placeholder:text-navy-300 dark:hover:bg-navy-900 dark:focus:bg-navy-900"
+                            placeholder="Password" type="password" required />
+                        <span class="pointer-events-none absolute flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </span>
+                    </label>
+                    @error('password')
+                        <span class="text-tiny-plus text-error">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="mt-4">
+                    <label class="relative flex">
+                        <input wire:model="password_confirmation"
+                            class="form-input peer w-full rounded-lg bg-slate-150 px-3 py-2 pl-9 ring-primary/50 placeholder:text-slate-400 hover:bg-slate-200 focus:ring-3 dark:bg-navy-900/90 dark:ring-accent/50 dark:placeholder:text-navy-300 dark:hover:bg-navy-900 dark:focus:bg-navy-900"
+                            placeholder="Konfirmasi Password" type="password" required />
+                        <span class="pointer-events-none absolute flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                            </svg>
+                        </span>
+                    </label>
+                </div>
+
+                <button type="submit"
+                    class="btn mt-10 h-10 w-full bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
+                    Daftar
+                </button>
+                <div class="mt-4 text-center text-xs-plus">
+                    <p class="line-clamp-1">
+                        <span>Sudah punya akun?</span>
+                        <a class="text-primary transition-colors hover:text-primary-focus dark:text-accent-light dark:hover:text-accent"
+                            href="{{ route('login') }}">Login</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+        <div class="my-5 flex justify-center text-xs text-slate-400 dark:text-navy-300">
+            <span>&copy; {{ date('Y') }} {{ config('app.name') }}</span>
+        </div>
+    </main>
 </div>

@@ -1,45 +1,35 @@
-@extends('layouts.base')
-
-@section('content')
-<div class="min-h-screen flex font-sans">
-  <!-- Panel kiri: brand, disembunyikan di mobile -->
-  <div class="hidden lg:flex w-1/2 bg-ink text-white flex-col justify-between p-12">
-    <span class="font-display font-bold text-xl"><a href="/">{{ config('app.name') }}</a></span>
-    <div>
-      <p class="font-display text-4xl font-bold mb-3 leading-tight">Berhasil.</p>
-      <p class="text-slate-400 text-sm">Akun Anda siap digunakan sepenuhnya.</p>
+<div class="flex w-full grow">
+    <div class="hidden w-full place-items-center lg:grid">
+        <div class="w-full max-w-lg p-6">
+            <img class="w-full" src="{{ asset('images/illustrations/dashboard-check.svg') }}" alt="image" />
+        </div>
     </div>
-    <p class="font-mono text-xs text-slate-500">© {{ date('Y') }} {{ config('app.name') }}</p>
-  </div>
-
-  <!-- Panel kanan: message -->
-  <div class="w-full lg:w-1/2 flex items-center justify-center bg-paper p-8">
-    <div
-        class="text-center max-w-sm mx-auto"
-        x-data="{ seconds: 5 }"
-        x-init="
-            const t = setInterval(() => {
-                seconds--;
-                if (seconds <= 0) { clearInterval(t); window.location.href = '{{ route('dashboard') }}'; }
-            }, 1000);
-         "
-    >
-        <div class="text-green-600 text-4xl mb-4">✓</div>
-        <h1 class="font-display font-bold text-2xl text-ink mb-2">
-            Verifikasi Berhasil!
-        </h1>
-        <p class="text-ink-muted text-sm mb-6">
-            Email kamu sudah terverifikasi. Diarahkan otomatis dalam
-            <span x-text="seconds" class="font-mono font-medium text-ink"></span>
-            detik.
-        </p>
-        <a
-            href="{{ route('dashboard') }}"
-            class="bg-amber text-ink font-medium px-6 py-2.5 rounded-sm inline-block shadow-sm hover:bg-amber/90 transition-colors"
-        >
-            Ke Dashboard Sekarang
-        </a>
-    </div>
-  </div>
+    <main class="flex w-full flex-col items-center bg-white dark:bg-navy-700 lg:max-w-md">
+        <div class="flex w-full max-w-sm grow flex-col items-center justify-center p-5"
+            x-data="{ seconds: 5 }"
+            x-init="
+                const t = setInterval(() => {
+                    seconds--;
+                    if (seconds <= 0) { clearInterval(t); window.location.href = '{{ route('dashboard') }}'; }
+                }, 1000);
+            ">
+            <div class="text-center">
+                <div class="mx-auto flex size-20 items-center justify-center rounded-full bg-success/10">
+                    <svg class="size-10 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h2 class="mt-5 text-2xl font-semibold text-slate-600 dark:text-navy-100">Verifikasi Berhasil!</h2>
+                <p class="mt-2 text-slate-400 dark:text-navy-300">
+                    Email kamu sudah terverifikasi. Diarahkan otomatis dalam
+                    <span x-text="seconds" class="font-semibold text-slate-600 dark:text-navy-100"></span>
+                    detik.
+                </p>
+                <a href="{{ route('dashboard') }}"
+                    class="btn mt-8 bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
+                    Ke Dashboard Sekarang
+                </a>
+            </div>
+        </div>
+    </main>
 </div>
-@endsection
