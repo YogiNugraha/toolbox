@@ -17,51 +17,43 @@
             const list = [...new Set(this.tools.map(t => t.category))];
             return list;
         }
-    }" class="w-full min-h-screen flex flex-col justify-between">
+    }" class="w-full min-h-screen flex flex-col justify-between bg-slate-50 dark:bg-navy-900 transition-colors duration-300">
 
-        {{-- Background Glow Decorators --}}
-        <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
-            <div class="absolute -top-40 -left-40 size-96 rounded-full bg-primary/10 blur-3xl dark:bg-accent/10"></div>
-            <div class="absolute top-1/3 -right-40 size-96 rounded-full bg-indigo-500/10 blur-3xl dark:bg-accent-light/10"></div>
-            <div class="absolute -bottom-40 left-1/3 size-96 rounded-full bg-primary/5 blur-3xl dark:bg-accent/5"></div>
-        </div>
-
-        <div class="relative z-10 w-full">
-            {{-- Navigation Header --}}
-            <header class="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/80 backdrop-blur-md dark:border-navy-700/80 dark:bg-navy-900/80 transition-colors duration-300">
+        <div class="relative w-full">
+            {{-- Navigation Header (Lineone Starter Blurred Header Style) --}}
+            <header class="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/90 backdrop-blur-md dark:border-navy-700/80 dark:bg-navy-900/90 transition-colors duration-300">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
-                    {{-- Brand Logo --}}
+                    {{-- Brand Logo (Lineone Squircle) --}}
                     <a href="{{ route('home') }}" class="flex items-center space-x-3 group">
-                        <div class="mask is-squircle flex size-10 items-center justify-center bg-gradient-to-tr from-primary to-primary-focus text-white shadow-md shadow-primary/30 transition-transform group-hover:scale-105 dark:from-accent dark:to-accent-focus dark:shadow-accent/30">
+                        <div class="mask is-squircle flex size-10 items-center justify-center bg-primary text-white shadow-md shadow-primary/20 dark:bg-accent dark:shadow-accent/20">
                             <svg xmlns="http://www.w3.org/2000/svg" class="size-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-lg font-bold tracking-tight text-slate-800 dark:text-navy-50 uppercase leading-none">
+                            <span class="text-base sm:text-lg font-bold tracking-tight text-slate-800 dark:text-navy-50 uppercase leading-none">
                                 {{ config('app.name') }}
                             </span>
-                            <span class="text-[10px] font-medium tracking-widest text-slate-400 dark:text-navy-300 uppercase">
+                            <span class="text-[10px] font-semibold tracking-widest text-slate-400 dark:text-navy-300 uppercase mt-0.5">
                                 Online Web Tools
                             </span>
                         </div>
                     </a>
 
                     {{-- Navigation Links (Desktop) --}}
-                    <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600 dark:text-navy-200">
-                        <a href="#tools-section" class="hover:text-primary dark:hover:text-accent-light transition-colors">Semua Tools</a>
-                        <a href="#how-it-works" class="hover:text-primary dark:hover:text-accent-light transition-colors">Cara Kerja</a>
+                    <nav class="hidden md:flex items-center space-x-6 lg:space-x-8 text-xs font-semibold text-slate-600 dark:text-navy-200">
+                        <a href="#tools-section" class="hover:text-primary dark:hover:text-accent-light transition-colors">Katalog Tools</a>
                         <a href="#features-section" class="hover:text-primary dark:hover:text-accent-light transition-colors">Keunggulan</a>
                         <a href="#pricing-section" class="hover:text-primary dark:hover:text-accent-light transition-colors">Paket & Harga</a>
                         <a href="#faq-section" class="hover:text-primary dark:hover:text-accent-light transition-colors">FAQ</a>
                     </nav>
 
-                    {{-- Right Actions: Dark Mode & Auth --}}
+                    {{-- Right Actions: Dark Mode Switcher & Auth Buttons --}}
                     <div class="flex items-center space-x-3 sm:space-x-4">
                         {{-- Dark Mode Switcher --}}
                         <button 
                             @click="$store.global.isDarkModeEnabled = !$store.global.isDarkModeEnabled"
-                            class="btn size-9 rounded-full p-0 text-slate-500 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:text-navy-200 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 transition-colors"
+                            class="btn size-9 rounded-full p-0 text-slate-500 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:text-navy-200 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 transition-colors"
                             aria-label="Toggle Dark Mode"
                             x-tooltip="'Toggle Dark Mode'">
                             {{-- Sun Icon for Dark Mode --}}
@@ -75,325 +67,317 @@
                         </button>
 
                         @auth
-                            <a href="{{ route('dashboard') }}" class="btn space-x-2 bg-primary font-medium text-white shadow-lg shadow-primary/30 hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:shadow-accent/30 dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90 h-9 px-4 rounded-lg">
+                            <a href="{{ route('dashboard') }}" class="btn h-9 rounded-full bg-primary px-4 text-xs font-semibold text-white shadow-md shadow-primary/30 hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus dark:shadow-accent/30 space-x-1.5">
                                 <span>Dashboard</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                 </svg>
                             </a>
                         @else
-                            <a href="{{ route('login') }}" class="btn font-medium text-slate-700 hover:text-primary dark:text-navy-100 dark:hover:text-accent-light px-3 text-sm">
+                            <a href="{{ route('login') }}" class="btn h-9 rounded-full px-3.5 text-xs font-semibold text-slate-700 hover:text-primary dark:text-navy-100 dark:hover:text-accent-light">
                                 Masuk
                             </a>
-                            <a href="{{ route('register') }}" class="btn space-x-1.5 bg-primary font-medium text-white shadow-lg shadow-primary/30 hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:shadow-accent/30 dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90 h-9 px-4 rounded-lg hidden sm:inline-flex text-sm">
+                            <a href="{{ route('register') }}" class="btn h-9 rounded-full bg-primary px-4 text-xs font-semibold text-white shadow-md shadow-primary/30 hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus dark:shadow-accent/30 hidden sm:inline-flex space-x-1">
                                 <span>Daftar Gratis</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                </svg>
                             </a>
                         @endauth
                     </div>
                 </div>
             </header>
 
-            {{-- Hero Section --}}
-            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 lg:pt-20 lg:pb-24 text-center">
-                {{-- Announcement Pill Badge --}}
-                <div class="inline-flex items-center space-x-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-semibold text-primary dark:border-accent/20 dark:bg-accent/10 dark:text-accent-light mb-8 animate-pulse">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                    </svg>
-                    <span>Platform Pengolah File Serbaguna & Cepat</span>
+            {{-- Hero Banner (Lineone Teacher / Onboarding Banner Style) --}}
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 lg:pt-12 lg:pb-16">
+                <div class="card relative overflow-hidden bg-gradient-to-l from-pink-200 via-indigo-100 to-indigo-200 dark:from-navy-700 dark:via-navy-800 dark:to-navy-900 p-6 sm:p-10 lg:p-12">
+                    <div class="grid grid-cols-12 gap-6 items-center">
+                        <div class="col-span-12 lg:col-span-7 space-y-4 text-center lg:text-left">
+                            <div class="inline-flex items-center space-x-2 rounded-full bg-white/80 px-3.5 py-1 text-xs font-semibold text-primary shadow-xs backdrop-blur-xs dark:bg-navy-800/80 dark:text-accent-light">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                                <span>Platform Produktivitas & Pengolah Dokumen</span>
+                            </div>
+
+                            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-800 dark:text-navy-50 leading-tight">
+                                Compress, Convert & Olah File <span class="text-primary dark:text-accent-light">Online Cepat.</span>
+                            </h1>
+
+                            <p class="text-xs sm:text-sm lg:text-base text-slate-600 dark:text-navy-200 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                                Solusi lengkap kompresi foto, konversi format gambar, hingga pengubahan dokumen PDF ke Word secara instan langsung di browser Anda.
+                            </p>
+
+                            {{-- Lineone Search Bar --}}
+                            <div class="pt-2 max-w-lg mx-auto lg:mx-0">
+                                <div class="relative flex items-center">
+                                    <input 
+                                        x-model="search" 
+                                        type="text" 
+                                        placeholder="Cari tool (contoh: Compress Gambar, PDF to Word)..."
+                                        class="form-input h-11 w-full rounded-full border border-slate-300 bg-white px-4 pl-10 pr-24 text-xs placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-500 dark:bg-navy-800 dark:text-navy-50 dark:placeholder:text-navy-400 dark:hover:border-navy-400 dark:focus:border-accent shadow-sm" />
+                                    <span class="pointer-events-none absolute left-3.5 flex items-center justify-center text-slate-400 dark:text-navy-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                        </svg>
+                                    </span>
+                                    <a href="#tools-section" class="absolute right-1.5 btn h-8 rounded-full bg-primary px-3.5 font-semibold text-white shadow-sm hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs">
+                                        Cari
+                                    </a>
+                                </div>
+                            </div>
+
+                            {{-- Action Buttons --}}
+                            <div class="pt-3 flex flex-wrap items-center justify-center lg:justify-start gap-3">
+                                <a href="#tools-section" class="btn rounded-full bg-primary px-6 py-2.5 text-xs font-bold text-white shadow-md shadow-primary/30 hover:bg-primary-focus dark:bg-accent dark:shadow-accent/30 dark:hover:bg-accent-focus space-x-2">
+                                    <span>Jelajahi Semua Tools</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                                    </svg>
+                                </a>
+                                @guest
+                                    <a href="{{ route('register') }}" class="btn rounded-full border border-slate-300 bg-white/80 px-6 py-2.5 text-xs font-semibold text-slate-700 hover:bg-white dark:border-navy-500 dark:bg-navy-800/80 dark:text-navy-100 dark:hover:bg-navy-700 shadow-xs">
+                                        Daftar Gratis
+                                    </a>
+                                @endguest
+                            </div>
+                        </div>
+
+                        {{-- Right Illustration (Lineone user-laptop illustration) --}}
+                        <div class="col-span-12 lg:col-span-5 flex justify-center lg:justify-end">
+                            <img class="w-72 sm:w-80 lg:w-96 drop-shadow-md" src="{{ asset('images/illustrations/user-laptop.svg') }}" alt="Ilustrasi Pengolah File" />
+                        </div>
+                    </div>
                 </div>
 
-                {{-- Main Headline --}}
-                <h1 class="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight text-slate-800 dark:text-navy-50 leading-tight max-w-4xl mx-auto mb-6">
-                    Compress, Convert, & Kelola File
-                    <span class="bg-gradient-to-r from-primary via-indigo-500 to-accent bg-clip-text text-transparent dark:from-accent-light dark:via-indigo-400 dark:to-primary">Tanpa Ribet.</span>
-                </h1>
-
-                {{-- Subtitle --}}
-                <p class="text-base sm:text-lg lg:text-xl text-slate-600 dark:text-navy-200 max-w-2xl mx-auto mb-10 leading-relaxed">
-                    Satu tempat untuk segala kebutuhan kompresi gambar, konversi dokumen, dan pengolahan file instan langsung di browser dengan kualitas maksimal.
-                </p>
-
-                {{-- Hero Search Bar --}}
-                <div class="max-w-xl mx-auto mb-10">
-                    <div class="relative flex items-center shadow-lg shadow-slate-200/50 dark:shadow-navy-900/50 rounded-full">
-                        <input 
-                            x-model="search" 
-                            type="text" 
-                            placeholder="Cari tool (contoh: Compress Gambar, PDF to Word)..."
-                            class="form-input h-14 w-full rounded-full border border-slate-300 bg-white px-5 py-3 pl-12 pr-28 text-sm placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-500 dark:bg-navy-800 dark:text-navy-50 dark:placeholder:text-navy-400 dark:hover:border-navy-400 dark:focus:border-accent transition-colors" />
-                        <span class="pointer-events-none absolute left-4 flex items-center justify-center text-slate-400 dark:text-navy-300">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                {{-- 4 Metric Cards (Lineone Squircle Stat Card Style) --}}
+                <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-5">
+                    <div class="card p-4 sm:p-5 flex items-center space-x-3.5">
+                        <div class="mask is-squircle flex size-11 shrink-0 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                             </svg>
-                        </span>
-                        <a href="#tools-section" class="absolute right-2 btn h-10 rounded-full bg-primary px-4 font-medium text-white shadow-md hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus text-xs sm:text-sm">
-                            Cari
-                        </a>
+                        </div>
+                        <div>
+                            <p class="text-lg sm:text-xl font-extrabold text-slate-800 dark:text-navy-100">{{ count($tools) }}+ Tools</p>
+                            <p class="text-[11px] text-slate-400 dark:text-navy-300 font-medium">Tersedia online</p>
+                        </div>
                     </div>
-                </div>
 
-                {{-- Quick Action Buttons --}}
-                <div class="flex flex-wrap items-center justify-center gap-4">
-                    <a href="#tools-section" class="btn space-x-2 bg-primary px-7 py-3 text-base font-semibold text-white shadow-lg shadow-primary/30 hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:shadow-accent/30 dark:hover:bg-accent-focus dark:focus:bg-accent-focus rounded-xl">
-                        <span>Jelajahi Semua Tools</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                        </svg>
-                    </a>
-                    @guest
-                        <a href="{{ route('register') }}" class="btn border border-slate-300 bg-white px-7 py-3 text-base font-semibold text-slate-700 hover:bg-slate-50 focus:bg-slate-50 active:bg-slate-100 dark:border-navy-500 dark:bg-navy-800 dark:text-navy-100 dark:hover:bg-navy-700 rounded-xl shadow-sm">
-                            Daftar Akun Gratis
-                        </a>
-                    @endguest
-                </div>
+                    <div class="card p-4 sm:p-5 flex items-center space-x-3.5">
+                        <div class="mask is-squircle flex size-11 shrink-0 items-center justify-center bg-success/10 text-success">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-lg sm:text-xl font-extrabold text-slate-800 dark:text-navy-100">100% Aman</p>
+                            <p class="text-[11px] text-slate-400 dark:text-navy-300 font-medium">Privasi terenkripsi</p>
+                        </div>
+                    </div>
 
-                {{-- Trust Stats / Badges --}}
-                <div class="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6 max-w-4xl mx-auto">
-                    <div class="card p-4 text-center border border-slate-150 dark:border-navy-700">
-                        <div class="text-2xl sm:text-3xl font-bold text-primary dark:text-accent-light">{{ count($tools) }}+</div>
-                        <div class="mt-1 text-xs text-slate-500 dark:text-navy-300 font-medium">Tools Tersedia</div>
+                    <div class="card p-4 sm:p-5 flex items-center space-x-3.5">
+                        <div class="mask is-squircle flex size-11 shrink-0 items-center justify-center bg-info/10 text-info">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-lg sm:text-xl font-extrabold text-slate-800 dark:text-navy-100">Instan</p>
+                            <p class="text-[11px] text-slate-400 dark:text-navy-300 font-medium">Proses hitungan detik</p>
+                        </div>
                     </div>
-                    <div class="card p-4 text-center border border-slate-150 dark:border-navy-700">
-                        <div class="text-2xl sm:text-3xl font-bold text-success">100%</div>
-                        <div class="mt-1 text-xs text-slate-500 dark:text-navy-300 font-medium">Aman & Privat</div>
-                    </div>
-                    <div class="card p-4 text-center border border-slate-150 dark:border-navy-700">
-                        <div class="text-2xl sm:text-3xl font-bold text-info">Instant</div>
-                        <div class="mt-1 text-xs text-slate-500 dark:text-navy-300 font-medium">Pemrosesan Cepat</div>
-                    </div>
-                    <div class="card p-4 text-center border border-slate-150 dark:border-navy-700">
-                        <div class="text-2xl sm:text-3xl font-bold text-warning">24/7</div>
-                        <div class="mt-1 text-xs text-slate-500 dark:text-navy-300 font-medium">Akses Kapan Saja</div>
+
+                    <div class="card p-4 sm:p-5 flex items-center space-x-3.5">
+                        <div class="mask is-squircle flex size-11 shrink-0 items-center justify-center bg-warning/10 text-warning">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-lg sm:text-xl font-extrabold text-slate-800 dark:text-navy-100">Akses 24/7</p>
+                            <p class="text-[11px] text-slate-400 dark:text-navy-300 font-medium">Tanpa instalasi</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            {{-- Tools Directory Section --}}
-            <section id="tools-section" class="w-full bg-slate-100/70 dark:bg-navy-800/60 py-16 lg:py-24 border-y border-slate-200 dark:border-navy-700">
+            {{-- Tools Directory Section (Lineone App Cards Grid) --}}
+            <section id="tools-section" class="w-full bg-white dark:bg-navy-800/80 py-16 lg:py-20 border-y border-slate-200 dark:border-navy-700 transition-colors">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     {{-- Section Header --}}
-                    <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between mb-8">
                         <div>
-                            <div class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light font-semibold text-xs px-3 py-1 mb-2">
-                                KATALOG TOOLS
+                            <div class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light font-bold text-xs px-3 py-1 mb-2">
+                                DIREKTORI TOOLS
                             </div>
-                            <h2 class="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-navy-50">
-                                Pilih Tool yang Anda Butuhkan
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-navy-50">
+                                Katalog Alat Produktivitas
                             </h2>
-                            <p class="mt-2 text-slate-500 dark:text-navy-300 text-sm sm:text-base">
-                                Klik tool di bawah untuk langsung mulai memproses file Anda.
+                            <p class="mt-1 text-slate-400 dark:text-navy-300 text-xs sm:text-sm">
+                                Pilih alat di bawah untuk langsung mengunggah dan memproses file Anda secara gratis.
                             </p>
                         </div>
 
                         {{-- Category Filter Pills --}}
-                        <div class="mt-6 md:mt-0 flex flex-wrap gap-2">
+                        <div class="mt-4 md:mt-0 flex flex-wrap gap-1.5">
                             <button 
                                 @click="selectedCategory = 'all'"
-                                :class="selectedCategory === 'all' ? 'bg-primary text-white dark:bg-accent' : 'bg-white text-slate-600 hover:bg-slate-200/60 dark:bg-navy-700 dark:text-navy-200 dark:hover:bg-navy-600'"
-                                class="btn h-9 rounded-full px-4 text-xs font-semibold shadow-sm transition-all">
+                                :class="selectedCategory === 'all' ? 'bg-primary text-white dark:bg-accent' : 'bg-slate-100 text-slate-600 hover:bg-slate-200/80 dark:bg-navy-700 dark:text-navy-200 dark:hover:bg-navy-600'"
+                                class="btn h-8 rounded-full px-3.5 text-xs font-semibold transition-all">
                                 Semua (<span x-text="tools.length"></span>)
                             </button>
                             <template x-for="cat in categories" :key="cat">
                                 <button 
                                     @click="selectedCategory = cat"
-                                    :class="selectedCategory === cat ? 'bg-primary text-white dark:bg-accent' : 'bg-white text-slate-600 hover:bg-slate-200/60 dark:bg-navy-700 dark:text-navy-200 dark:hover:bg-navy-600'"
-                                    class="btn h-9 rounded-full px-4 text-xs font-semibold shadow-sm transition-all"
+                                    :class="selectedCategory === cat ? 'bg-primary text-white dark:bg-accent' : 'bg-slate-100 text-slate-600 hover:bg-slate-200/80 dark:bg-navy-700 dark:text-navy-200 dark:hover:bg-navy-600'"
+                                    class="btn h-8 rounded-full px-3.5 text-xs font-semibold transition-all"
                                     x-text="cat">
                                 </button>
                             </template>
                         </div>
                     </div>
 
-                    {{-- Tools Grid --}}
+                    {{-- Tools Grid (Exact Lineone layouts/onboarding-1 Style) --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <template x-for="tool in filteredTools" :key="tool.slug">
-                            <a :href="'/tool/' + tool.slug" 
-                               class="card group relative flex flex-col justify-between p-6 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 hover:border-primary/50 dark:hover:border-accent/50 dark:hover:shadow-accent/10 border border-slate-200/80 dark:border-navy-600">
-                                <div>
-                                    <div class="flex items-center justify-between mb-5">
-                                        {{-- Squircle Icon --}}
-                                        <div class="mask is-squircle flex size-12 shrink-0 items-center justify-center bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300 dark:bg-accent-light/10 dark:text-accent-light dark:group-hover:bg-accent dark:group-hover:text-white shadow-sm">
-                                            <template x-if="tool.icon === 'photo'">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                </svg>
-                                            </template>
-                                            <template x-if="tool.icon === 'arrows-right-left'">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                                                </svg>
-                                            </template>
-                                            <template x-if="tool.icon === 'document-text'">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                </svg>
-                                            </template>
+                            <div class="card flex flex-col justify-between h-full hover:shadow-xl transition-shadow duration-300">
+                                <div class="flex justify-center p-6 bg-slate-50/50 dark:bg-navy-700/30 rounded-t-lg">
+                                    <template x-if="tool.slug === 'compress-image'">
+                                        <img class="h-36 w-auto object-contain" src="{{ asset('images/illustrations/upload-cloud.svg') }}" :alt="tool.name" />
+                                    </template>
+                                    <template x-if="tool.slug === 'convert-image'">
+                                        <img class="h-36 w-auto object-contain" src="{{ asset('images/illustrations/responsive.svg') }}" :alt="tool.name" />
+                                    </template>
+                                    <template x-if="tool.slug === 'pdf-to-word'">
+                                        <img class="h-36 w-auto object-contain" src="{{ asset('images/illustrations/writer.svg') }}" :alt="tool.name" />
+                                    </template>
+                                    <template x-if="!['compress-image', 'convert-image', 'pdf-to-word'].includes(tool.slug)">
+                                        <img class="h-36 w-auto object-contain" src="{{ asset('images/illustrations/creativedesign.svg') }}" :alt="tool.name" />
+                                    </template>
+                                </div>
+                                <div class="px-4 pb-8 pt-5 text-center sm:px-5 flex flex-col justify-between flex-1">
+                                    <div>
+                                        <div class="mb-2">
+                                            <span class="badge rounded-full bg-slate-150 text-slate-700 dark:bg-navy-600 dark:text-navy-200 text-[11px] font-semibold px-2.5 py-0.5" x-text="tool.category"></span>
                                         </div>
-
-                                        {{-- Category Badge --}}
-                                        <span class="badge rounded-full bg-slate-100 text-slate-600 dark:bg-navy-600 dark:text-navy-200 text-xs px-2.5 py-1 font-medium" x-text="tool.category"></span>
+                                        <h4 class="text-lg font-semibold text-slate-700 dark:text-navy-100" x-text="tool.name"></h4>
+                                        <p class="pt-2 text-xs text-slate-500 dark:text-navy-300 leading-relaxed" x-text="tool.description"></p>
                                     </div>
-
-                                    <h3 class="text-xl font-bold text-slate-800 dark:text-navy-50 group-hover:text-primary dark:group-hover:text-accent-light transition-colors mb-2" x-text="tool.name"></h3>
-                                    <p class="text-sm text-slate-500 dark:text-navy-300 leading-relaxed" x-text="tool.description"></p>
+                                    <div class="pt-6">
+                                        <a :href="'/tool/' + tool.slug" class="btn bg-primary font-medium text-white shadow-lg shadow-primary/50 hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:shadow-accent/50 dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90 w-full rounded-lg text-xs py-2.5">
+                                            Buka Tool
+                                        </a>
+                                    </div>
                                 </div>
-
-                                <div class="mt-6 flex items-center justify-between border-t border-slate-150 dark:border-navy-600/70 pt-4 text-sm font-semibold text-primary dark:text-accent-light">
-                                    <span>Gunakan Tool</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5 transition-transform duration-300 group-hover:translate-x-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                    </svg>
-                                </div>
-                            </a>
+                            </div>
                         </template>
                     </div>
 
-                    {{-- Empty State When Search Not Found --}}
-                    <div x-show="filteredTools.length === 0" class="card py-16 px-6 text-center border border-slate-200 dark:border-navy-600">
-                        <div class="mask is-squircle size-16 bg-slate-100 text-slate-400 dark:bg-navy-700 dark:text-navy-300 flex items-center justify-center mx-auto mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="size-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    {{-- Empty Search State --}}
+                    <div x-show="filteredTools.length === 0" class="card py-12 px-6 text-center border border-slate-200 dark:border-navy-600">
+                        <div class="mask is-squircle size-14 bg-slate-100 text-slate-400 dark:bg-navy-700 dark:text-navy-300 flex items-center justify-center mx-auto mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                         </div>
-                        <h4 class="text-xl font-semibold text-slate-700 dark:text-navy-100">Tool Tidak Ditemukan</h4>
-                        <p class="text-slate-500 dark:text-navy-300 text-sm mt-1 max-w-sm mx-auto">
-                            Tidak ada tool yang cocok dengan kata kunci "<span class="font-medium text-slate-700 dark:text-navy-200" x-text="search"></span>".
+                        <h4 class="text-base font-bold text-slate-700 dark:text-navy-100">Tool Tidak Ditemukan</h4>
+                        <p class="text-slate-400 dark:text-navy-300 text-xs mt-1 max-w-sm mx-auto">
+                            Tidak ada tool yang cocok dengan kata kunci "<span class="font-bold text-slate-700 dark:text-navy-200" x-text="search"></span>".
                         </p>
-                        <button @click="search = ''; selectedCategory = 'all'" class="btn mt-4 bg-primary text-white dark:bg-accent h-9 px-4 rounded-lg text-xs font-semibold mx-auto">
+                        <button @click="search = ''; selectedCategory = 'all'" class="btn rounded-full mt-4 bg-primary text-white dark:bg-accent h-8 px-4 text-xs font-semibold mx-auto">
                             Reset Pencarian
                         </button>
                     </div>
                 </div>
             </section>
 
-            {{-- How It Works Section --}}
-            <section id="how-it-works" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
-                <div class="text-center max-w-2xl mx-auto mb-16">
-                    <div class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light font-semibold text-xs px-3 py-1 mb-3">
-                        ALUR KERJA
-                    </div>
-                    <h2 class="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-navy-50">
-                        Semudah 3 Langkah Cepat
-                    </h2>
-                    <p class="text-slate-500 dark:text-navy-300 mt-3 text-base">
-                        Tidak perlu menginstal aplikasi tambahan di komputer atau smartphone Anda.
-                    </p>
-                </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-                    {{-- Step 1 --}}
-                    <div class="card p-8 text-center relative border border-slate-200 dark:border-navy-600 transition-all hover:shadow-lg">
-                        <div class="mask is-squircle size-16 bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light flex items-center justify-center mx-auto mb-6 text-2xl font-black">
-                            1
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-800 dark:text-navy-50 mb-3">Upload File</h3>
-                        <p class="text-slate-500 dark:text-navy-300 text-sm leading-relaxed">
-                            Pilih atau drag & drop file yang ingin Anda proses langsung ke dalam kotak upload yang tersedia.
-                        </p>
-                    </div>
 
-                    {{-- Step 2 --}}
-                    <div class="card p-8 text-center relative border border-slate-200 dark:border-navy-600 transition-all hover:shadow-lg">
-                        <div class="mask is-squircle size-16 bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light flex items-center justify-center mx-auto mb-6 text-2xl font-black">
-                            2
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-800 dark:text-navy-50 mb-3">Pilih Pengaturan</h3>
-                        <p class="text-slate-500 dark:text-navy-300 text-sm leading-relaxed">
-                            Tentukan format keluaran, rasio kompresi, atau opsi khusus sesuai kebutuhan pekerjaan Anda.
-                        </p>
-                    </div>
-
-                    {{-- Step 3 --}}
-                    <div class="card p-8 text-center relative border border-slate-200 dark:border-navy-600 transition-all hover:shadow-lg">
-                        <div class="mask is-squircle size-16 bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light flex items-center justify-center mx-auto mb-6 text-2xl font-black">
-                            3
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-800 dark:text-navy-50 mb-3">Proses & Unduh</h3>
-                        <p class="text-slate-500 dark:text-navy-300 text-sm leading-relaxed">
-                            Sistem secara instan mengolah file Anda. Klik tombol unduh dan file siap langsung digunakan.
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            {{-- Why Choose Us / Features --}}
-            <section id="features-section" class="w-full bg-slate-100/70 dark:bg-navy-800/60 py-20 lg:py-28 border-y border-slate-200 dark:border-navy-700">
+            {{-- Why Choose Us / Features (Lineone layouts-onboarding-1 style cards) --}}
+            <section id="features-section" class="w-full bg-slate-100/60 dark:bg-navy-800/60 py-16 lg:py-24 border-y border-slate-200 dark:border-navy-700 transition-colors">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center max-w-2xl mx-auto mb-16">
-                        <div class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light font-semibold text-xs px-3 py-1 mb-3">
+                    <div class="text-center max-w-2xl mx-auto mb-12">
+                        <div class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light font-bold text-xs px-3 py-1 mb-2">
                             KEUNGGULAN UTAMA
                         </div>
-                        <h2 class="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-navy-50">
-                            Mengapa Menggunakan {{ config('app.name') }}?
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-navy-50">
+                            Mengapa Memilih {{ config('app.name') }}?
                         </h2>
-                        <p class="text-slate-500 dark:text-navy-300 mt-3 text-base">
-                            Dirancang untuk kenyamanan, kecepatan, dan keamanan pemrosesan data Anda.
+                        <p class="text-slate-400 dark:text-navy-300 mt-1 text-xs sm:text-sm">
+                            Platform yang dirancang untuk kecepatan tinggi, privasi ketat, dan fleksibilitas kerja.
                         </p>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="card p-6 border border-slate-200 dark:border-navy-600">
-                            <div class="mask is-squircle size-12 bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light flex items-center justify-center mb-5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                        {{-- Feature 1 --}}
+                        <div class="card p-5">
+                            <div class="mask is-squircle flex size-12 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light mb-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                                 </svg>
                             </div>
-                            <h4 class="text-lg font-bold text-slate-800 dark:text-navy-50 mb-2">Kecepatan Tinggi</h4>
-                            <p class="text-sm text-slate-500 dark:text-navy-300 leading-relaxed">
-                                Ditenagai engine pemrosesan server modern untuk hasil konversi dan kompresi tanpa menunggu lama.
+                            <h4 class="text-sm font-bold text-slate-700 dark:text-navy-100">
+                                Kecepatan Maksimal
+                            </h4>
+                            <p class="pt-1.5 text-xs text-slate-400 dark:text-navy-300 leading-relaxed">
+                                Ditenagai engine server modern untuk memproses kompresi dan konversi dalam sekejap.
                             </p>
                         </div>
 
-                        <div class="card p-6 border border-slate-200 dark:border-navy-600">
-                            <div class="mask is-squircle size-12 bg-success/10 text-success flex items-center justify-center mb-5">
+                        {{-- Feature 2 --}}
+                        <div class="card p-5">
+                            <div class="mask is-squircle flex size-12 items-center justify-center bg-success/10 text-success mb-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                 </svg>
                             </div>
-                            <h4 class="text-lg font-bold text-slate-800 dark:text-navy-50 mb-2">Privasi Terjamin</h4>
-                            <p class="text-sm text-slate-500 dark:text-navy-300 leading-relaxed">
-                                File Anda bersifat privat dan dihapus secara otomatis dari sistem setelah proses selesai.
+                            <h4 class="text-sm font-bold text-slate-700 dark:text-navy-100">
+                                Privasi Terjamin
+                            </h4>
+                            <p class="pt-1.5 text-xs text-slate-400 dark:text-navy-300 leading-relaxed">
+                                File diproses privat dan dihapus otomatis dari server setelah selesai diunduh.
                             </p>
                         </div>
 
-                        <div class="card p-6 border border-slate-200 dark:border-navy-600">
-                            <div class="mask is-squircle size-12 bg-info/10 text-info flex items-center justify-center mb-5">
+                        {{-- Feature 3 --}}
+                        <div class="card p-5">
+                            <div class="mask is-squircle flex size-12 items-center justify-center bg-info/10 text-info mb-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                 </svg>
                             </div>
-                            <h4 class="text-lg font-bold text-slate-800 dark:text-navy-50 mb-2">Akses Lintas Perangkat</h4>
-                            <p class="text-sm text-slate-500 dark:text-navy-300 leading-relaxed">
-                                Bekerja secara responsif dan lancar di browser komputer, tablet, maupun smartphone Anda.
+                            <h4 class="text-sm font-bold text-slate-700 dark:text-navy-100">
+                                Lintas Perangkat
+                            </h4>
+                            <p class="pt-1.5 text-xs text-slate-400 dark:text-navy-300 leading-relaxed">
+                                Berjalan lancar di browser komputer desktop, laptop, tablet, hingga smartphone.
                             </p>
                         </div>
 
-                        <div class="card p-6 border border-slate-200 dark:border-navy-600">
-                            <div class="mask is-squircle size-12 bg-warning/10 text-warning flex items-center justify-center mb-5">
+                        {{-- Feature 4 --}}
+                        <div class="card p-5">
+                            <div class="mask is-squircle flex size-12 items-center justify-center bg-warning/10 text-warning mb-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
-                            <h4 class="text-lg font-bold text-slate-800 dark:text-navy-50 mb-2">Paket Fleksibel</h4>
-                            <p class="text-sm text-slate-500 dark:text-navy-300 leading-relaxed">
-                                Gunakan secara gratis setiap hari atau upgrade ke Pro untuk akses tanpa batas dan ukuran file besar.
+                            <h4 class="text-sm font-bold text-slate-700 dark:text-navy-100">
+                                Kuota Fleksibel
+                            </h4>
+                            <p class="pt-1.5 text-xs text-slate-400 dark:text-navy-300 leading-relaxed">
+                                Kuota gratis setiap hari atau upgrade ke Pro untuk akses pemrosesan tanpa batas.
                             </p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {{-- Pricing Section (Exact from layouts/price-list-1) --}}
-            <section id="pricing-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
-                <div class="py-5 text-center lg:py-6 max-w-2xl mx-auto mb-10">
-                    <p class="text-sm uppercase tracking-wider text-slate-500 dark:text-navy-300">PILIH PAKET ANDA</p>
-                    <h3 class="mt-1 text-xl font-semibold text-slate-600 dark:text-navy-100 lg:text-2xl">
+            {{-- Pricing Section (Exact from Lineone layouts/price-list-1) --}}
+            <section id="pricing-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+                <div class="py-5 text-center max-w-2xl mx-auto mb-10">
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300">PILIHAN PAKET</p>
+                    <h3 class="mt-1 text-2xl font-bold text-slate-700 dark:text-navy-100 sm:text-3xl">
                         Tingkatkan Produktivitas Anda Tanpa Batas
                     </h3>
+                    <p class="mt-1 text-xs text-slate-400 dark:text-navy-300">Pilih paket yang paling sesuai dengan kebutuhan produktivitas harian Anda.</p>
                 </div>
 
                 <div class="grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-{{ min($plans->count(), 3) }} sm:gap-5 lg:gap-6 mx-auto items-stretch">
@@ -405,7 +389,7 @@
                             {{-- Top Badge for Recommended --}}
                             @if($isRecommended)
                                 <div class="absolute top-0 right-0 p-3">
-                                    <div class="badge rounded-full bg-info/10 text-info dark:bg-info/15 font-semibold text-xs px-3 py-1">
+                                    <div class="badge rounded-full bg-info/10 text-info dark:bg-info/15 font-bold text-[10px] px-2.5 py-0.5">
                                         Recommended
                                     </div>
                                 </div>
@@ -413,46 +397,46 @@
 
                             <div>
                                 {{-- Icon (Price List 1 Style) --}}
-                                <div class="mt-8">
+                                <div class="mt-6">
                                     @if($plan->price == 0)
-                                        <i class="fa fa-car text-6xl text-primary dark:text-accent-light"></i>
+                                        <i class="fa fa-car text-5xl text-primary dark:text-accent-light"></i>
                                     @elseif($isRecommended)
-                                        <i class="fa fa-plane text-6xl text-primary dark:text-accent-light"></i>
+                                        <i class="fa fa-plane text-5xl text-primary dark:text-accent-light"></i>
                                     @else
-                                        <i class="fa fa-rocket text-6xl text-primary dark:text-accent-light"></i>
+                                        <i class="fa fa-rocket text-5xl text-primary dark:text-accent-light"></i>
                                     @endif
                                 </div>
 
                                 {{-- Title & Subtitle --}}
-                                <div class="mt-5">
-                                    <h4 class="text-xl font-semibold text-slate-600 dark:text-navy-100">
+                                <div class="mt-4">
+                                    <h4 class="text-lg font-bold text-slate-700 dark:text-navy-100">
                                         {{ $plan->name }}
                                     </h4>
-                                    <p class="text-xs text-slate-400 dark:text-navy-300 mt-1 min-h-[20px]">
+                                    <p class="text-xs text-slate-400 dark:text-navy-300 mt-0.5 min-h-[18px]">
                                         {{ $plan->description ?? 'Pilihan tepat untuk kebutuhan harian Anda' }}
                                     </p>
                                 </div>
 
                                 {{-- Price --}}
-                                <div class="mt-5">
-                                    <span class="text-3xl sm:text-4xl tracking-tight font-bold text-primary dark:text-accent-light">
+                                <div class="mt-4">
+                                    <span class="text-2xl sm:text-3xl tracking-tight font-extrabold text-primary dark:text-accent-light">
                                         Rp {{ number_format($plan->price, 0, ',', '.') }}
                                     </span>
-                                    <span class="text-xs text-slate-500 dark:text-navy-300">
+                                    <span class="text-xs text-slate-400 dark:text-navy-300">
                                         /{{ $plan->duration_days ? $plan->duration_days . ' hari' : 'bulan' }}
                                     </span>
                                 </div>
 
                                 {{-- Features List (Price List 1 Exact Style) --}}
-                                <div class="mt-8 space-y-4 text-left">
+                                <div class="mt-6 space-y-3 text-left">
                                     @foreach($plan->features ?? [] as $feature)
-                                        <div class="flex items-start space-x-3">
-                                            <div class="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary dark:bg-accent/10 dark:text-accent-light">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5" viewBox="0 0 20 20" fill="currentColor">
+                                        <div class="flex items-start space-x-2.5">
+                                            <div class="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary dark:bg-accent/10 dark:text-accent-light mt-0.5">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5" viewBox="0 0 20 20" fill="currentColor">
                                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                                                 </svg>
                                             </div>
-                                            <span class="font-medium text-slate-700 dark:text-navy-100 text-sm">
+                                            <span class="font-medium text-slate-600 dark:text-navy-100 text-xs">
                                                 {{ $feature }}
                                             </span>
                                         </div>
@@ -461,114 +445,95 @@
                             </div>
 
                             {{-- CTA Button (Price List 1 Style) --}}
-                            <div class="mt-8">
+                            <div class="mt-6">
                                 @auth
-                                    <a href="{{ route('pricing') }}" class="btn rounded-full {{ $isRecommended ? 'bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90' : 'border border-slate-200 font-medium text-primary hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-500 dark:text-accent-light dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90' }} w-full text-xs py-2.5">
+                                    <a href="{{ route('pricing') }}" class="btn rounded-full {{ $isRecommended ? 'bg-primary font-bold text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus' : 'border border-slate-200 font-semibold text-primary hover:bg-slate-150 dark:border-navy-500 dark:text-accent-light dark:hover:bg-navy-500' }} w-full text-xs py-2">
                                         {{ $plan->price == 0 ? 'Paket Aktif' : 'Pilih Paket' }}
                                     </a>
                                 @else
-                                    <a href="{{ route('register') }}" class="btn rounded-full {{ $isRecommended ? 'bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90' : 'border border-slate-200 font-medium text-primary hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-500 dark:text-accent-light dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90' }} w-full text-xs py-2.5">
+                                    <a href="{{ route('register') }}" class="btn rounded-full {{ $isRecommended ? 'bg-primary font-bold text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus' : 'border border-slate-200 font-semibold text-primary hover:bg-slate-150 dark:border-navy-500 dark:text-accent-light dark:hover:bg-navy-500' }} w-full text-xs py-2">
                                         {{ $plan->price == 0 ? 'Daftar Gratis' : 'Pilih Paket' }}
                                     </a>
                                 @endauth
                             </div>
                         </div>
                     @empty
-                        <div class="col-span-full card p-8 text-center text-slate-500">
+                        <div class="col-span-full card p-8 text-center text-slate-400 text-xs">
                             Belum ada data paket yang tersedia.
                         </div>
                     @endforelse
                 </div>
             </section>
 
-            {{-- FAQ Section --}}
-            <section id="faq-section" class="w-full bg-slate-100/70 dark:bg-navy-800/60 py-20 lg:py-28 border-y border-slate-200 dark:border-navy-700">
+            {{-- FAQ Section (Lineone Clean Accordion Style) --}}
+            <section id="faq-section" class="w-full bg-slate-100/60 dark:bg-navy-800/60 py-16 lg:py-24 border-y border-slate-200 dark:border-navy-700 transition-colors">
                 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center max-w-2xl mx-auto mb-16">
-                        <div class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light font-semibold text-xs px-3 py-1 mb-3">
+                    <div class="text-center max-w-2xl mx-auto mb-12">
+                        <div class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light font-bold text-xs px-3 py-1 mb-2">
                             PERTANYAAN UMUM
                         </div>
-                        <h2 class="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-navy-50">
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-navy-50">
                             Frequently Asked Questions
                         </h2>
-                        <p class="text-slate-500 dark:text-navy-300 mt-3 text-base">
-                            Pertanyaan yang sering diajukan mengenai penggunaan layanan {{ config('app.name') }}.
+                        <p class="text-slate-400 dark:text-navy-300 mt-1 text-xs sm:text-sm">
+                            Jawaban atas pertanyaan yang sering diajukan mengenai layanan kami.
                         </p>
                     </div>
 
-                    <div class="space-y-4">
+                    <div class="space-y-3 text-xs">
                         {{-- FAQ 1 --}}
-                        <div class="card border border-slate-200 dark:border-navy-600 overflow-hidden">
+                        <div class="card overflow-hidden">
                             <button 
                                 @click="faqOpen = (faqOpen === 1 ? null : 1)"
-                                class="w-full px-6 py-4.5 flex items-center justify-between text-left font-semibold text-slate-800 dark:text-navy-100 hover:text-primary dark:hover:text-accent-light transition-colors">
-                                <span class="text-base">Apakah file saya aman dan terjaga privasinya?</span>
+                                class="w-full px-5 py-4 flex items-center justify-between text-left font-bold text-slate-700 dark:text-navy-100 hover:text-primary dark:hover:text-accent-light transition-colors">
+                                <span class="text-sm">Apakah file saya aman dan terjaga privasinya?</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" 
                                      :class="faqOpen === 1 ? 'rotate-180 text-primary dark:text-accent-light' : 'text-slate-400 dark:text-navy-300'"
-                                     class="size-5 shrink-0 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                     class="size-4 shrink-0 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
                             <div x-show="faqOpen === 1" x-collapse>
-                                <div class="px-6 pb-5 text-sm text-slate-500 dark:text-navy-300 leading-relaxed border-t border-slate-100 dark:border-navy-600/60 pt-3">
-                                    Sangat aman. Semua proses kompresi dan konversi berlangsung secara otomatis melalui koneksi terenkripsi SSL. File Anda tidak dibagikan ke pihak ketiga dan akan dihapus secara otomatis dari server kami.
+                                <div class="px-5 pb-4 text-slate-500 dark:text-navy-300 leading-relaxed border-t border-slate-150 dark:border-navy-600 pt-3">
+                                    Sangat aman. Semua proses kompresi dan konversi berlangsung secara otomatis melalui koneksi terenkripsi. File Anda tidak dibagikan ke pihak ketiga dan akan dihapus secara otomatis dari server kami.
                                 </div>
                             </div>
                         </div>
 
                         {{-- FAQ 2 --}}
-                        <div class="card border border-slate-200 dark:border-navy-600 overflow-hidden">
+                        <div class="card overflow-hidden">
                             <button 
                                 @click="faqOpen = (faqOpen === 2 ? null : 2)"
-                                class="w-full px-6 py-4.5 flex items-center justify-between text-left font-semibold text-slate-800 dark:text-navy-100 hover:text-primary dark:hover:text-accent-light transition-colors">
-                                <span class="text-base">Apakah layanan ini benar-benar bisa digunakan gratis?</span>
+                                class="w-full px-5 py-4 flex items-center justify-between text-left font-bold text-slate-700 dark:text-navy-100 hover:text-primary dark:hover:text-accent-light transition-colors">
+                                <span class="text-sm">Apakah layanan ini benar-benar bisa digunakan gratis?</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" 
                                      :class="faqOpen === 2 ? 'rotate-180 text-primary dark:text-accent-light' : 'text-slate-400 dark:text-navy-300'"
-                                     class="size-5 shrink-0 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                     class="size-4 shrink-0 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
                             <div x-show="faqOpen === 2" x-collapse>
-                                <div class="px-6 pb-5 text-sm text-slate-500 dark:text-navy-300 leading-relaxed border-t border-slate-100 dark:border-navy-600/60 pt-3">
-                                    Ya! Anda dapat langsung menggunakan paket Gratis setiap hari untuk kebutuhan pemrosesan file sehari-hari. Jika membutuhkan pemrosesan tanpa batas dan file besar, Anda dapat beralih ke paket Pro kapan pun.
+                                <div class="px-5 pb-4 text-slate-500 dark:text-navy-300 leading-relaxed border-t border-slate-150 dark:border-navy-600 pt-3">
+                                    Ya! Anda dapat langsung menggunakan paket Gratis setiap hari untuk kebutuhan pemrosesan file standar. Jika memerlukan kuota tanpa batas dan pemrosesan file berukuran besar, Anda dapat beralih ke paket Pro.
                                 </div>
                             </div>
                         </div>
 
                         {{-- FAQ 3 --}}
-                        <div class="card border border-slate-200 dark:border-navy-600 overflow-hidden">
+                        <div class="card overflow-hidden">
                             <button 
                                 @click="faqOpen = (faqOpen === 3 ? null : 3)"
-                                class="w-full px-6 py-4.5 flex items-center justify-between text-left font-semibold text-slate-800 dark:text-navy-100 hover:text-primary dark:hover:text-accent-light transition-colors">
-                                <span class="text-base">Metode pembayaran apa saja yang didukung untuk upgrade Pro?</span>
+                                class="w-full px-5 py-4 flex items-center justify-between text-left font-bold text-slate-700 dark:text-navy-100 hover:text-primary dark:hover:text-accent-light transition-colors">
+                                <span class="text-sm">Metode pembayaran apa saja yang didukung untuk paket Pro?</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" 
                                      :class="faqOpen === 3 ? 'rotate-180 text-primary dark:text-accent-light' : 'text-slate-400 dark:text-navy-300'"
-                                     class="size-5 shrink-0 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                     class="size-4 shrink-0 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
                             <div x-show="faqOpen === 3" x-collapse>
-                                <div class="px-6 pb-5 text-sm text-slate-500 dark:text-navy-300 leading-relaxed border-t border-slate-100 dark:border-navy-600/60 pt-3">
-                                    Kami mendukung pembayaran otomatis melalui QRIS (GoPay, OVO, Dana, ShopeePay), Virtual Account Bank (BCA, Mandiri, BNI, BRI), serta Kartu Kredit melalui payment gateway Midtrans.
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- FAQ 4 --}}
-                        <div class="card border border-slate-200 dark:border-navy-600 overflow-hidden">
-                            <button 
-                                @click="faqOpen = (faqOpen === 4 ? null : 4)"
-                                class="w-full px-6 py-4.5 flex items-center justify-between text-left font-semibold text-slate-800 dark:text-navy-100 hover:text-primary dark:hover:text-accent-light transition-colors">
-                                <span class="text-base">Apakah kualitas file saya akan berkurang setelah dikompres?</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" 
-                                     :class="faqOpen === 4 ? 'rotate-180 text-primary dark:text-accent-light' : 'text-slate-400 dark:text-navy-300'"
-                                     class="size-5 shrink-0 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                            <div x-show="faqOpen === 4" x-collapse>
-                                <div class="px-6 pb-5 text-sm text-slate-500 dark:text-navy-300 leading-relaxed border-t border-slate-100 dark:border-navy-600/60 pt-3">
-                                    Tool kompresi kami menggunakan algoritma *smart compression* yang memangkas ukuran byte file secara drastis tanpa menurunkan kejernihan visual secara kasat mata.
+                                <div class="px-5 pb-4 text-slate-500 dark:text-navy-300 leading-relaxed border-t border-slate-150 dark:border-navy-600 pt-3">
+                                    Kami mendukung pembayaran otomatis melalui QRIS (GoPay, OVO, Dana, ShopeePay), Virtual Account Bank (BCA, Mandiri, BNI, BRI), serta Kartu Kredit melalui payment gateway Midtrans yang terverifikasi otomatis seketika.
                                 </div>
                             </div>
                         </div>
@@ -576,85 +541,83 @@
                 </div>
             </section>
 
-            {{-- CTA Banner --}}
-            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24">
-                <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary to-primary-focus dark:from-accent dark:to-accent-focus p-8 sm:p-12 lg:p-16 text-white text-center shadow-2xl shadow-primary/20">
-                    <div class="relative z-10 max-w-3xl mx-auto">
-                        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4">
-                            Siap Menghemat Waktu Pekerjaan Anda?
+            {{-- CTA Banner (Lineone style) --}}
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+                <div class="card relative overflow-hidden bg-primary dark:bg-accent p-8 sm:p-12 text-white text-center shadow-xl shadow-primary/20 dark:shadow-accent/20">
+                    <div class="max-w-2xl mx-auto space-y-4">
+                        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">
+                            Mulai Olah Dokumen Anda Sekarang
                         </h2>
-                        <p class="text-base sm:text-lg text-white/85 mb-8 max-w-xl mx-auto">
-                            Gabung sekarang dan nikmati kemudahan mengolah berbagai format file langsung dari satu tempat tanpa batasan.
+                        <p class="text-xs sm:text-sm text-white/80 max-w-lg mx-auto">
+                            Nikmati kemudahan mengompres dan mengonversi berbagai format dokumen langsung dari browser tanpa batasan ribet.
                         </p>
-                        <div class="flex flex-wrap justify-center gap-4">
+                        <div class="pt-2 flex flex-wrap justify-center gap-3">
                             @guest
-                                <a href="{{ route('register') }}" class="btn bg-white text-primary hover:bg-slate-100 dark:text-navy-900 font-bold px-8 py-3.5 rounded-xl shadow-lg text-base">
-                                    Daftar Akun Sekarang
+                                <a href="{{ route('register') }}" class="btn rounded-full bg-white text-primary hover:bg-slate-100 font-bold px-6 py-2.5 text-xs shadow-md">
+                                    Daftar Akun Gratis
                                 </a>
                             @else
-                                <a href="{{ route('dashboard') }}" class="btn bg-white text-primary hover:bg-slate-100 dark:text-navy-900 font-bold px-8 py-3.5 rounded-xl shadow-lg text-base">
+                                <a href="{{ route('dashboard') }}" class="btn rounded-full bg-white text-primary hover:bg-slate-100 font-bold px-6 py-2.5 text-xs shadow-md">
                                     Buka Dashboard Saya
                                 </a>
                             @endguest
-                            <a href="#tools-section" class="btn border border-white/40 text-white hover:bg-white/10 font-semibold px-8 py-3.5 rounded-xl text-base">
-                                Coba Tools
+                            <a href="#tools-section" class="btn rounded-full border border-white/40 text-white hover:bg-white/10 font-semibold px-6 py-2.5 text-xs">
+                                Jelajahi Tools
                             </a>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {{-- Footer --}}
-            <footer class="w-full border-t border-slate-200 dark:border-navy-700 bg-white dark:bg-navy-900 py-12 transition-colors">
+            {{-- Footer (Lineone Clean Footer) --}}
+            <footer class="w-full border-t border-slate-200 dark:border-navy-700 bg-white dark:bg-navy-900 py-10 transition-colors">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 text-xs">
                         {{-- Col 1: Brand --}}
-                        <div class="md:col-span-2 space-y-4">
-                            <div class="flex items-center space-x-3">
-                                <div class="mask is-squircle flex size-9 items-center justify-center bg-primary text-white dark:bg-accent shadow-md">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <div class="md:col-span-2 space-y-3">
+                            <div class="flex items-center space-x-2.5">
+                                <div class="mask is-squircle flex size-8 items-center justify-center bg-primary text-white dark:bg-accent shadow-xs">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                                     </svg>
                                 </div>
-                                <span class="text-xl font-bold uppercase tracking-wider text-slate-800 dark:text-navy-50">{{ config('app.name') }}</span>
+                                <span class="text-base font-bold uppercase tracking-wider text-slate-800 dark:text-navy-50">{{ config('app.name') }}</span>
                             </div>
-                            <p class="text-sm text-slate-500 dark:text-navy-300 max-w-sm leading-relaxed">
+                            <p class="text-slate-400 dark:text-navy-300 max-w-sm leading-relaxed">
                                 Solusi perkakas digital instan untuk mengolah, mengompres, dan mengonversi file Anda setiap hari tanpa instalasi software.
                             </p>
                         </div>
 
                         {{-- Col 2: Navigation --}}
                         <div>
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300 mb-4">Navigasi</h4>
-                            <ul class="space-y-2 text-sm text-slate-600 dark:text-navy-200">
+                            <h4 class="font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300 mb-3">Navigasi</h4>
+                            <ul class="space-y-2 text-slate-600 dark:text-navy-200">
                                 <li><a href="#tools-section" class="hover:text-primary dark:hover:text-accent-light transition-colors">Katalog Tools</a></li>
-                                <li><a href="#how-it-works" class="hover:text-primary dark:hover:text-accent-light transition-colors">Cara Kerja</a></li>
-                                <li><a href="#pricing-section" class="hover:text-primary dark:hover:text-accent-light transition-colors">Paket Berlangganan</a></li>
+                                <li><a href="#features-section" class="hover:text-primary dark:hover:text-accent-light transition-colors">Keunggulan</a></li>
+                                <li><a href="#pricing-section" class="hover:text-primary dark:hover:text-accent-light transition-colors">Paket & Harga</a></li>
                                 <li><a href="#faq-section" class="hover:text-primary dark:hover:text-accent-light transition-colors">FAQ</a></li>
                             </ul>
                         </div>
 
                         {{-- Col 3: Akun --}}
                         <div>
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300 mb-4">Akun & Layanan</h4>
-                            <ul class="space-y-2 text-sm text-slate-600 dark:text-navy-200">
+                            <h4 class="font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300 mb-3">Akun & Layanan</h4>
+                            <ul class="space-y-2 text-slate-600 dark:text-navy-200">
                                 @auth
                                     <li><a href="{{ route('dashboard') }}" class="hover:text-primary dark:hover:text-accent-light transition-colors">Dashboard Pengguna</a></li>
                                     <li><a href="{{ route('history') }}" class="hover:text-primary dark:hover:text-accent-light transition-colors">Riwayat Aktivitas</a></li>
                                     <li><a href="{{ route('profile') }}" class="hover:text-primary dark:hover:text-accent-light transition-colors">Pengaturan Profil</a></li>
                                 @else
                                     <li><a href="{{ route('login') }}" class="hover:text-primary dark:hover:text-accent-light transition-colors">Masuk ke Akun</a></li>
-                                    <li><a href="{{ route('register') }}" class="hover:text-primary dark:hover:text-accent-light transition-colors">Registrasi Akun Baru</a></li>
+                                    <li><a href="{{ route('register') }}" class="hover:text-primary dark:hover:text-accent-light transition-colors">Daftar Akun Baru</a></li>
                                 @endauth
                             </ul>
                         </div>
                     </div>
 
-                    <div class="border-t border-slate-150 dark:border-navy-700/80 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400 dark:text-navy-300">
+                    <div class="border-t border-slate-150 dark:border-navy-700/80 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400 dark:text-navy-300">
                         <p>&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
-                        <div class="flex items-center space-x-6">
-                            <span>Dirancang dengan Theme Lineone</span>
-                        </div>
+                        <span>Lineone Theme Architecture</span>
                     </div>
                 </div>
             </footer>
