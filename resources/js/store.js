@@ -1,42 +1,57 @@
 export default () => ({
-  isDarkModeEnabled: window.Alpine.$persist(false).as("_x_darkMode_on"),
+  isDarkModeEnabled: window.Alpine?.$persist ? window.Alpine.$persist(false).as("_x_darkMode_on") : (localStorage.getItem("_x_darkMode_on") === "true"),
   isMonochromeModeEnabled: false,
   isSearchbarActive: false,
   isSidebarExpanded: false,
   isRightSidebarExpanded: false,
 
   init() {
+    this.removePreloader();
+
     this.isSidebarExpanded =
       document.querySelector(".sidebar") &&
       document.body.classList.contains("is-sidebar-open") &&
-      window.Alpine.store("breakpoints").xlAndUp;
+      window.Alpine?.store("breakpoints")?.xlAndUp;
 
-    window.Alpine.effect(() => {
-      this.isDarkModeEnabled
-        ? document.documentElement.classList.add("dark")
-        : document.documentElement.classList.remove("dark");
-    });
+    if (window.Alpine?.effect) {
+      window.Alpine.effect(() => {
+        this.isDarkModeEnabled
+          ? document.documentElement.classList.add("dark")
+          : document.documentElement.classList.remove("dark");
+      });
 
-    window.Alpine.effect(() => {
-      this.isMonochromeModeEnabled
-        ? document.body.classList.add("is-monochrome")
-        : document.body.classList.remove("is-monochrome");
-    });
+      window.Alpine.effect(() => {
+        this.isMonochromeModeEnabled
+          ? document.body.classList.add("is-monochrome")
+          : document.body.classList.remove("is-monochrome");
+      });
 
-    window.Alpine.effect(() => {
-      this.isSidebarExpanded
-        ? document.body.classList.add("is-sidebar-open")
-        : document.body.classList.remove("is-sidebar-open");
-    });
+      window.Alpine.effect(() => {
+        this.isSidebarExpanded
+          ? document.body.classList.add("is-sidebar-open")
+          : document.body.classList.remove("is-sidebar-open");
+      });
 
-    window.Alpine.effect(() => {
-      if (window.Alpine.store("breakpoints").smAndUp) this.isSearchbarActive = false;
-    });
+      window.Alpine.effect(() => {
+        if (window.Alpine?.store("breakpoints")?.smAndUp) this.isSearchbarActive = false;
+      });
+    }
 
     window.addEventListener('changed:breakpoint', () => {
       if (this.isSidebarExpanded) this.isSidebarExpanded = false;
       if (this.isRightSidebarExpanded) this.isRightSidebarExpanded = false;
-    })
+    });
+  },
+
+  removePreloader() {
+    const preloader = document.querySelector(".app-preloader");
+    if (!preloader) return;
+    setTimeout(() => {
+      preloader.classList.add(
+        "animate-[cubic-bezier(0.4,0,0.2,1)_fade-out_500ms_forwards]"
+      );
+      setTimeout(() => preloader.remove(), 1000);
+    }, 150);
   },
 
   documentBody: {

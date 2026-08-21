@@ -30,7 +30,9 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 
 Route::get('/', function () {
-    return view('welcome');
+    $tools = config('tools', []);
+    $plans = \App\Models\Plan::where('is_active', true)->orderBy('sort_order')->get();
+    return view('welcome', compact('tools', 'plans'));
 })->name('home');
 
 // GUEST ONLY (belum login)

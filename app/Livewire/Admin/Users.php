@@ -6,12 +6,12 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 use App\Models\User;
-use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
+use App\Traits\LivewireLineoneAlerts;
 
 #[Layout('layouts.admin')]
 class Users extends Component
 {
-    use WithPagination;
+    use WithPagination, LivewireLineoneAlerts;
 
     public $search = '';
     public $planFilter = 'all'; // all, free, pro
@@ -36,13 +36,12 @@ class Users extends Component
     {
         abort_if($userId === auth()->id(), 403, 'Tidak bisa ban diri sendiri.');
 
-        LivewireAlert::title('Ban pengguna ini?')
-            ->text('Pengguna tidak akan bisa login sampai di-unban lagi.')
-            ->warning()
-            ->withConfirmButton('Ya, Ban')
-            ->withCancelButton('Batal')
-            ->onConfirm('banUser', ['userId' => $userId])
-            ->show();
+        $this->confirmDialog(
+            'Ban pengguna ini?',
+            'Pengguna tidak akan bisa login sampai di-unban lagi.',
+            'banUser',
+            ['userId' => $userId]
+        );
     }
 
     public function banUser($data)
@@ -53,13 +52,13 @@ class Users extends Component
         abort_if($userId === auth()->id(), 403, 'Tidak bisa ban diri sendiri.');
 
         User::where('id', $userId)->update(['banned_at' => now()]);
-        LivewireAlert::title('Pengguna telah di-ban.')->success()->toast()->position('top-end')->show();
+        $this->toast('Pengguna telah di-ban.', 'success');
     }
 
     public function unbanUser($userId)
     {
         User::where('id', $userId)->update(['banned_at' => null]);
-        LivewireAlert::title('Pengguna telah di-unban.')->success()->toast()->position('top-end')->show();
+        $this->toast('Pengguna telah di-unban.', 'success');
     }
 
     public function getListeners()

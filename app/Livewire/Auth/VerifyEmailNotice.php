@@ -3,9 +3,12 @@
 namespace App\Livewire\Auth;
 
 use Livewire\Component;
+use App\Traits\LivewireLineoneAlerts;
 
 class VerifyEmailNotice extends Component
 {
+    use LivewireLineoneAlerts;
+
     public function checkVerification()
     {
         if (auth()->check() && auth()->user()->hasVerifiedEmail()) {
@@ -22,7 +25,7 @@ class VerifyEmailNotice extends Component
         $key = 'resend-verification:' . auth()->id();
         if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($key, 1)) {
             $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($key);
-            \Jantinnerezo\LivewireAlert\Facades\LivewireAlert::title("Tunggu $seconds detik sebelum mengirim ulang.")->warning()->toast()->position('top-end')->show();
+            $this->toast("Tunggu $seconds detik sebelum mengirim ulang.", 'warning');
             return;
         }
 
@@ -30,7 +33,7 @@ class VerifyEmailNotice extends Component
         \Illuminate\Support\Facades\RateLimiter::hit($key, 60);
 
         $this->dispatch('cooldown-start', seconds: 60);
-        \Jantinnerezo\LivewireAlert\Facades\LivewireAlert::title('Email verifikasi telah dikirim ulang.')->success()->toast()->position('top-end')->timer(3000)->show();
+        $this->toast('Email verifikasi telah dikirim ulang.', 'success');
     }
 
     public function render()

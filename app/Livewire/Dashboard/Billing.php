@@ -3,27 +3,68 @@
 namespace App\Livewire\Dashboard;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 use Livewire\Attributes\On;
-use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
+use App\Traits\LivewireLineoneAlerts;
 
 class Billing extends Component
 {
+    use WithPagination, LivewireLineoneAlerts;
+
+    public $searchTrx = '';
+    public $statusFilter = '';
+    public $perPage = 10;
+
+    public function updatingSearchTrx()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingStatusFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingPerPage()
+    {
+        $this->resetPage();
+    }
+
+    public function resetFilters()
+    {
+        $this->searchTrx = '';
+        $this->statusFilter = '';
+        $this->resetPage();
+    }
+
     public function mount()
     {
         if (request('status') === 'success') {
-            LivewireAlert::title('Pembayaran berhasil! Paket kamu sudah aktif.')->success()->toast()->position('top-end')->timer(4000)->show();
+            $this->toast('Pembayaran berhasil! Paket kamu sudah aktif.', 'success');
         } elseif (request('status') === 'pending') {
-            LivewireAlert::title('Pembayaran sedang diproses.')->info()->toast()->position('top-end')->show();
+            $this->toast('Pembayaran sedang diproses.', 'info');
         }
     }
+
     public function render()
     {
         $user = auth()->user();
 
-
-
         $activeSubscription = $user->activeSubscription();
-        $history = $user->subscriptions()->latest()->get();
+        $history = $user->subscriptions()
+            ->when($this->searchTrx, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('midtrans_order_id', 'like', '%' . $this->searchTrx . '%')
+                      ->orWhere('plan_slug', 'like', '%' . $this->searchTrx . '%')
+                      ->orWhere('status', 'like', '%' . $this->searchTrx . '%');
+                });
+            })
+            ->when($this->statusFilter, function ($query) {
+                $query->where('status', $this->statusFilter);
+            })
+            ->latest()
+            ->paginate($this->perPage);
+
         $pending = $user->subscriptions()
             ->where('status', 'pending')
             ->where('created_at', '>', now()->subHours(24))
@@ -97,14 +138,11 @@ class Billing extends Component
 
     public function confirmCancel()
     {
-        LivewireAlert::title('Yakin mau berhenti berlangganan paket ini?')
-            ->warning()
-            ->toast(false)
-            ->position('center')
-            ->withConfirmButton('Ya, Berhenti')
-            ->withCancelButton('Batal')
-            ->onConfirm('cancelSubscription')
-            ->show();
+        $this->confirmDialog(
+            'Yakin mau berhenti berlangganan paket ini?',
+            '',
+            'cancelSubscription'
+        );
     }
 
     #[On('cancelSubscription')]
@@ -121,7 +159,7 @@ class Billing extends Component
             \Illuminate\Support\Facades\Mail::to(auth()->user()->email)
                 ->queue(new \App\Mail\SubscriptionCancelledMail(auth()->user()));
 
-            LivewireAlert::title('Langganan sudah dibatalkan.')->success()->toast()->position('top-end')->timer(3000)->show();
+            $this->toast('Langganan sudah dibatalkan.', 'success');
         }
     }
 }

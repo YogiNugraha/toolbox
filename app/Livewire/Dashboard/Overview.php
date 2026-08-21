@@ -28,10 +28,21 @@ class Overview extends Component
                 return max(0, $activity->original_size - $activity->result_size);
             });
 
+        $todayFiles = Activity::where('user_id', $userId)
+            ->whereDate('created_at', today())
+            ->count();
+
+        $entitlementService = app(\App\Services\EntitlementService::class);
+        $currentPlan = $entitlementService->getCurrentPlan(auth()->user());
+        $activeSub = auth()->user()->activeSubscription();
+
         return view('livewire.dashboard.overview', [
             'activities' => $activities,
             'totalFiles' => $totalFiles,
             'totalSaved' => $totalSaved,
+            'todayFiles' => $todayFiles,
+            'currentPlan' => $currentPlan,
+            'activeSub' => $activeSub,
             'tools' => config('tools'),
         ])->layout('layouts.dashboard');
     }

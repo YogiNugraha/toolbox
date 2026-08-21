@@ -1,6 +1,7 @@
 <div>
     <div class="flex items-center justify-between mt-5 mb-5">
-        <h2 class="text-xl font-medium text-slate-800 dark:text-navy-50 lg:text-2xl">Semua Transaksi</h2>
+        @section('page_title', 'Semua Transaksi')
+        <div></div>
     </div>
 
     {{-- Summary --}}

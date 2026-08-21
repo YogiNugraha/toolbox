@@ -4,10 +4,12 @@ namespace App\Livewire\Auth;
 
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
-use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
+use App\Traits\LivewireLineoneAlerts;
 
 class Login extends Component
 {
+    use LivewireLineoneAlerts;
+
     public $email;
     public $password;
     public $remember = false;
@@ -15,7 +17,7 @@ class Login extends Component
     public function mount()
     {
         if (session()->has('error')) {
-            LivewireAlert::title(session('error'))->error()->show();
+            $this->toast(session('error'), 'error');
         }
     }
 

@@ -3,9 +3,12 @@
 namespace App\Livewire\Auth;
 
 use Livewire\Component;
+use App\Traits\LivewireLineoneAlerts;
 
 class ForgotPassword extends Component
 {
+    use LivewireLineoneAlerts;
+
     public $email;
 
     public function sendResetLink()
@@ -24,7 +27,7 @@ class ForgotPassword extends Component
         if ($status === \Illuminate\Support\Facades\Password::RESET_LINK_SENT) {
             \Illuminate\Support\Facades\RateLimiter::hit($key, 60);
             $this->dispatch('cooldown-start', seconds: 60);
-            \Jantinnerezo\LivewireAlert\Facades\LivewireAlert::title('Link reset password sudah dikirim ke email kamu.')->success()->show();
+            $this->toast('Link reset password sudah dikirim ke email kamu.', 'success');
         } else {
             $this->addError('email', 'Email tidak ditemukan.');
         }

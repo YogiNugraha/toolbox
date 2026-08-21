@@ -7,12 +7,12 @@ use Livewire\WithFileUploads;
 use App\Services\Tools\ImageProcessorService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Route;
-use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 use Illuminate\Validation\ValidationException;
+use App\Traits\LivewireLineoneAlerts;
 
 class ImageCompressor extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, LivewireLineoneAlerts;
 
     public $file;
     public $preset = 'sosmed'; // sosmed, website, custom
@@ -66,7 +66,7 @@ class ImageCompressor extends Component
                 }
             }
         } catch (ValidationException $e) {
-            LivewireAlert::title('Format file tidak didukung atau terlalu besar.')->error()->toast()->position('top-end')->timer(4000)->show();
+            $this->toast('Format file tidak didukung atau terlalu besar.', 'error');
             throw $e;
         }
     }
@@ -85,7 +85,7 @@ class ImageCompressor extends Component
         $remaining = $entitlementService->getRemainingQuota($user, $toolSlug);
         if ($remaining !== null && $remaining <= 0) {
             $this->errorMsg = 'Kuota harian Anda sudah habis. Silakan upgrade ke Pro.';
-            LivewireAlert::title('Kuota harian kamu sudah habis.')->info()->toast()->position('top-end')->show();
+            $this->toast('Kuota harian kamu sudah habis.', 'info');
             return;
         }
 
@@ -148,7 +148,7 @@ class ImageCompressor extends Component
                 ],
             ]);
 
-            LivewireAlert::title('Gambar berhasil dikompres!')->success()->toast()->position('top-end')->timer(3000)->show();
+            $this->toast('Gambar berhasil dikompres!', 'success');
 
         } catch (\Exception $e) {
             if (isset($activity)) {

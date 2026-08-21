@@ -1,128 +1,197 @@
 <div>
-    <div class="card px-5 py-8 sm:px-12 sm:py-12 print:shadow-none print:border-none print:p-0">
-        {{-- Header Invoice --}}
-        <div class="flex flex-col justify-between sm:flex-row">
-            <div class="text-center sm:text-left">
-                <h1 class="text-3xl font-bold uppercase text-primary dark:text-accent-light">{{ config('app.name') }}</h1>
-                <p class="mt-1 text-sm font-medium text-slate-400 dark:text-navy-300">Sistem Alat Produktivitas</p>
-            </div>
-            <div class="mt-4 text-center sm:mt-0 sm:text-right">
-                <h2 class="text-2xl font-semibold uppercase text-slate-700 dark:text-navy-100">Invoice</h2>
-                <p class="mt-1 text-sm font-medium text-slate-400 dark:text-navy-300">#{{ $subscription->midtrans_order_id }}</p>
-            </div>
+    @section('title', 'Invoice #' . $subscription->midtrans_order_id . ' - ' . config('app.name'))
+    @section('page_title', 'Invoice')
+    @section('page_breadcrumb', 'Invoice #' . $subscription->midtrans_order_id)
+
+    {{-- Top Action Toolbar (Lineone Style) --}}
+    <div class="flex items-center justify-between pb-5 lg:pb-6 print:hidden">
+        <h2 class="text-xl font-medium text-slate-700 line-clamp-1 dark:text-navy-50 lg:text-2xl">
+            Invoice
+        </h2>
+
+        <div class="flex space-x-2">
+            <a href="{{ route('dashboard.billing') }}"
+                class="btn h-9 rounded-full border border-slate-300 px-4 text-xs font-semibold text-slate-700 hover:bg-slate-150 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Kembali ke Billing
+            </a>
+            <button @click="window.print()"
+                class="btn size-9 rounded-full bg-primary p-0 text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus shadow-sm"
+                title="Cetak / Download PDF">
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+            </button>
         </div>
+    </div>
 
-        <div class="my-6 h-px bg-slate-200 dark:bg-navy-500"></div>
-
-        {{-- Info Grid --}}
-        <div class="flex flex-col justify-between sm:flex-row">
-            {{-- Info Pelanggan --}}
-            <div class="text-center sm:text-left">
-                <h3 class="text-xs-plus uppercase tracking-wide text-slate-400 dark:text-navy-300 mb-2">Ditagihkan Kepada:</h3>
-                <p class="text-base font-medium text-slate-700 dark:text-navy-100">{{ auth()->user()->name }}</p>
-                <p class="mt-1 text-sm text-slate-400 dark:text-navy-300">{{ auth()->user()->email }}</p>
-                @if(auth()->user()->phone)
-                    <p class="mt-1 text-sm text-slate-400 dark:text-navy-300">{{ auth()->user()->phone }}</p>
-                @endif
-            </div>
-
-            {{-- Info Transaksi --}}
-            <div class="mt-4 text-center sm:mt-0 sm:text-right">
-                <h3 class="text-xs-plus uppercase tracking-wide text-slate-400 dark:text-navy-300 mb-2">Detail Transaksi:</h3>
-                <p class="text-sm">
-                    <span class="inline-block w-24 text-slate-400 dark:text-navy-300 text-left sm:text-right sm:mr-2">Tanggal:</span>
-                    <span class="font-medium text-slate-700 dark:text-navy-100">{{ $subscription->created_at->translatedFormat('d F Y, H:i') }}</span>
-                </p>
-                <p class="mt-1 text-sm">
-                    <span class="inline-block w-24 text-slate-400 dark:text-navy-300 text-left sm:text-right sm:mr-2">Status:</span>
-                    <span class="font-medium capitalize text-slate-700 dark:text-navy-100">{{ $subscription->status }}</span>
-                </p>
-            </div>
-        </div>
-
-        {{-- Tabel Item --}}
-        <div class="is-scrollbar-hidden mt-8 min-w-full overflow-x-auto rounded-lg border border-slate-200 dark:border-navy-500">
-            <table class="w-full text-left">
-                <thead>
-                    <tr class="border-y border-transparent border-b-slate-200 bg-slate-50 dark:border-b-navy-500 dark:bg-navy-800">
-                        <th class="whitespace-nowrap px-4 py-3 font-semibold uppercase text-slate-800 dark:text-navy-100">Deskripsi</th>
-                        <th class="whitespace-nowrap px-4 py-3 text-right font-semibold uppercase text-slate-800 dark:text-navy-100">Durasi</th>
-                        <th class="whitespace-nowrap px-4 py-3 text-right font-semibold uppercase text-slate-800 dark:text-navy-100">Jumlah</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="whitespace-nowrap px-4 py-4 sm:px-5">
-                            <p class="font-medium text-slate-700 dark:text-navy-100">Paket {{ $subscription->plan->name ?? ucfirst($subscription->plan_slug) }}</p>
-                            <p class="mt-1 text-xs text-slate-400 dark:text-navy-300">Akses tanpa batas ke semua fitur premium.</p>
-                        </td>
-                        <td class="whitespace-nowrap px-4 py-4 text-right text-sm text-slate-700 dark:text-navy-100 sm:px-5">
-                            {{ $subscription->plan ? ($subscription->plan->duration_days ?? 'Selamanya') . ' Hari' : '30 Hari' }}
-                        </td>
-                        <td class="whitespace-nowrap px-4 py-4 text-right font-medium text-slate-700 dark:text-navy-100 sm:px-5">
-                            @if($subscription->subtotal > 0 || $subscription->amount == 0)
-                                Rp {{ number_format($subscription->subtotal + $subscription->discount, 0, ',', '.') }}
+    {{-- Invoice Main Card (Exact Lineone layouts/invoice-1 style) --}}
+    <div class="grid grid-cols-1">
+        <div class="card px-5 py-12 sm:px-18 print:shadow-none print:border-none print:p-0">
+            
+            {{-- Header Invoice --}}
+            <div class="flex flex-col justify-between sm:flex-row">
+                <div class="text-center sm:text-left">
+                    <h2 class="text-2xl font-bold uppercase text-primary dark:text-accent-light tracking-wide">
+                        {{ config('app.name') }}
+                    </h2>
+                    <div class="space-y-1 pt-2 text-xs text-slate-500 dark:text-navy-300">
+                        <p class="font-medium text-slate-700 dark:text-navy-100">MudahKerja Productivity Suite</p>
+                        <p>Platform Alat Bantu Dokumen & Gambar Digital</p>
+                        <p>support@mudahkerja.com</p>
+                    </div>
+                </div>
+                <div class="mt-4 text-center sm:m-0 sm:text-right">
+                    <h2 class="text-2xl font-semibold uppercase text-primary dark:text-accent-light">
+                        INVOICE
+                    </h2>
+                    <div class="space-y-1 pt-2 text-xs text-slate-500 dark:text-navy-300">
+                        <p>Nomor Invoice: <span class="font-semibold text-slate-800 dark:text-navy-100">#{{ $subscription->midtrans_order_id }}</span></p>
+                        <p>
+                            Diterbitkan: <span class="font-semibold text-slate-800 dark:text-navy-100">{{ $subscription->created_at->translatedFormat('d F Y, H:i') }}</span>
+                        </p>
+                        <p>
+                            Status: 
+                            @if($subscription->status === 'active' || $subscription->status === 'settlement' || $subscription->status === 'capture')
+                                <span class="badge rounded-full bg-success/10 text-success text-[11px] font-bold px-2.5 py-0.5">
+                                    LUNAS
+                                </span>
+                            @elseif($subscription->status === 'pending')
+                                <span class="badge rounded-full bg-warning/10 text-warning text-[11px] font-bold px-2.5 py-0.5">
+                                    MENUNGGU PEMBAYARAN
+                                </span>
                             @else
-                                Rp {{ number_format($subscription->amount, 0, ',', '.') }}
+                                <span class="badge rounded-full bg-error/10 text-error text-[11px] font-bold px-2.5 py-0.5 uppercase">
+                                    {{ $subscription->status }}
+                                </span>
                             @endif
-                        </td>
-                    </tr>
+                        </p>
+                    </div>
+                </div>
+            </div>
 
-                    @if($subscription->subtotal > 0 || $subscription->amount == 0)
+            <div class="my-7 h-px bg-slate-200 dark:bg-navy-500"></div>
+
+            {{-- Invoiced To & Payment Method --}}
+            <div class="flex flex-col justify-between sm:flex-row">
+                <div class="text-center sm:text-left">
+                    <p class="text-lg font-medium text-slate-600 dark:text-navy-100">
+                        Ditagihkan Kepada:
+                    </p>
+                    <div class="space-y-1 pt-2 text-xs text-slate-500 dark:text-navy-300">
+                        <p class="font-bold text-slate-800 dark:text-navy-100 text-sm">{{ auth()->user()->name }}</p>
+                        <p>{{ auth()->user()->email }}</p>
+                        @if(auth()->user()->phone)
+                            <p>{{ auth()->user()->phone }}</p>
+                        @endif
+                    </div>
+                </div>
+                <div class="mt-4 text-center sm:m-0 sm:text-right">
+                    <p class="text-lg font-medium text-slate-600 dark:text-navy-100">
+                        Metode Pembayaran:
+                    </p>
+                    <div class="space-y-1 pt-2 text-xs text-slate-500 dark:text-navy-300">
+                        <p class="font-bold text-slate-800 dark:text-navy-100">Midtrans Gateway (QRIS / Transfer / E-Wallet)</p>
+                        <p>Order ID: {{ $subscription->midtrans_order_id }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="my-7 h-px bg-slate-200 dark:bg-navy-500"></div>
+
+            {{-- Zebra Table (Exact Lineone layouts-invoice-1 style) --}}
+            <div class="is-scrollbar-hidden min-w-full overflow-x-auto">
+                <table class="is-zebra w-full text-left">
+                    <thead>
+                        <tr>
+                            <th class="whitespace-nowrap rounded-l-lg bg-slate-200 px-3 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs">
+                                #
+                            </th>
+                            <th class="whitespace-nowrap bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs">
+                                DESKRIPSI
+                            </th>
+                            <th class="whitespace-nowrap bg-slate-200 px-3 py-3 text-right font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs">
+                                DURASI
+                            </th>
+                            <th class="whitespace-nowrap bg-slate-200 px-3 py-3 text-right font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs">
+                                HARGA
+                            </th>
+                            <th class="whitespace-nowrap rounded-r-lg bg-slate-200 px-3 py-3 text-right font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs">
+                                SUBTOTAL
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
                         @php
-                            $basePrice = $subscription->subtotal + $subscription->discount;
+                            $basePrice = $subscription->subtotal > 0 ? ($subscription->subtotal + $subscription->discount) : $subscription->amount;
                             $taxPercent = $subscription->subtotal > 0 ? round(($subscription->tax / $subscription->subtotal) * 100) : 0;
                             $discountPercent = $basePrice > 0 ? round(($subscription->discount / $basePrice) * 100) : 0;
                         @endphp
-                        @if($subscription->discount > 0)
-                        <tr class="border-y border-transparent border-t-slate-200 dark:border-t-navy-500">
-                            <td colspan="2" class="whitespace-nowrap px-4 py-3 text-right font-medium text-success sm:px-5">Diskon ({{ $discountPercent }}%)</td>
-                            <td class="whitespace-nowrap px-4 py-3 text-right font-medium text-success sm:px-5">-Rp {{ number_format($subscription->discount, 0, ',', '.') }}</td>
+                        <tr>
+                            <td class="whitespace-nowrap rounded-l-lg px-4 py-3 sm:px-5 font-medium text-slate-600 dark:text-navy-100">
+                                1
+                            </td>
+                            <td class="whitespace-nowrap px-4 py-3 sm:px-5">
+                                <div>
+                                    <p class="font-bold text-slate-700 dark:text-navy-100">
+                                        Paket {{ $subscription->plan->name ?? ucfirst($subscription->plan_slug) }}
+                                    </p>
+                                    <p class="text-xs text-slate-400 dark:text-navy-300">
+                                        Akses tanpa batas ke seluruh tools konversi & optimasi dokumen / gambar.
+                                    </p>
+                                </div>
+                            </td>
+                            <td class="w-2/12 whitespace-nowrap px-4 py-3 text-right sm:px-5 font-medium text-slate-600 dark:text-navy-100">
+                                {{ $subscription->plan ? ($subscription->plan->duration_days ?? '30') . ' Hari' : '30 Hari' }}
+                            </td>
+                            <td class="w-2/12 whitespace-nowrap px-4 py-3 text-right sm:px-5 font-medium text-slate-600 dark:text-navy-100">
+                                Rp {{ number_format($basePrice, 0, ',', '.') }}
+                            </td>
+                            <td class="w-2/12 whitespace-nowrap rounded-r-lg px-4 py-3 text-right font-semibold text-slate-800 dark:text-navy-100 sm:px-5">
+                                Rp {{ number_format($basePrice, 0, ',', '.') }}
+                            </td>
                         </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="my-7 h-px bg-slate-200 dark:bg-navy-500"></div>
+
+            {{-- Summary Breakdown --}}
+            <div class="flex flex-col justify-end sm:flex-row">
+                <div class="mt-4 text-center sm:m-0 sm:text-right">
+                    <p class="text-lg font-medium text-slate-600 dark:text-navy-100">
+                        Rincian Pembayaran:
+                    </p>
+                    <div class="space-y-1.5 pt-2 text-xs text-slate-600 dark:text-navy-200">
+                        <p>Harga Paket: <span class="font-semibold text-slate-800 dark:text-navy-100">Rp {{ number_format($basePrice, 0, ',', '.') }}</span></p>
+                        @if($subscription->discount > 0)
+                            <p class="text-success">Diskon ({{ $discountPercent }}%): <span class="font-semibold">-Rp {{ number_format($subscription->discount, 0, ',', '.') }}</span></p>
                         @endif
                         @if($subscription->service_fee > 0)
-                        <tr class="border-y border-transparent border-t-slate-200 dark:border-t-navy-500">
-                            <td colspan="2" class="whitespace-nowrap px-4 py-3 text-right font-medium text-slate-700 dark:text-navy-100 sm:px-5">Biaya Layanan</td>
-                            <td class="whitespace-nowrap px-4 py-3 text-right font-medium text-slate-700 dark:text-navy-100 sm:px-5">Rp {{ number_format($subscription->service_fee, 0, ',', '.') }}</td>
-                        </tr>
+                            <p>Biaya Layanan: <span class="font-semibold text-slate-800 dark:text-navy-100">Rp {{ number_format($subscription->service_fee, 0, ',', '.') }}</span></p>
                         @endif
                         @if($subscription->tax > 0)
-                        <tr class="border-y border-transparent border-t-slate-200 dark:border-t-navy-500">
-                            <td colspan="2" class="whitespace-nowrap px-4 py-3 text-right font-medium text-slate-700 dark:text-navy-100 sm:px-5">Pajak ({{ $taxPercent }}%)</td>
-                            <td class="whitespace-nowrap px-4 py-3 text-right font-medium text-slate-700 dark:text-navy-100 sm:px-5">Rp {{ number_format($subscription->tax, 0, ',', '.') }}</td>
-                        </tr>
+                            <p>Pajak ({{ $taxPercent }}%): <span class="font-semibold text-slate-800 dark:text-navy-100">Rp {{ number_format($subscription->tax, 0, ',', '.') }}</span></p>
                         @endif
-                    @endif
-                </tbody>
-                <tfoot>
-                    <tr class="border-y border-transparent border-t-slate-200 bg-slate-50 dark:border-t-navy-500 dark:bg-navy-800">
-                        <td colspan="2" class="whitespace-nowrap px-4 py-4 text-right font-semibold uppercase text-slate-800 dark:text-navy-100 sm:px-5">Total Pembayaran</td>
-                        <td class="whitespace-nowrap px-4 py-4 text-right text-lg font-bold text-primary dark:text-accent-light sm:px-5">
-                            Rp {{ number_format($subscription->amount, 0, ',', '.') }}
-                        </td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
+                        <div class="pt-2">
+                            <p class="text-xl font-bold text-primary dark:text-accent-light">
+                                Total: Rp {{ number_format($subscription->amount, 0, ',', '.') }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        {{-- Footer / Notes --}}
-        <div class="mt-8 pt-4">
-            <p class="text-sm text-slate-400 dark:text-navy-300">
-                Terima kasih telah menggunakan {{ config('app.name') }}. Jika Anda memiliki pertanyaan mengenai tagihan ini, silakan hubungi dukungan pelanggan kami.
-            </p>
-        </div>
-
-        {{-- Tombol Aksi (Sembunyi saat diprint) --}}
-        <div class="mt-8 flex justify-end space-x-3 print:hidden">
-            <a href="{{ route('dashboard.billing') }}" class="btn border border-slate-300 font-medium text-slate-800 hover:bg-slate-150 focus:bg-slate-150 active:bg-slate-150/80 dark:border-navy-450 dark:text-navy-50 dark:hover:bg-navy-500 dark:focus:bg-navy-500 dark:active:bg-navy-500/90">
-                Kembali
-            </a>
-            <button onclick="window.print()" class="btn space-x-2 bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
-                <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                </svg>
-                <span>Cetak Invoice</span>
-            </button>
+            {{-- Notes Footer --}}
+            <div class="mt-8 rounded-lg bg-slate-50 p-4 dark:bg-navy-600/50 text-xs text-slate-500 dark:text-navy-300">
+                <p class="font-medium text-slate-700 dark:text-navy-100 mb-1">Catatan:</p>
+                <p>Terima kasih atas kepercayaan Anda menggunakan layanan {{ config('app.name') }}. Simpan invoice ini sebagai bukti transaksi resmi langganan Anda.</p>
+            </div>
         </div>
     </div>
 </div>

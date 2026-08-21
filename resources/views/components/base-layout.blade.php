@@ -47,7 +47,7 @@
     <x-app-preloader></x-app-preloader>
 
     <!-- Page Wrapper -->
-    <div id="root" class="min-h-100vh flex grow bg-slate-50 dark:bg-navy-900" x-cloak>
+    <div id="root" class="min-h-100vh w-full flex grow bg-slate-50 dark:bg-navy-900" x-cloak>
 
         {{ $slot }}
 

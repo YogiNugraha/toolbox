@@ -5,13 +5,15 @@ namespace App\Livewire;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use App\Models\Subscription;
-use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
+use App\Traits\LivewireLineoneAlerts;
 use Midtrans\Config;
 use Midtrans\Snap;
 use Illuminate\Support\Str;
 
 class Pricing extends Component
 {
+    use LivewireLineoneAlerts;
+
     public $snapToken;
     public $country_code = '+62';
     public $phone;
@@ -50,14 +52,11 @@ class Pricing extends Component
 
     public function confirmCancelCheckout()
     {
-        LivewireAlert::title('Batalkan pembayaran ini?')
-            ->warning()
-            ->toast(false)
-            ->position('center')
-            ->withConfirmButton('Ya, Batalkan')
-            ->withCancelButton('Tidak')
-            ->onConfirm('cancelPending')
-            ->show();
+        $this->confirmDialog(
+            'Batalkan pembayaran ini?',
+            '',
+            'cancelPending'
+        );
     }
 
     #[On('cancelPending')]

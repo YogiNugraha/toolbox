@@ -6,12 +6,12 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Services\Tools\ImageProcessorService;
 use Illuminate\Support\Facades\Storage;
-use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 use Illuminate\Validation\ValidationException;
+use App\Traits\LivewireLineoneAlerts;
 
 class ImageConverter extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, LivewireLineoneAlerts;
 
     public $file;
     public $outputFormat = 'png';
@@ -66,7 +66,7 @@ class ImageConverter extends Component
                 }
             }
         } catch (ValidationException $e) {
-            LivewireAlert::title('Format file tidak didukung.')->error()->toast()->position('top-end')->timer(4000)->show();
+            $this->toast('Format file tidak didukung.', 'error');
             throw $e;
         }
     }
@@ -85,7 +85,7 @@ class ImageConverter extends Component
         $remaining = $entitlementService->getRemainingQuota($user, $toolSlug);
         if ($remaining !== null && $remaining <= 0) {
             $this->errorMsg = 'Kuota harian Anda sudah habis. Silakan upgrade ke Pro.';
-            LivewireAlert::title('Kuota harian kamu sudah habis.')->info()->toast()->position('top-end')->show();
+            $this->toast('Kuota harian kamu sudah habis.', 'info');
             return;
         }
 
@@ -115,7 +115,7 @@ class ImageConverter extends Component
                 ],
             ]);
 
-            LivewireAlert::title('Gambar berhasil dikonversi!')->success()->toast()->position('top-end')->timer(3000)->show();
+            $this->toast('Gambar berhasil dikonversi!', 'success');
 
         } catch (\Exception $e) {
             if (isset($activity)) {

@@ -5,17 +5,53 @@ namespace App\Livewire\Dashboard;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Activity;
-use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
+use App\Traits\LivewireLineoneAlerts;
 
 class History extends Component
 {
-    use WithPagination;
+    use WithPagination, LivewireLineoneAlerts;
 
     public $search = '';
+    public $perPage = 10;
+    public $statusFilter = '';
+    public $toolFilter = '';
 
     public function updatingSearch()
     {
         $this->resetPage();
+    }
+
+    public function updatingPerPage()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingStatusFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingToolFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->statusFilter = '';
+        $this->toolFilter = '';
+        $this->resetPage();
+    }
+
+    public function deleteActivity($id)
+    {
+        $activity = Activity::where('user_id', auth()->id())->findOrFail($id);
+        if ($activity->result_path && \Illuminate\Support\Facades\Storage::disk('local')->exists($activity->result_path)) {
+            \Illuminate\Support\Facades\Storage::disk('local')->delete($activity->result_path);
+        }
+        $activity->delete();
+        $this->toast('Aktivitas berhasil dihapus.', 'success');
     }
 
     public function export()
@@ -27,6 +63,12 @@ class History extends Component
                       ->orWhere('original_filename', 'like', '%' . $this->search . '%')
                       ->orWhere('status', 'like', '%' . $this->search . '%');
                 });
+            })
+            ->when($this->statusFilter, function ($query) {
+                $query->where('status', $this->statusFilter);
+            })
+            ->when($this->toolFilter, function ($query) {
+                $query->where('tool_slug', $this->toolFilter);
             })
             ->latest()
             ->get();
@@ -62,7 +104,7 @@ class History extends Component
             $writer->close();
         }, 'riwayat_aktivitas.xlsx');
         
-        LivewireAlert::title('File Excel siap diunduh.')->success()->toast()->position('top-end')->show();
+        $this->toast('File Excel siap diunduh.', 'success');
         return $response;
     }
 
@@ -76,11 +118,18 @@ class History extends Component
                       ->orWhere('status', 'like', '%' . $this->search . '%');
                 });
             })
+            ->when($this->statusFilter, function ($query) {
+                $query->where('status', $this->statusFilter);
+            })
+            ->when($this->toolFilter, function ($query) {
+                $query->where('tool_slug', $this->toolFilter);
+            })
             ->latest()
-            ->paginate(10);
+            ->paginate($this->perPage);
 
         return view('livewire.dashboard.history', [
-            'activities' => $activities
+            'activities' => $activities,
+            'tools' => config('tools', [])
         ])->layout('layouts.dashboard');
     }
 }

@@ -5,11 +5,11 @@ namespace App\Livewire\Dashboard;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
-use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
+use App\Traits\LivewireLineoneAlerts;
 
 class Profile extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, LivewireLineoneAlerts;
 
     public $photo;
     public $name;
@@ -39,7 +39,7 @@ class Profile extends Component
             auth()->user()->update(['profile_photo_path' => $path]);
             
             $this->dispatch('profile-photo-updated', path: Storage::url($path));
-            LivewireAlert::title('Foto profil berhasil diperbarui.')->success()->toast()->position('top-end')->timer(2500)->show();
+            $this->toast('Foto profil berhasil diperbarui.', 'success');
         }
     }
 
@@ -94,13 +94,12 @@ class Profile extends Component
             $user->update(['pending_email' => $this->email]);
             $this->sendPendingEmailConfirmation($user);
 
-            LivewireAlert::title("Link konfirmasi dikirim ke {$this->email}. Email akun kamu belum berubah sampai link itu diklik.")
-                ->info()->toast(false)->position('center')->show();
+            $this->toast("Link konfirmasi dikirim ke {$this->email}. Email akun belum berubah sampai link diklik.", 'info');
 
             $this->email = $user->email; // Revert the form UI to the current active email
         } else {
             $this->dispatch('profile-updated', name: $this->name);
-            LivewireAlert::title('Profil berhasil diperbarui.')->success()->toast()->position('top-end')->timer(2500)->show();
+            $this->toast('Profil berhasil diperbarui.', 'success');
         }
     }
 
@@ -118,7 +117,7 @@ class Profile extends Component
     public function cancelPendingEmail()
     {
         auth()->user()->update(['pending_email' => null]);
-        LivewireAlert::title('Perubahan email dibatalkan.')->info()->toast()->position('top-end')->show();
+        $this->toast('Perubahan email dibatalkan.', 'info');
     }
 
     public function resendPendingEmail()
@@ -126,7 +125,7 @@ class Profile extends Component
         $key = 'resend-pending-email:' . auth()->id();
         if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($key, 1)) {
             $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($key);
-            LivewireAlert::title("Tunggu $seconds detik sebelum mengirim ulang.")->warning()->toast()->position('top-end')->show();
+            $this->toast("Tunggu $seconds detik sebelum mengirim ulang.", 'warning');
             return;
         }
 
@@ -134,7 +133,7 @@ class Profile extends Component
         \Illuminate\Support\Facades\RateLimiter::hit($key, 60);
 
         $this->dispatch('cooldown-start', seconds: 60);
-        LivewireAlert::title('Link konfirmasi telah dikirim ulang.')->success()->toast()->position('top-end')->show();
+        $this->toast('Link konfirmasi telah dikirim ulang.', 'success');
     }
 
     public function updatePassword()
@@ -150,7 +149,7 @@ class Profile extends Component
 
         $this->reset(['current_password', 'password', 'password_confirmation']);
 
-        LivewireAlert::title('Password berhasil diperbarui.')->success()->toast()->position('top-end')->timer(2500)->show();
+        $this->toast('Password berhasil diperbarui.', 'success');
     }
 
     public function render()

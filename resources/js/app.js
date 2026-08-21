@@ -107,15 +107,40 @@ window.Tom = Tom;
 window.helpers = helpers;
 window.pages = pages;
 
+// Preloader fallback to prevent stuck loader
+const dismissPreloader = () => {
+    const preloader = document.querySelector(".app-preloader");
+    if (preloader) {
+        setTimeout(() => {
+            preloader.classList.add("animate-[cubic-bezier(0.4,0,0.2,1)_fade-out_500ms_forwards]");
+            setTimeout(() => preloader.remove(), 1000);
+        }, 150);
+    }
+};
+
+if (document.readyState === "complete") {
+    dismissPreloader();
+} else {
+    window.addEventListener("load", dismissPreloader);
+}
+
 let isAlpineInitialized = false;
 document.addEventListener('alpine:init', () => {
     if (isAlpineInitialized) return;
     isAlpineInitialized = true;
 
     try {
-        window.Alpine.plugin(persist);
-        window.Alpine.plugin(collapse);
-        window.Alpine.plugin(intersect);
+        if (window.Alpine) {
+            if (!window.Alpine.$persist) {
+                window.Alpine.plugin(persist);
+            }
+            if (!window.Alpine.collapse) {
+                window.Alpine.plugin(collapse);
+            }
+            if (!window.Alpine.intersect) {
+                window.Alpine.plugin(intersect);
+            }
+        }
     } catch (e) {
         console.warn('Alpine plugins already registered', e);
     }
@@ -143,6 +168,34 @@ document.addEventListener('alpine:init', () => {
     try {
         window.Alpine.store("global", store());
     } catch (e) { console.warn('global store err', e); }
+
+    try {
+        window.Alpine.store("confirmModal", {
+            show: false,
+            title: '',
+            text: '',
+            action: '',
+            data: {},
+            open(title, text, action, data) {
+                this.title = title;
+                this.text = text;
+                this.action = action;
+                this.data = data || {};
+                this.show = true;
+            },
+            close() {
+                this.show = false;
+            },
+            confirm() {
+                this.show = false;
+                if (this.action === 'submit-form') {
+                    document.getElementById(this.data.formId).submit();
+                } else {
+                    window.Livewire.dispatch(this.action, this.data);
+                }
+            }
+        });
+    } catch (e) { console.warn('confirmModal store err', e); }
 
     try {
         window.Alpine.data("usePopper", usePopper);

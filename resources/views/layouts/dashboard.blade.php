@@ -1,23 +1,13 @@
-<x-app-layout>
+<x-app-layout-sideblock is-sidebar-open="true">
     <x-slot name="title">
         @yield('title', 'Dashboard - ' . config('app.name'))
     </x-slot>
 
     <!-- Main Content Wrapper -->
-    <main class="main-content w-full px-[var(--margin-x)] pb-8">
-        <div class="flex items-center space-x-4 py-5 lg:py-6">
-            <div>
-                <h2 class="text-xl font-medium text-slate-800 dark:text-navy-50 lg:text-2xl">
-                    @yield('page_title', 'Dashboard')
-                </h2>
-                @hasSection('page_description')
-                    <p class="mt-1 text-sm text-slate-400 dark:text-navy-300">
-                        @yield('page_description')
-                    </p>
-                @endif
-            </div>
-
-            @hasSection('page_breadcrumb')
+    <main class="main-content w-full px-[var(--margin-x)] pb-8 pt-5 lg:pt-6">
+        <div id="page-title-source" class="hidden">@yield('page_title', 'Dashboard')</div>
+        @if(View::hasSection('page_breadcrumb'))
+        <div class="flex items-center space-x-4 pb-5 lg:pb-6">
             <div class="hidden h-full py-1 sm:flex">
                 <div class="h-full w-px bg-slate-300 dark:bg-navy-600"></div>
             </div>
@@ -30,10 +20,10 @@
                 </li>
                 <li>@yield('page_breadcrumb')</li>
             </ul>
-            @endif
         </div>
+        @endif
 
         {{ $slot ?? '' }}
         @yield('content')
     </main>
-</x-app-layout>
+</x-app-layout-sideblock>

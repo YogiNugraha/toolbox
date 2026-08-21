@@ -5,11 +5,13 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use App\Models\Plan;
 use Livewire\Attributes\On;
-use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 use Illuminate\Support\Str;
+use App\Traits\LivewireLineoneAlerts;
 
 class Plans extends Component
 {
+    use LivewireLineoneAlerts;
+
     public $isModalOpen = false;
     
     public $planId;
@@ -143,7 +145,7 @@ class Plans extends Component
             $otherDefaults = Plan::where('id', '!=', $this->planId)->where('is_default', true)->count();
             if ($otherDefaults === 0) {
                 $this->is_default = true;
-                LivewireAlert::title('Minimal harus ada 1 paket default!')->warning()->toast()->position('top-end')->show();
+                $this->toast('Minimal harus ada 1 paket default!', 'warning');
             }
         }
 
@@ -163,18 +165,17 @@ class Plans extends Component
         ]);
 
         $this->isModalOpen = false;
-        LivewireAlert::title('Paket berhasil disimpan')->success()->toast()->position('top-end')->show();
+        $this->toast('Paket berhasil disimpan', 'success');
     }
 
     public function confirmDelete($id)
     {
-        LivewireAlert::title('Yakin hapus paket ini?')
-            ->warning()
-            ->text('Paket yang memiliki riwayat transaksi tidak bisa dihapus.')
-            ->withConfirmButton('Ya, Hapus')
-            ->withCancelButton('Batal')
-            ->onConfirm('deletePlan', ['id' => $id])
-            ->show();
+        $this->confirmDialog(
+            'Yakin hapus paket ini?',
+            'Paket yang memiliki riwayat transaksi tidak bisa dihapus.',
+            'deletePlan',
+            ['id' => $id]
+        );
     }
 
     #[On('deletePlan')]
@@ -184,17 +185,17 @@ class Plans extends Component
         $plan = Plan::findOrFail($id);
 
         if ($plan->is_default) {
-            LivewireAlert::title('Tidak bisa hapus paket default!')->error()->toast()->position('top-end')->show();
+            $this->toast('Tidak bisa hapus paket default!', 'error');
             return;
         }
 
         if ($plan->subscriptions()->exists()) {
-            LivewireAlert::title('Gagal dihapus')->error()->text('Paket ini punya riwayat transaksi. Sebaiknya dinonaktifkan saja.')->toast(false)->position('center')->show();
+            $this->toast('Paket ini punya riwayat transaksi. Sebaiknya dinonaktifkan saja.', 'error');
             return;
         }
 
         $plan->delete();
-        LivewireAlert::title('Paket berhasil dihapus')->success()->toast()->position('top-end')->show();
+        $this->toast('Paket berhasil dihapus', 'success');
     }
 
     private function resetInputFields()
@@ -226,7 +227,7 @@ class Plans extends Component
     {
         $plan = Plan::findOrFail($id);
         $plan->update(['is_active' => !$plan->is_active]);
-        LivewireAlert::title('Status paket diubah')->success()->toast()->position('top-end')->timer(3000)->show();
+        $this->toast('Status paket diubah', 'success');
     }
 
     public function saveSettings()
@@ -245,7 +246,7 @@ class Plans extends Component
         \App\Models\Setting::set('service_fee_type', $this->service_fee_type);
         \App\Models\Setting::set('service_fee_value', $this->service_fee_value);
 
-        LivewireAlert::title('Pengaturan biaya berhasil disimpan!')->success()->toast()->position('top-end')->timer(3000)->show();
+        $this->toast('Pengaturan biaya berhasil disimpan!', 'success');
     }
 
     public function render()
