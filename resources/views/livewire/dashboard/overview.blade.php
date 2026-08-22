@@ -1,158 +1,209 @@
 <div>
     @section('title', 'Dashboard - ' . config('app.name'))
-    @section('page_title', 'Dashboard Overview')
-    @section('page_breadcrumb', 'Overview')
+    @section('page_title', 'Dashboard')
 
-    <div class="mt-2 grid grid-cols-12 gap-4 sm:gap-5 lg:gap-6">
-        {{-- Left / Main Column (col-span-12 lg:col-span-8 xl:col-span-9) --}}
-        <div class="col-span-12 lg:col-span-8 xl:col-span-9 space-y-4 sm:space-y-5 lg:space-y-6">
-            
-            {{-- Teacher Dashboard Welcome Hero Banner --}}
-            @php
-                $planName = $activeSub ? ($activeSub->plan->name ?? ucfirst($activeSub->plan_slug)) : null;
-                $isProMax = $activeSub && ($activeSub->plan_slug === 'pro-max' || strtolower((string)$planName) === 'pro max');
-            @endphp
-            <div class="card {{ $activeSub ? ($isProMax ? 'bg-linear-to-r from-purple-700 via-indigo-600 to-primary text-white shadow-lg shadow-purple-500/20' : 'bg-linear-to-r from-indigo-600 via-primary to-purple-600 text-white shadow-lg shadow-primary/20') : 'bg-linear-to-l from-pink-300 to-indigo-400 text-white shadow-md' }} p-5 sm:flex-row items-center relative overflow-hidden">
-                <div class="flex justify-center sm:order-last shrink-0">
-                    <img class="-mt-6 sm:-mt-2 h-36 sm:h-40 object-contain drop-shadow" 
-                         src="{{ asset('images/illustrations/teacher.svg') }}" 
-                         alt="Teacher Illustration" />
-                </div>
-                <div class="mt-4 flex-1 pt-1 text-center text-white sm:mt-0 sm:text-left sm:pr-4">
-                    <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                        <h3 class="text-xl sm:text-2xl font-bold">
-                            Selamat Datang Kembali, <span class="font-extrabold">{{ auth()->user()->name }}</span>!
-                        </h3>
-                        @if($activeSub)
-                            @if($isProMax)
-                                <span class="badge rounded-full bg-linear-to-r from-amber-400 to-yellow-300 text-slate-900 px-2.5 py-0.5 text-xs font-black shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
-                                    <x-lucide-crown class="size-3.5 stroke-[2.5]" />
-                                    <span>{{ $planName }}</span>
-                                </span>
-                            @else
-                                <span class="badge rounded-full bg-linear-to-r from-amber-400 to-orange-400 text-white px-2.5 py-0.5 text-xs font-black shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
-                                    <x-lucide-star class="size-3.5 stroke-[2.5] fill-current" />
-                                    <span>{{ $planName }}</span>
-                                </span>
-                            @endif
-                        @endif
-                    </div>
-                    <p class="mt-2 text-sm text-indigo-50 leading-relaxed">
-                        @if($activeSub)
-                            Akun Anda aktif dengan <strong>Akses Kuota Unlimited</strong>. Anda telah memproses 
-                            <span class="font-bold text-navy-900 bg-white/60 px-2 py-0.5 rounded-md">{{ $totalFiles }} file</span> sejauh ini.
-                        @else
-                            Anda telah berhasil memproses 
-                            <span class="font-bold text-navy-900 bg-white/40 px-2 py-0.5 rounded-md">{{ $totalFiles }} file</span> sejauh ini.
-                        @endif
-                    </p>
-                    <p class="text-xs text-indigo-100 mt-1">
-                        Total efisiensi penyimpanan: <span class="font-bold text-white">{{ \Illuminate\Support\Number::fileSize($totalSaved) }}</span> dihemat.
-                    </p>
+    {{-- Canva-Inspired Hero Banner Section --}}
+    <div class="relative overflow-hidden rounded-2xl border border-slate-200/70 bg-gradient-to-br from-cyan-50/60 via-indigo-50/70 to-purple-50/70 p-6 text-center shadow-xs dark:border-navy-600/70 dark:bg-gradient-to-br dark:from-navy-800 dark:via-navy-750 dark:to-navy-800 sm:p-10 lg:p-12 mb-8">
+        {{-- Subtle decorative ambient background blurs --}}
+        <div class="pointer-events-none absolute -top-12 -left-12 size-48 rounded-full bg-primary/10 blur-3xl dark:bg-accent/10"></div>
+        <div class="pointer-events-none absolute -bottom-12 -right-12 size-48 rounded-full bg-secondary/10 blur-3xl dark:bg-secondary/10"></div>
 
-                    <div class="mt-5 flex flex-wrap gap-2.5 justify-center sm:justify-start">
-                        @if(!$activeSub)
-                            <a href="{{ route('pricing') }}" 
-                               class="btn bg-white font-bold text-primary hover:bg-slate-100 active:bg-slate-200 text-xs px-4 py-2 rounded-lg shadow-sm">
-                                Upgrade ke Pro
-                            </a>
-                            <a href="{{ route('home') }}#tools-section" 
-                               class="btn bg-white/20 hover:bg-white/30 text-white font-semibold text-xs px-3.5 py-2 rounded-lg backdrop-blur-xs">
-                                Jelajahi Tools
-                            </a>
-                        @else
-                            <a href="{{ route('dashboard.billing') }}" 
-                               class="btn bg-white font-bold text-primary hover:bg-slate-100 active:bg-slate-200 text-xs px-4 py-2 rounded-lg shadow-sm">
-                                Kelola Langganan
-                            </a>
-                            <span class="badge rounded-lg bg-white/20 text-white text-xs px-3 py-1.5 backdrop-blur-xs font-semibold">
-                                ✓ Kuota Unlimited Aktif
-                            </span>
-                        @endif
-                    </div>
-                </div>
+        <div class="relative z-1 max-w-3xl mx-auto">
+            {{-- Main Canva-style Greeting Title --}}
+            <h1 class="text-2xl font-black tracking-tight text-slate-800 dark:text-navy-50 sm:text-3xl lg:text-4xl">
+                Mau olah file apa hari ini?
+            </h1>
+            <p class="mt-2 text-xs sm:text-sm text-slate-500 dark:text-navy-300 max-w-md mx-auto leading-relaxed">
+                Pilih dan jalankan berbagai alat bantu kerja untuk kompresi gambar, konversi dokumen & PDF secara instan.
+            </p>
+
+            {{-- Centered Hero Search Bar --}}
+            <div class="relative mt-6 max-w-2xl mx-auto">
+                <input 
+                    wire:model.live.debounce.250ms="search" 
+                    type="text" 
+                    placeholder="Cari alat produktivitas, format, atau fungsi file..." 
+                    class="form-input h-12 sm:h-13 w-full rounded-full border border-slate-200/90 bg-white px-5 pl-12 pr-11 text-xs-plus sm:text-sm text-slate-800 shadow-sm placeholder:text-slate-400 hover:border-slate-300 focus:border-primary focus:ring-4 focus:ring-primary/15 dark:border-navy-500 dark:bg-navy-900 dark:text-navy-50 dark:placeholder:text-navy-400 dark:hover:border-navy-400 dark:focus:border-accent dark:focus:ring-accent/15 transition-all duration-200"
+                />
+                <span class="pointer-events-none absolute left-4.5 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-400 dark:text-navy-300">
+                    <x-lucide-search class="size-5" />
+                </span>
+                @if($search)
+                    <button 
+                        wire:click="$set('search', '')" 
+                        type="button" 
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-navy-100 transition-colors p-1"
+                    >
+                        <x-lucide-x class="size-4" />
+                    </button>
+                @endif
             </div>
 
-            {{-- Featured Quick Access Tools (Classes Cards from Teacher Dashboard) --}}
-            <div>
-                <div class="flex h-8 items-center justify-between">
-                    <h2 class="text-base font-medium tracking-wide text-slate-700 dark:text-navy-100">
-                        Pilihan Tools Cepat
-                    </h2>
-                    <a href="{{ route('home') }}#tools-section"
-                        class="border-b border-dotted border-current pb-0.5 text-xs-plus font-medium text-primary outline-hidden transition-colors duration-300 hover:text-primary/70 dark:text-accent-light">
-                        Lihat Semua Tools
-                    </a>
+            {{-- Category Filter Navigation (Canva-style Icon Chips) --}}
+            <div class="is-scrollbar-hidden mt-7 flex items-center justify-center gap-3 overflow-x-auto pb-1 sm:gap-4">
+                {{-- Chip: Semua --}}
+                <button 
+                    wire:click="selectCategory('all')"
+                    type="button"
+                    class="group flex flex-col items-center gap-1.5 shrink-0 px-2 py-1 transition-transform active:scale-95"
+                >
+                    <div class="mask is-squircle flex size-12 items-center justify-center transition-all duration-200 {{ $selectedCategory === 'all' ? 'bg-primary text-white shadow-md shadow-primary/40 ring-2 ring-primary ring-offset-2 ring-offset-white dark:bg-accent dark:ring-accent dark:shadow-accent/40 dark:ring-offset-navy-750' : 'bg-white text-slate-600 shadow-xs border border-slate-200/80 hover:bg-slate-50 dark:bg-navy-700 dark:text-navy-200 dark:border-navy-600 dark:hover:bg-navy-650' }}">
+                        <x-lucide-layout-grid class="size-5.5" />
+                    </div>
+                    <span class="text-xs font-semibold {{ $selectedCategory === 'all' ? 'text-primary dark:text-accent font-bold' : 'text-slate-600 dark:text-navy-300 group-hover:text-slate-800' }}">
+                        Semua
+                    </span>
+                    <span class="badge rounded-full px-1.5 py-0.2 text-[9px] font-bold {{ $selectedCategory === 'all' ? 'bg-primary/10 text-primary dark:bg-accent/15 dark:text-accent' : 'bg-slate-150 text-slate-500 dark:bg-navy-700 dark:text-navy-300' }}">
+                        {{ $totalToolsCount }}
+                    </span>
+                </button>
+
+                {{-- Dynamic Category Chips --}}
+                @foreach($categories as $cat)
+                    @php
+                        $isSelected = strtolower($selectedCategory) === strtolower($cat['raw']) || strtolower($selectedCategory) === strtolower($cat['slug']);
+                        $isImage = stripos($cat['raw'], 'image') !== false || stripos($cat['raw'], 'foto') !== false;
+                        $isDoc = stripos($cat['raw'], 'pdf') !== false || stripos($cat['raw'], 'doc') !== false;
+                    @endphp
+                    <button 
+                        wire:click="selectCategory('{{ $cat['raw'] }}')"
+                        type="button"
+                        class="group flex flex-col items-center gap-1.5 shrink-0 px-2 py-1 transition-transform active:scale-95"
+                    >
+                        <div class="mask is-squircle flex size-12 items-center justify-center transition-all duration-200 {{ $isSelected ? 'bg-primary text-white shadow-md shadow-primary/40 ring-2 ring-primary ring-offset-2 ring-offset-white dark:bg-accent dark:ring-accent dark:shadow-accent/40 dark:ring-offset-navy-750' : 'bg-white text-slate-600 shadow-xs border border-slate-200/80 hover:bg-slate-50 dark:bg-navy-700 dark:text-navy-200 dark:border-navy-600 dark:hover:bg-navy-650' }}">
+                            @if($isImage)
+                                <x-lucide-image class="size-5.5 {{ $isSelected ? 'text-white' : 'text-blue-500 dark:text-blue-400' }}" />
+                            @elseif($isDoc)
+                                <x-lucide-file-text class="size-5.5 {{ $isSelected ? 'text-white' : 'text-purple-500 dark:text-purple-400' }}" />
+                            @else
+                                <x-lucide-boxes class="size-5.5 {{ $isSelected ? 'text-white' : 'text-amber-500 dark:text-amber-400' }}" />
+                            @endif
+                        </div>
+                        <span class="text-xs font-semibold {{ $isSelected ? 'text-primary dark:text-accent font-bold' : 'text-slate-600 dark:text-navy-300 group-hover:text-slate-800' }}">
+                            {{ $cat['name'] }}
+                        </span>
+                        <span class="badge rounded-full px-1.5 py-0.2 text-[9px] font-bold {{ $isSelected ? 'bg-primary/10 text-primary dark:bg-accent/15 dark:text-accent' : 'bg-slate-150 text-slate-500 dark:bg-navy-700 dark:text-navy-300' }}">
+                            {{ $cat['count'] }}
+                        </span>
+                    </button>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+    {{-- Tools Collection Grouped Section by Section with Dividers --}}
+    <div class="space-y-12">
+        @forelse($groupedTools as $categoryName => $toolsInCategory)
+            @php
+                $catDisplayName = $categoryName;
+                if (strtolower($categoryName) === 'image') $catDisplayName = 'Gambar & Foto';
+                if (strtolower($categoryName) === 'document') $catDisplayName = 'Dokumen & PDF';
+            @endphp
+
+            <div class="space-y-5">
+                {{-- Category Header & Divider --}}
+                <div class="flex items-center space-x-3 pt-2">
+                    <div class="mask is-squircle flex size-9 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light font-bold shrink-0">
+                        @if(stripos($categoryName, 'image') !== false || stripos($categoryName, 'foto') !== false)
+                            <x-lucide-image class="size-5" />
+                        @elseif(stripos($categoryName, 'pdf') !== false || stripos($categoryName, 'doc') !== false)
+                            <x-lucide-file-text class="size-5" />
+                        @else
+                            <x-lucide-boxes class="size-5" />
+                        @endif
+                    </div>
+                    <div class="flex items-center gap-2.5 shrink-0">
+                        <h2 class="text-lg font-bold text-slate-800 dark:text-navy-100 tracking-tight">
+                            {{ $catDisplayName }}
+                        </h2>
+                        <span class="badge rounded-full bg-slate-150 text-slate-600 dark:bg-navy-600 dark:text-navy-200 text-[10px] font-bold px-2 py-0.5">
+                            {{ $toolsInCategory->count() }} Tools
+                        </span>
+                    </div>
+                    <div class="h-px flex-1 bg-slate-200 dark:bg-navy-600"></div>
                 </div>
-                <div class="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
-                    @foreach($tools->take(3) as $tool)
+
+                {{-- Cards Grid (Lineone Onboarding-1 Standard) --}}
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-5 lg:gap-6">
+                    @foreach($toolsInCategory as $tool)
                         @php
-                            $gradients = [
-                                0 => 'from-blue-500 to-purple-600',
-                                1 => 'from-info to-info-focus',
-                                2 => 'from-secondary-light to-secondary',
-                            ];
-                            $grad = $gradients[$loop->index % 3];
-                            $toolSlug = is_array($tool) ? $tool['slug'] : $tool->slug;
-                            $toolName = is_array($tool) ? $tool['name'] : $tool->name;
-                            $toolDesc = is_array($tool) ? ($tool['description'] ?? '') : ($tool->description ?? '');
-                            $toolCat = is_array($tool) ? ($tool['category'] ?? 'General') : ($tool->category ?? 'General');
-                            $toolBadge = is_array($tool) ? ($tool['badge'] ?? null) : ($tool->badge ?? null);
-                            $toolMaint = is_array($tool) ? ($tool['is_maintenance'] ?? false) : ($tool->is_maintenance ?? false);
+                            $defaultIllustration = match($tool->slug) {
+                                'compress-image' => asset('images/illustrations/upload-cloud.svg'),
+                                'convert-image' => asset('images/illustrations/responsive.svg'),
+                                'pdf-to-word' => asset('images/illustrations/writer.svg'),
+                                default => asset('images/illustrations/creativedesign.svg'),
+                            };
+
+                            $imageSrc = $tool->image_url ?: $defaultIllustration;
                         @endphp
-                        <div class="card flex-row overflow-hidden hover:shadow-md transition-shadow">
-                            <div class="h-full w-1.5 bg-linear-to-b {{ $grad }}"></div>
-                            <div class="flex flex-1 flex-col justify-between p-4 sm:px-5">
-                                <div>
-                                    <div class="flex items-center justify-between mb-3">
-                                        <div class="mask is-squircle flex size-12 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light">
-                                            @if($toolCat === 'Image')
-                                                <x-lucide-image class="size-6" />
-                                            @elseif($toolCat === 'PDF' || $toolCat === 'Document')
-                                                <x-lucide-file-text class="size-6" />
-                                            @else
-                                                <x-lucide-wrench class="size-6" />
-                                            @endif
-                                        </div>
-                                        @if($toolMaint)
-                                            <span class="badge rounded-full bg-warning/15 text-warning text-[10px] font-bold px-2 py-0.5">
-                                                Maintenance
-                                            </span>
-                                        @elseif($toolBadge === 'HOT')
-                                            <span class="badge rounded-full bg-linear-to-r from-red-500 to-orange-500 text-white text-[10px] font-black px-2 py-0.5 shadow-xs">
-                                                🔥 HOT
-                                            </span>
-                                        @elseif($toolBadge === 'NEW')
-                                            <span class="badge rounded-full bg-linear-to-r from-emerald-500 to-teal-500 text-white text-[10px] font-black px-2 py-0.5 shadow-xs">
-                                                ✨ NEW
-                                            </span>
-                                        @elseif($toolBadge === 'PRO')
-                                            <span class="badge rounded-full bg-linear-to-r from-amber-500 to-purple-600 text-white text-[10px] font-black px-2 py-0.5 shadow-xs">
-                                                👑 PRO
-                                            </span>
-                                        @elseif($toolBadge)
-                                            <span class="badge rounded-full bg-slate-150 text-slate-700 dark:bg-navy-500 dark:text-navy-200 text-[10px] font-bold px-2 py-0.5">
-                                                {{ $toolBadge }}
-                                            </span>
-                                        @endif
-                                    </div>
-                                    <h3 class="font-bold text-slate-700 line-clamp-1 dark:text-navy-100 text-sm">
-                                        {{ $toolName }}
-                                    </h3>
-                                    <p class="text-xs text-slate-400 dark:text-navy-300 mt-1 line-clamp-2">
-                                        {{ $toolDesc }}
-                                    </p>
-                                    <div class="mt-3 flex space-x-1.5">
-                                        <span class="tag bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light py-0.5 px-2 rounded text-[11px] font-semibold">
-                                            {{ ucfirst($toolCat) }}
+
+                        <div class="card flex flex-col justify-between h-full hover:shadow-lg transition-all duration-200 border border-slate-150/70 dark:border-navy-600/70 group">
+                            {{-- Top Image / Thumbnail --}}
+                            <div class="flex h-44 items-center justify-center p-5 bg-slate-50/60 dark:bg-navy-800/40 rounded-t-lg relative overflow-hidden">
+                                <img
+                                    class="max-h-36 max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                                    src="{{ $imageSrc }}"
+                                    alt="{{ $tool->name }}"
+                                />
+
+                                {{-- Badges Top Right --}}
+                                <div class="absolute top-3 right-3 flex items-center gap-1">
+                                    @if($tool->is_maintenance)
+                                        <span class="badge rounded-full bg-warning/15 text-warning text-[10px] font-bold px-2 py-0.5 shadow-xs">
+                                            Maintenance
                                         </span>
-                                    </div>
+                                    @elseif($tool->is_pro_only)
+                                        <span class="badge rounded-full bg-linear-to-r from-amber-500 via-purple-600 to-indigo-600 text-white text-[10px] font-black px-2.5 py-0.5 shadow-xs">
+                                            👑 PRO
+                                        </span>
+                                    @elseif($tool->badge === 'HOT')
+                                        <span class="badge rounded-full bg-linear-to-r from-red-500 to-orange-500 text-white text-[10px] font-black px-2 py-0.5 shadow-xs">
+                                            🔥 HOT
+                                        </span>
+                                    @elseif($tool->badge === 'NEW')
+                                        <span class="badge rounded-full bg-linear-to-r from-emerald-500 to-teal-500 text-white text-[10px] font-black px-2 py-0.5 shadow-xs">
+                                            ✨ NEW
+                                        </span>
+                                    @elseif($tool->badge === 'PRO')
+                                        <span class="badge rounded-full bg-linear-to-r from-amber-500 to-purple-600 text-white text-[10px] font-black px-2 py-0.5 shadow-xs">
+                                            👑 PRO
+                                        </span>
+                                    @elseif($tool->badge)
+                                        <span class="badge rounded-full bg-slate-150 text-slate-700 dark:bg-navy-500 dark:text-navy-200 text-[10px] font-bold px-2 py-0.5">
+                                            {{ $tool->badge }}
+                                        </span>
+                                    @endif
                                 </div>
-                                <div class="mt-6 flex justify-between items-center pt-2 border-t border-slate-100 dark:border-navy-600">
-                                    <span class="text-[11px] text-slate-400 dark:text-navy-300 font-medium">Buka Tool</span>
-                                    <a href="{{ route('tool', $toolSlug) }}"
-                                        class="btn size-7 rounded-full bg-slate-150 p-0 font-medium text-slate-800 hover:bg-slate-200 hover:shadow-lg focus:bg-slate-200 dark:bg-navy-500 dark:text-navy-50 dark:hover:bg-navy-450 flex items-center justify-center transition-all">
-                                        <x-lucide-arrow-up-right class="size-4" />
+                            </div>
+
+                            {{-- Card Body --}}
+                            @php
+                                $user = auth()->user();
+                                $isProUser = $user && $user->isSubscribed();
+                                $isAdmin = $user && $user->is_admin;
+                                $isLockedForUser = $tool->is_pro_only && !$isProUser && !$isAdmin;
+                            @endphp
+                            <div class="flex flex-1 flex-col justify-between px-4.5 pb-6 pt-4 text-center sm:px-5">
+                                <div>
+                                    <h3 class="text-base font-bold text-slate-700 dark:text-navy-100 line-clamp-1">
+                                        {{ $tool->name }}
+                                    </h3>
+                                    <p class="pt-2 text-xs text-slate-500 dark:text-navy-300 line-clamp-2 leading-relaxed">
+                                        {{ $tool->description }}
+                                    </p>
+                                </div>
+                                <div class="pt-6">
+                                    <a
+                                        href="{{ route('tool', $tool->slug) }}" wire:navigate
+                                        class="btn w-full {{ $isLockedForUser ? 'bg-linear-to-r from-purple-600 via-indigo-600 to-amber-500 text-white shadow-lg shadow-purple-500/25 hover:opacity-95' : 'bg-primary font-medium text-white shadow-lg shadow-primary/30 hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:shadow-accent/30 dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90' }} rounded-lg text-xs py-2.5 flex items-center justify-center gap-1.5 transition-all"
+                                    >
+                                        @if($isLockedForUser)
+                                            <x-lucide-lock class="size-3.5" />
+                                            <span>Buka Tool (PRO)</span>
+                                        @else
+                                            <span>Buka Tool</span>
+                                            <x-lucide-arrow-up-right class="size-3.5" />
+                                        @endif
                                     </a>
                                 </div>
                             </div>
@@ -160,296 +211,29 @@
                     @endforeach
                 </div>
             </div>
-
-            {{-- Recent File Activities Table (Media for lessons table style from Teacher Dashboard) --}}
-            <div>
-                <div class="flex items-center justify-between">
-                    <h2 class="text-base font-medium tracking-wide text-slate-700 line-clamp-1 dark:text-navy-100">
-                        Aktivitas File Terakhir
-                    </h2>
-                    <a href="{{ route('history') }}"
-                        class="border-b border-dotted border-current pb-0.5 text-xs-plus font-medium text-primary outline-hidden transition-colors duration-300 hover:text-primary/70 dark:text-accent-light">
-                        Lihat Riwayat Lengkap
-                    </a>
+        @empty
+            {{-- Empty Search Result State --}}
+            <div class="card p-10 text-center border border-slate-200 dark:border-navy-600 my-8">
+                <div class="mask is-squircle size-16 bg-slate-100 text-slate-400 dark:bg-navy-700 dark:text-navy-300 flex items-center justify-center mx-auto mb-3">
+                    <x-lucide-search class="size-8" />
                 </div>
-                <div class="card mt-3">
-                    <div class="is-scrollbar-hidden min-w-full overflow-x-auto">
-                        <table class="is-hoverable w-full text-left">
-                            <thead>
-                                <tr class="border-y border-transparent border-b-slate-200 dark:border-b-navy-500">
-                                    <th class="whitespace-nowrap px-4 py-3 font-semibold uppercase text-slate-800 dark:text-navy-100 sm:px-5 text-xs">
-                                        Tool
-                                    </th>
-                                    <th class="whitespace-nowrap px-4 py-3 font-semibold uppercase text-slate-800 dark:text-navy-100 sm:px-5 text-xs">
-                                        Detail File
-                                    </th>
-                                    <th class="whitespace-nowrap px-4 py-3 font-semibold uppercase text-slate-800 dark:text-navy-100 sm:px-5 text-xs">
-                                        Status
-                                    </th>
-                                    <th class="whitespace-nowrap px-4 py-3 font-semibold uppercase text-slate-800 dark:text-navy-100 sm:px-5 text-xs">
-                                        Ukuran
-                                    </th>
-                                    <th class="whitespace-nowrap px-4 py-3 font-semibold uppercase text-slate-800 dark:text-navy-100 sm:px-5 text-xs">
-                                        Waktu
-                                    </th>
-                                    <th class="whitespace-nowrap px-4 py-3 font-semibold uppercase text-slate-800 dark:text-navy-100 sm:px-5 text-xs text-right">
-                                        Aksi
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-150 dark:divide-navy-500">
-                                @forelse ($activities as $activity)
-                                    <tr class="border-y border-transparent border-b-slate-200 dark:border-b-navy-500">
-                                        <td class="whitespace-nowrap px-4 py-3 sm:px-5">
-                                            <div class="flex items-center space-x-3">
-                                                <div class="relative flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary dark:bg-accent dark:text-white">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                    </svg>
-                                                </div>
-                                                <span class="font-medium text-slate-700 dark:text-navy-100 text-xs sm:text-sm">
-                                                    {{ Str::headline($activity->tool_slug) }}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td class="px-4 py-3 sm:px-5 max-w-[200px]">
-                                            <p class="truncate font-medium text-slate-700 dark:text-navy-100 text-xs sm:text-sm" title="{{ $activity->original_filename }}">
-                                                {{ $activity->original_filename }}
-                                            </p>
-                                        </td>
-                                        <td class="whitespace-nowrap px-4 py-3 sm:px-5">
-                                            @if($activity->status === 'completed')
-                                                <div class="badge space-x-2 text-success font-medium text-xs">
-                                                    <div class="size-2 rounded-full bg-current"></div>
-                                                    <span>Selesai</span>
-                                                </div>
-                                            @elseif($activity->status === 'processing')
-                                                <div class="badge space-x-2 text-warning font-medium text-xs">
-                                                    <div class="size-2 rounded-full bg-current animate-ping"></div>
-                                                    <span>Diproses</span>
-                                                </div>
-                                            @elseif($activity->status === 'expired')
-                                                <div class="badge space-x-2 text-slate-500 dark:text-navy-200 font-medium text-xs">
-                                                    <div class="size-2 rounded-full bg-current"></div>
-                                                    <span>Expired</span>
-                                                </div>
-                                            @else
-                                                <div class="badge space-x-2 text-error font-medium text-xs">
-                                                    <div class="size-2 rounded-full bg-current"></div>
-                                                    <span>Gagal</span>
-                                                </div>
-                                            @endif
-                                        </td>
-                                        <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-700 dark:text-navy-100 sm:px-5 text-xs">
-                                            @if($activity->result_size)
-                                                {{ \Illuminate\Support\Number::fileSize($activity->result_size) }}
-                                            @elseif($activity->original_size)
-                                                {{ \Illuminate\Support\Number::fileSize($activity->original_size) }}
-                                            @else
-                                                -
-                                            @endif
-                                        </td>
-                                        <td class="whitespace-nowrap px-4 py-3 text-xs text-slate-400 dark:text-navy-300 sm:px-5">
-                                            {{ $activity->created_at->diffForHumans() }}
-                                        </td>
-                                        <td class="whitespace-nowrap px-4 py-3 text-right sm:px-5">
-                                            @if($activity->status === 'completed' && $activity->result_path)
-                                                <a href="{{ route('activity.download', $activity->id) }}"
-                                                    class="btn size-8 rounded-full bg-slate-150 p-0 font-medium text-slate-800 hover:bg-slate-200 dark:bg-navy-500 dark:text-navy-50 dark:hover:bg-navy-450 inline-flex items-center justify-center"
-                                                    title="Unduh File">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                                    </svg>
-                                                </a>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="6" class="text-center py-8 text-slate-400 dark:text-navy-300 text-xs">
-                                            Belum ada aktivitas pemrosesan file.
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Right Column (col-span-12 lg:col-span-4 xl:col-span-3) --}}
-        <div class="col-span-12 lg:col-span-4 xl:col-span-3 space-y-4 sm:space-y-5 lg:space-y-6">
-            
-            {{-- Status & Quota Card (Working Hours Card Style) --}}
-            <div class="card p-4 sm:p-5">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-150 dark:border-navy-600">
-                    <h2 class="font-medium tracking-wide text-slate-700 dark:text-navy-100 text-sm">
-                        Paket & Status Kuota
-                    </h2>
-                    @if($activeSub)
-                        @if($isProMax)
-                            <span class="badge rounded-full bg-linear-to-r from-amber-500 via-purple-600 to-indigo-600 text-white text-xs font-black px-2.5 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
-                                <x-lucide-crown class="size-3 stroke-[2.5]" />
-                                <span>{{ $planName }}</span>
-                            </span>
-                        @else
-                            <span class="badge rounded-full bg-linear-to-r from-amber-500 to-orange-500 text-white text-xs font-black px-2.5 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
-                                <x-lucide-star class="size-3 stroke-[2.5] fill-current" />
-                                <span>{{ $planName }}</span>
-                            </span>
-                        @endif
+                <h4 class="text-base font-bold text-slate-700 dark:text-navy-100">Tool Tidak Ditemukan</h4>
+                <p class="text-slate-400 dark:text-navy-300 text-xs mt-1.5 max-w-sm mx-auto leading-relaxed">
+                    @if($search)
+                        Tidak ada tool yang cocok dengan kata kunci "<span class="font-semibold text-slate-600 dark:text-navy-200">{{ $search }}</span>".
                     @else
-                        <span class="badge rounded-full bg-slate-150 text-slate-600 dark:bg-navy-600 dark:text-navy-200 text-xs font-semibold px-2.5 py-0.5">
-                            FREE
-                        </span>
+                        Belum ada tool yang tersedia di kategori ini.
                     @endif
-                </div>
-
-                <div class="py-4 space-y-3.5">
-                    <div>
-                        <div class="flex justify-between text-xs font-medium text-slate-600 dark:text-navy-200 mb-1">
-                            <span>Aktivitas Hari Ini</span>
-                            <span class="font-bold text-slate-800 dark:text-navy-100">
-                                {{ $todayFiles }} file @if($activeSub) <span class="text-success font-bold">(Unlimited)</span> @endif
-                            </span>
-                        </div>
-                        <div class="progress h-2 rounded-full bg-slate-150 dark:bg-navy-500 overflow-hidden">
-                            @if($activeSub)
-                                <div class="h-full rounded-full bg-linear-to-r from-emerald-500 to-teal-400 w-full"></div>
-                            @else
-                                @php
-                                    $quotaLimit = $currentPlan ? ($currentPlan->daily_limit ?? 10) : 10;
-                                    $quotaPercent = min(100, round(($todayFiles / max(1, $quotaLimit)) * 100));
-                                @endphp
-                                <div class="h-full rounded-full bg-primary dark:bg-accent transition-all" style="width: {{ $quotaPercent }}%"></div>
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="rounded-xl bg-slate-50 p-3.5 dark:bg-navy-600 space-y-2 text-xs">
-                        <div class="flex justify-between">
-                            <span class="text-slate-400 dark:text-navy-300">Total File Selesai</span>
-                            <span class="font-bold text-slate-700 dark:text-navy-100">{{ $totalFiles }} file</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-400 dark:text-navy-300">Penyimpanan Dihemat</span>
-                            <span class="font-bold text-success">{{ \Illuminate\Support\Number::fileSize($totalSaved) }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="pt-2">
-                    @if(!$activeSub)
-                        <a href="{{ route('pricing') }}" class="btn w-full bg-primary font-medium text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs py-2 rounded-lg shadow-sm">
-                            Upgrade Kuota Unlimited
-                        </a>
-                    @else
-                        <a href="{{ route('dashboard.billing') }}" class="btn w-full border border-slate-300 text-slate-700 hover:bg-slate-150 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 text-xs py-2 rounded-lg">
-                            Detail Langganan
-                        </a>
-                    @endif
-                </div>
+                </p>
+                <button 
+                    wire:click="resetFilters" 
+                    type="button"
+                    class="btn rounded-full mt-4 bg-primary text-white dark:bg-accent h-8.5 px-5 text-xs font-semibold mx-auto shadow-md shadow-primary/30 dark:shadow-accent/30 flex items-center gap-1.5"
+                >
+                    <x-lucide-rotate-ccw class="size-3.5" />
+                    <span>Reset Filter & Pencarian</span>
+                </button>
             </div>
-
-            {{-- Interactive Calendar Widget (Exact Teacher Dashboard Calendar) --}}
-            <div class="card p-4">
-                <div class="space-y-1 text-center font-inter text-xs-plus">
-                    <div class="flex items-center justify-between px-2 pb-3">
-                        <p class="font-bold text-slate-700 dark:text-navy-100 text-sm">
-                            {{ now()->translatedFormat('F Y') }}
-                        </p>
-                        <div class="flex space-x-1">
-                            <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-[10px] font-semibold px-2 py-0.5">
-                                Hari Ini
-                            </span>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-7 pb-2 text-[11px] font-semibold text-primary dark:text-accent-light">
-                        <div>MIN</div>
-                        <div>SEN</div>
-                        <div>SEL</div>
-                        <div>RAB</div>
-                        <div>KAM</div>
-                        <div>JUM</div>
-                        <div>SAB</div>
-                    </div>
-                    
-                    @php
-                        $startOfMonth = now()->startOfMonth();
-                        $endOfMonth = now()->endOfMonth();
-                        $startDayOfWeek = $startOfMonth->dayOfWeek; // 0 for Sun
-                        $totalDays = $endOfMonth->day;
-                        $today = now()->day;
-                    @endphp
-
-                    <div class="grid grid-cols-7 gap-y-1 place-items-center text-xs">
-                        {{-- Empty leading days --}}
-                        @for($i = 0; $i < $startDayOfWeek; $i++)
-                            <div class="h-7 w-8"></div>
-                        @endfor
-
-                        {{-- Days of current month --}}
-                        @for($day = 1; $day <= $totalDays; $day++)
-                            @if($day === $today)
-                                <button class="flex h-7 w-8 items-center justify-center rounded-lg bg-primary text-white font-bold dark:bg-accent shadow-xs">
-                                    {{ $day }}
-                                </button>
-                            @else
-                                <button class="flex h-7 w-8 items-center justify-center rounded-lg text-slate-700 hover:bg-primary/10 hover:text-primary dark:text-navy-100 dark:hover:bg-accent-light/10 dark:hover:text-accent-light">
-                                    {{ $day }}
-                                </button>
-                            @endif
-                        @endfor
-                    </div>
-                </div>
-            </div>
-
-            {{-- Summary Cards (Student Cards style from Teacher Dashboard) --}}
-            <div class="space-y-3">
-                <div class="card p-3.5 flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        <div class="mask is-squircle flex size-10 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="font-bold text-slate-700 dark:text-navy-100 text-xs">
-                                File Diproses Hari Ini
-                            </p>
-                            <p class="text-xs text-slate-400 dark:text-navy-300">
-                                {{ $todayFiles }} file sukses
-                            </p>
-                        </div>
-                    </div>
-                    <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-xs font-bold px-2 py-0.5">
-                        {{ $todayFiles }}
-                    </span>
-                </div>
-
-                <div class="card p-3.5 flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        <div class="mask is-squircle flex size-10 items-center justify-center bg-success/10 text-success">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="font-bold text-slate-700 dark:text-navy-100 text-xs">
-                                Efisiensi Kompresi
-                            </p>
-                            <p class="text-xs text-slate-400 dark:text-navy-300">
-                                {{ \Illuminate\Support\Number::fileSize($totalSaved) }}
-                            </p>
-                        </div>
-                    </div>
-                    <span class="badge rounded-full bg-success/10 text-success text-xs font-bold px-2 py-0.5">
-                        Hemat
-                    </span>
-                </div>
-            </div>
-
-        </div>
+        @endforelse
     </div>
 </div>

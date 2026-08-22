@@ -97,6 +97,7 @@ Route::post('/logout', function () {
 
 Route::middleware(['auth', EnsureUserIsNotBanned::class, EnsureSingleSession::class, 'verified', 'throttle:60,1'])->group(function () {
     Route::get('/dashboard', Overview::class)->name('dashboard');
+    Route::get('/tools', function() { return redirect()->route('dashboard'); })->name('tools.index');
     Route::get('/history', History::class)->name('history');
     Route::get('/profile', Profile::class)->name('profile');
 
@@ -105,8 +106,8 @@ Route::middleware(['auth', EnsureUserIsNotBanned::class, EnsureSingleSession::cl
     Route::get('/billing', Billing::class)->name('dashboard.billing');
     Route::get('/billing/invoice/{order_id}', Invoice::class)->name('dashboard.invoice');
 
-    // Kategori Tools
-    Route::get('/category/{category}', \App\Livewire\Dashboard\CategoryTools::class)->name('dashboard.category');
+    // Kategori Tools (Redirect ke Dashboard)
+    Route::get('/category/{category}', function() { return redirect()->route('dashboard'); })->name('dashboard.category');
 
     Route::get('/tool/{slug}', function ($slug) {
         $tool = \App\Models\Tool::where('slug', $slug)->first();
@@ -117,6 +118,18 @@ Route::middleware(['auth', EnsureUserIsNotBanned::class, EnsureSingleSession::cl
 
         if ($tool->is_maintenance) {
             return view('tool_maintenance', ['tool' => $tool]);
+        }
+
+        // Check if tool is pro only and user is not subscribed and not admin
+        $user = auth()->user();
+        $isProUser = $user && $user->isSubscribed();
+        $isAdmin = $user && $user->is_admin;
+
+        if ($tool->is_pro_only && !$isProUser && !$isAdmin) {
+            return view('tool_locked', [
+                'tool' => $tool,
+                'plans' => \App\Models\Plan::where('is_active', true)->orderBy('sort_order')->get(),
+            ]);
         }
 
         return view('tool_wrapper', ['tool' => $tool->toArray()]);

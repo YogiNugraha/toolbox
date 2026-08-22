@@ -36,342 +36,135 @@
                 </button>
 
                 <!-- Main Searchbar -->
+                @php
+                    $headerTools = \App\Models\Tool::getActiveTools()->map(function($t) {
+                        return [
+                            'id' => $t->id,
+                            'name' => $t->name,
+                            'slug' => $t->slug,
+                            'description' => $t->description,
+                            'category' => $t->category,
+                            'badge' => $t->badge,
+                            'is_highlighted' => (bool) $t->is_highlighted,
+                            'is_maintenance' => (bool) $t->is_maintenance,
+                            'image_url' => $t->image_url,
+                        ];
+                    });
+                    $headerCategories = $headerTools->pluck('category')->unique()->values();
+                @endphp
                 <template x-if="$store.breakpoints.smAndUp">
-                    <div class="flex" x-data="usePopper({ placement: 'bottom-end', offset: 12 })" @click.outside="if(isShowPopper) isShowPopper = false">
+                    <div class="flex" 
+                         x-data="{
+                             ...usePopper({ placement: 'bottom-end', offset: 12 }),
+                             searchQuery: '',
+                             selectedCat: 'all',
+                             tools: {{ json_encode($headerTools) }},
+                             categories: {{ json_encode($headerCategories) }},
+                             get filteredTools() {
+                                 const q = this.searchQuery.trim().toLowerCase();
+                                 return this.tools.filter(t => {
+                                     const matchCat = this.selectedCat === 'all' || t.category === this.selectedCat;
+                                     const matchQuery = !q || 
+                                         t.name.toLowerCase().includes(q) || 
+                                         t.slug.toLowerCase().includes(q) || 
+                                         (t.description && t.description.toLowerCase().includes(q)) ||
+                                         (t.category && t.category.toLowerCase().includes(q));
+                                     return matchCat && matchQuery;
+                                 });
+                             }
+                         }" 
+                         @click.outside="if(isShowPopper) isShowPopper = false"
+                         @keydown.escape.window="isShowPopper = false">
+                        
                         <div class="relative mr-4 flex h-8">
-                            <input placeholder="Search here..."
-                                class="form-input peer h-full rounded-full bg-slate-150 px-4 pl-9 text-xs-plus text-slate-800 ring-primary/50 hover:bg-slate-200 focus:ring-3 dark:bg-navy-900/90 dark:text-navy-100 dark:placeholder-navy-300 dark:ring-accent/50 dark:hover:bg-navy-900 dark:focus:bg-navy-900"
-                                :class="isShowPopper ? 'w-80' : 'w-60'" @focus="isShowPopper= true" type="text"
-                                x-ref="popperRef" />
-                            <div
-                                class="pointer-events-none absolute flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                    class="size-4.5 transition-colors duration-200" fill="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path
-                                        d="M3.316 13.781l.73-.171-.73.171zm0-5.457l.73.171-.73-.171zm15.473 0l.73-.171-.73.171zm0 5.457l.73.171-.73-.171zm-5.008 5.008l-.171-.73.171.73zm-5.457 0l-.171.73.171-.73zm0-15.473l-.171-.73.171.73zm5.457 0l.171-.73-.171.73zM20.47 21.53a.75.75 0 101.06-1.06l-1.06 1.06zM4.046 13.61a11.198 11.198 0 010-5.115l-1.46-.342a12.698 12.698 0 000 5.8l1.46-.343zm14.013-5.115a11.196 11.196 0 010 5.115l1.46.342a12.698 12.698 0 000-5.8l-1.46.343zm-4.45 9.564a11.196 11.196 0 01-5.114 0l-.342 1.46c1.907.448 3.892.448 5.8 0l-.343-1.46zM8.496 4.046a11.198 11.198 0 015.115 0l.342-1.46a12.698 12.698 0 00-5.8 0l.343 1.46zm0 14.013a5.97 5.97 0 01-4.45-4.45l-1.46.343a7.47 7.47 0 005.568 5.568l.342-1.46zm5.457 1.46a7.47 7.47 0 005.568-5.567l-1.46-.342a5.97 5.97 0 01-4.45 4.45l.342 1.46zM13.61 4.046a5.97 5.97 0 014.45 4.45l1.46-.343a7.47 7.47 0 00-5.568-5.567l-.342 1.46zm-5.457-1.46a7.47 7.47 0 00-5.567 5.567l1.46.342a5.97 5.97 0 014.45-4.45l-.343-1.46zm8.652 15.28l3.665 3.664 1.06-1.06-3.665-3.665-1.06 1.06z" />
-                                </svg>
+                            <input 
+                                x-model="searchQuery"
+                                placeholder="Cari tool di sini..."
+                                class="form-input peer h-full rounded-full bg-slate-150 px-4 pl-9 pr-7 text-xs-plus text-slate-800 ring-primary/50 hover:bg-slate-200 focus:ring-3 dark:bg-navy-900/90 dark:text-navy-100 dark:placeholder-navy-300 dark:ring-accent/50 dark:hover:bg-navy-900 dark:focus:bg-navy-900 transition-all duration-200"
+                                :class="isShowPopper ? 'w-80' : 'w-60'" 
+                                @focus="isShowPopper = true" 
+                                type="text"
+                                x-ref="popperRef" 
+                            />
+                            <div class="pointer-events-none absolute flex h-full w-10 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">
+                                <x-lucide-search class="size-4 transition-colors duration-200" />
                             </div>
+                            <template x-if="searchQuery">
+                                <button @click="searchQuery = ''" type="button" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-navy-100">
+                                    <x-lucide-x class="size-3.5" />
+                                </button>
+                            </template>
                         </div>
+
                         <div :class="isShowPopper && 'show'" class="popper-root" x-ref="popperRoot">
-                            <div
-                                class="popper-box flex max-h-[calc(100vh-6rem)] w-80 flex-col rounded-lg border border-slate-150 bg-white shadow-soft dark:border-navy-800 dark:bg-navy-700 dark:shadow-soft-dark">
-                                <div x-data="{ activeTab: 'tabAll' }"
-                                    class="is-scrollbar-hidden flex shrink-0 overflow-x-auto rounded-t-lg bg-slate-100 px-2 text-slate-600 dark:bg-navy-800 dark:text-navy-200">
-                                    <button @click="activeTab = 'tabAll'"
-                                        :class="activeTab === 'tabAll' ?
-                                            'border-primary dark:border-accent text-primary dark:text-accent-light' :
-                                            'border-transparent hover:text-slate-800 focus:text-slate-800 dark:hover:text-navy-100 dark:focus:text-navy-100'"
-                                        class="btn shrink-0 rounded-none border-b-2 px-3.5 py-2.5">
-                                        All
+                            <div class="popper-box flex max-h-[calc(100vh-6rem)] w-96 flex-col rounded-xl border border-slate-150 bg-white shadow-soft dark:border-navy-600 dark:bg-navy-700 dark:shadow-soft-dark overflow-hidden">
+                                {{-- Category Filter Tabs --}}
+                                <div class="is-scrollbar-hidden flex shrink-0 overflow-x-auto border-b border-slate-150 bg-slate-50 px-2 py-1.5 dark:border-navy-600 dark:bg-navy-800 text-xs gap-1">
+                                    <button 
+                                        @click="selectedCat = 'all'"
+                                        :class="selectedCat === 'all' ? 'bg-primary text-white dark:bg-accent font-bold shadow-xs' : 'text-slate-600 hover:bg-slate-200/70 dark:text-navy-200 dark:hover:bg-navy-700 font-medium'"
+                                        class="btn h-7 rounded-lg px-2.5 text-xs transition-all shrink-0">
+                                        Semua (<span x-text="tools.length"></span>)
                                     </button>
-                                    <button @click="activeTab = 'tabFiles'"
-                                        :class="activeTab === 'tabFiles' ?
-                                            'border-primary dark:border-accent text-primary dark:text-accent-light' :
-                                            'border-transparent hover:text-slate-800 focus:text-slate-800 dark:hover:text-navy-100 dark:focus:text-navy-100'"
-                                        class="btn shrink-0 rounded-none border-b-2 px-3.5 py-2.5">
-                                        Files
-                                    </button>
-                                    <button @click="activeTab = 'tabChats'"
-                                        :class="activeTab === 'tabChats' ?
-                                            'border-primary dark:border-accent text-primary dark:text-accent-light' :
-                                            'border-transparent hover:text-slate-800 focus:text-slate-800 dark:hover:text-navy-100 dark:focus:text-navy-100'"
-                                        class="btn shrink-0 rounded-none border-b-2 px-3.5 py-2.5">
-                                        Chats
-                                    </button>
-                                    <button @click="activeTab = 'tabEmails'"
-                                        :class="activeTab === 'tabEmails' ?
-                                            'border-primary dark:border-accent text-primary dark:text-accent-light' :
-                                            'border-transparent hover:text-slate-800 focus:text-slate-800 dark:hover:text-navy-100 dark:focus:text-navy-100'"
-                                        class="btn shrink-0 rounded-none border-b-2 px-3.5 py-2.5">
-                                        Emails
-                                    </button>
-                                    <button @click="activeTab = 'tabProjects'"
-                                        :class="activeTab === 'tabProjects' ?
-                                            'border-primary dark:border-accent text-primary dark:text-accent-light' :
-                                            'border-transparent hover:text-slate-800 focus:text-slate-800 dark:hover:text-navy-100 dark:focus:text-navy-100'"
-                                        class="btn shrink-0 rounded-none border-b-2 px-3.5 py-2.5">
-                                        Projects
-                                    </button>
-                                    <button @click="activeTab = 'tabTasks'"
-                                        :class="activeTab === 'tabTasks' ?
-                                            'border-primary dark:border-accent text-primary dark:text-accent-light' :
-                                            'border-transparent hover:text-slate-800 focus:text-slate-800 dark:hover:text-navy-100 dark:focus:text-navy-100'"
-                                        class="btn shrink-0 rounded-none border-b-2 px-3.5 py-2.5">
-                                        Tasks
-                                    </button>
+                                    <template x-for="cat in categories" :key="cat">
+                                        <button 
+                                            @click="selectedCat = cat"
+                                            :class="selectedCat === cat ? 'bg-primary text-white dark:bg-accent font-bold shadow-xs' : 'text-slate-600 hover:bg-slate-200/70 dark:text-navy-200 dark:hover:bg-navy-700 font-medium'"
+                                            class="btn h-7 rounded-lg px-2.5 text-xs transition-all shrink-0"
+                                            x-text="cat">
+                                        </button>
+                                    </template>
                                 </div>
 
-                                <div class="is-scrollbar-hidden overflow-y-auto overscroll-contain pb-2">
-                                    <div class="is-scrollbar-hidden mt-3 flex space-x-4 overflow-x-auto px-3">
-                                        <a href="'#'" class="w-14 text-center">
-                                            <div class="avatar size-12">
-                                                <div class="is-initial rounded-full bg-success text-white">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5"
-                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                        stroke-width="2">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
-                                                    </svg>
+                                {{-- Result List --}}
+                                <div class="is-scrollbar-hidden overflow-y-auto overscroll-contain p-2 max-h-80 space-y-1">
+                                    <template x-for="tool in filteredTools" :key="tool.id">
+                                        <a :href="'/tool/' + tool.slug" 
+                                           class="group flex items-center justify-between p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-navy-600/80 transition-colors">
+                                            <div class="flex items-center space-x-2.5 min-w-0">
+                                                {{-- Tool Thumbnail / Icon --}}
+                                                <div class="size-8 rounded-lg overflow-hidden bg-slate-100 dark:bg-navy-800 p-0.5 border border-slate-200 dark:border-navy-600 shrink-0 flex items-center justify-center">
+                                                    <template x-if="tool.image_url">
+                                                        <img :src="tool.image_url" :alt="tool.name" class="size-full object-contain" />
+                                                    </template>
+                                                    <template x-if="!tool.image_url">
+                                                        <x-lucide-wrench class="size-4 text-primary dark:text-accent-light" />
+                                                    </template>
+                                                </div>
+
+                                                <div class="min-w-0">
+                                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                                        <span class="font-bold text-slate-800 dark:text-navy-100 text-xs truncate group-hover:text-primary dark:group-hover:text-accent-light transition-colors" x-text="tool.name"></span>
+                                                        <span class="badge rounded-full bg-slate-150 text-slate-600 dark:bg-navy-800 dark:text-navy-300 text-[9px] font-semibold px-1.5 py-0.2" x-text="tool.category"></span>
+                                                        <template x-if="tool.badge">
+                                                            <span class="badge rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 text-[9px] font-black px-1.5 py-0.2" x-text="tool.badge"></span>
+                                                        </template>
+                                                        <template x-if="tool.is_maintenance">
+                                                            <span class="badge rounded-full bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300 text-[9px] font-bold px-1.5 py-0.2">Maintenance</span>
+                                                        </template>
+                                                    </div>
+                                                    <p class="text-[11px] text-slate-400 dark:text-navy-300 truncate mt-0.5" x-text="tool.description || ('Buka alat ' + tool.name)"></p>
                                                 </div>
                                             </div>
-                                            <p
-                                                class="mt-1.5 overflow-hidden text-ellipsis whitespace-nowrap text-xs text-slate-700 dark:text-navy-100">
-                                                Kanban
-                                            </p>
+
+                                            <div class="shrink-0 pl-2 text-slate-300 group-hover:text-primary dark:text-navy-400 dark:group-hover:text-accent-light transition-colors">
+                                                <x-lucide-chevron-right class="size-4" />
+                                            </div>
                                         </a>
-                                        <a href="'#'"
-                                            class="w-14 text-center">
-                                            <div class="avatar size-12">
-                                                <div class="is-initial rounded-full bg-secondary text-white">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5"
-                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                        stroke-width="2">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                            <p
-                                                class="mt-1.5 overflow-hidden text-ellipsis whitespace-nowrap text-xs text-slate-700 dark:text-navy-100">
-                                                Analytics
-                                            </p>
-                                        </a> <a href="'#'" class="w-14 text-center">
-                                            <div class="avatar size-12">
-                                                <div class="is-initial rounded-full bg-info text-white">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5"
-                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                        stroke-width="2">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                            <p
-                                                class="mt-1.5 overflow-hidden text-ellipsis whitespace-nowrap text-xs text-slate-700 dark:text-navy-100">
-                                                Chat
-                                            </p>
-                                        </a>
-                                        <a href="'#'" class="w-14 text-center">
-                                            <div class="avatar size-12">
-                                                <div class="is-initial rounded-full bg-error text-white">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5"
-                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                        stroke-width="2">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                            <p
-                                                class="mt-1.5 overflow-hidden text-ellipsis whitespace-nowrap text-xs text-slate-700 dark:text-navy-100">
-                                                Files
-                                            </p>
-                                        </a>
-                                        <a href="'#'" class="w-14 text-center">
-                                            <div class="avatar size-12">
-                                                <div class="is-initial rounded-full bg-secondary text-white">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5"
-                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                        stroke-width="2">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M15 9a2 2 0 10-4 0v5a2 2 0 01-2 2h6m-6-4h4m8 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                            <p
-                                                class="mt-1.5 overflow-hidden text-ellipsis whitespace-nowrap text-xs text-slate-700 dark:text-navy-100">
-                                                Crypto
-                                            </p>
-                                        </a>
-                                        <a href="'#'" class="w-14 text-center">
-                                            <div class="avatar size-12">
-                                                <div
-                                                    class="is-initial rounded-full bg-primary text-white dark:bg-accent">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5"
-                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                        stroke-width="2">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                            <p
-                                                class="mt-1.5 overflow-hidden text-ellipsis whitespace-nowrap text-xs text-slate-700 dark:text-navy-100">
-                                                Banking
-                                            </p>
-                                        </a>
-                                        <a href="'#'" class="w-14 text-center">
-                                            <div class="avatar size-12">
-                                                <div class="is-initial rounded-full bg-info text-white">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5"
-                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                        stroke-width="2">
-                                                        <path d="M12.5293 18L20.9999 8.40002" stroke-linecap="round"
-                                                            stroke-linejoin="round" />
-                                                        <path d="M3 13.2L7.23529 18L17.8235 6" stroke-linecap="round"
-                                                            stroke-linejoin="round" />
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                            <p
-                                                class="mt-1.5 overflow-hidden text-ellipsis whitespace-nowrap text-xs text-slate-700 dark:text-navy-100">
-                                                Todo
-                                            </p>
-                                        </a>
-                                        <a href="'#'" class="w-14 text-center">
-                                            <div class="avatar size-12">
-                                                <div class="is-initial rounded-full bg-secondary text-white">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5"
-                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                        stroke-width="2">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                            <p
-                                                class="mt-1.5 overflow-hidden text-ellipsis whitespace-nowrap text-xs text-slate-700 dark:text-navy-100">
-                                                CMS Analytics
-                                            </p>
-                                        </a>
-                                        <a href="'#'" class="w-14 text-center">
-                                            <div class="avatar size-12">
-                                                <div class="is-initial rounded-full bg-warning text-white">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5"
-                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                        stroke-width="2">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                            <p
-                                                class="mt-1.5 overflow-hidden text-ellipsis whitespace-nowrap text-xs text-slate-700 dark:text-navy-100">
-                                                Orders
-                                            </p>
-                                        </a>
+                                    </template>
+
+                                    {{-- Empty Search Result --}}
+                                    <div x-show="filteredTools.length === 0" class="py-8 text-center text-xs text-slate-400 dark:text-navy-300">
+                                        <x-lucide-search class="size-8 mx-auto text-slate-300 dark:text-navy-400 mb-2 opacity-60" />
+                                        <p class="font-semibold text-slate-700 dark:text-navy-100">Tool Tidak Ditemukan</p>
+                                        <p class="text-[11px] mt-0.5">Tidak ada tool yang cocok dengan "<span class="font-bold text-slate-600 dark:text-navy-200" x-text="searchQuery"></span>".</p>
                                     </div>
+                                </div>
 
-                                    <div
-                                        class="mt-3 flex items-center justify-between bg-slate-100 py-1.5 px-3 dark:bg-navy-800">
-                                        <p class="text-xs uppercase text-slate-400 dark:text-navy-300">
-                                            Recent
-                                        </p>
-                                        <a href="#"
-                                            class="text-tiny-plus font-medium uppercase text-primary outline-hidden transition-colors duration-300 hover:text-primary/70 focus:text-primary/70 dark:text-accent-light dark:hover:text-accent-light/70 dark:focus:text-accent-light/70">
-                                            View All
-                                        </a>
-                                    </div>
-
-                                    <div class="mt-1 font-inter font-medium">
-                                        <a class="group flex items-center space-x-2 px-2.5 py-2 tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100"
-                                            href="'#'">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="size-4.5 text-slate-400 transition-colors group-hover:text-slate-500 group-focus:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200 dark:group-focus:text-navy-200"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                stroke-width="1.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                                            </svg>
-                                            <span>Chat App</span>
-                                        </a>
-                                        <a class="group flex items-center space-x-2 px-2.5 py-2 tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100"
-                                            href="'#'">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="size-4.5 text-slate-400 transition-colors group-hover:text-slate-500 group-focus:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200 dark:group-focus:text-navy-200"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                stroke-width="1.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                                            </svg>
-                                            <span>File Manager App</span>
-                                        </a>
-                                        <a class="group flex items-center space-x-2 px-2.5 py-2 tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100"
-                                            href="'#'">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="size-4.5 text-slate-400 transition-colors group-hover:text-slate-500 group-focus:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200 dark:group-focus:text-navy-200"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                stroke-width="1.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                            </svg>
-                                            <span>Email App</span>
-                                        </a>
-                                        <a class="group flex items-center space-x-2 px-2.5 py-2 tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100"
-                                            href="'#'">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="size-4.5 text-slate-400 transition-colors group-hover:text-slate-500 group-focus:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200 dark:group-focus:text-navy-200"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                stroke-width="1.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
-                                            </svg>
-                                            <span>Kanban Board</span>
-                                        </a>
-                                        <a class="group flex items-center space-x-2 px-2.5 py-2 tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100"
-                                            href="'#'">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="size-4.5 text-slate-400 transition-colors group-hover:text-slate-500 group-focus:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200 dark:group-focus:text-navy-200"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                stroke-width="1.5">
-                                                <path d="M3 13.2L7.23529 18L17.8235 6" stroke-linecap="round"
-                                                    stroke-linejoin="round" />
-                                                <path d="M12.5293 18L20.9999 8.40002" stroke-linecap="round"
-                                                    stroke-linejoin="round" />
-                                            </svg>
-                                            <span>Todo App</span>
-                                        </a>
-                                        <a class="group flex items-center space-x-2 px-2.5 py-2 tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100"
-                                            href="'#'">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="size-4.5 text-slate-400 transition-colors group-hover:text-slate-500 group-focus:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200 dark:group-focus:text-navy-200"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                stroke-width="1.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M15 9a2 2 0 10-4 0v5a2 2 0 01-2 2h6m-6-4h4m8 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-
-                                            <span>Crypto Dashboard</span>
-                                        </a>
-                                        <a class="group flex items-center space-x-2 px-2.5 py-2 tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100"
-                                            href="'#'">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="size-4.5 text-slate-400 transition-colors group-hover:text-slate-500 group-focus:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200 dark:group-focus:text-navy-200"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                stroke-width="1.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-                                            </svg>
-
-                                            <span>Banking Dashboard</span>
-                                        </a>
-                                        <a class="group flex items-center space-x-2 px-2.5 py-2 tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100"
-                                            href="'#'">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="size-4.5 text-slate-400 transition-colors group-hover:text-slate-500 group-focus:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200 dark:group-focus:text-navy-200"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                stroke-width="1.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                                            </svg>
-
-                                            <span>Analytics Dashboard</span>
-                                        </a>
-                                        <a class="group flex items-center space-x-2 px-2.5 py-2 tracking-wide outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 focus:bg-slate-100 focus:text-slate-800 dark:hover:bg-navy-600 dark:hover:text-navy-100 dark:focus:bg-navy-600 dark:focus:text-navy-100"
-                                            href="'#'">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="size-4.5 text-slate-400 transition-colors group-hover:text-slate-500 group-focus:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200 dark:group-focus:text-navy-200"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                stroke-width="1.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-
-                                            <span>Influencer Dashboard</span>
-                                        </a>
-                                    </div>
+                                {{-- Popper Footer --}}
+                                <div class="flex items-center justify-between border-t border-slate-150 bg-slate-50 px-3 py-2 text-[10px] text-slate-400 dark:border-navy-600 dark:bg-navy-800 dark:text-navy-300">
+                                    <span>Ditemukan <strong class="text-slate-700 dark:text-navy-100" x-text="filteredTools.length"></strong> tools</span>
+                                    <span class="text-slate-400">Tekan <kbd class="rounded bg-slate-200 dark:bg-navy-600 px-1 py-0.5 font-mono text-[9px]">ESC</kbd> untuk menutup</span>
                                 </div>
                             </div>
                         </div>
@@ -397,444 +190,6 @@
                             clip-rule="evenodd" />
                     </svg>
                 </button>
-
-
-                <!-- Notification-->
-                <div x-effect="if($store.global.isSearchbarActive) isShowPopper = false" x-data="usePopper({ placement: 'bottom-end', offset: 12 })"
-                    @click.outside="if(isShowPopper) isShowPopper = false" class="flex">
-                    <button @click="isShowPopper = !isShowPopper" x-ref="popperRef"
-                        class="btn relative size-8 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-slate-500 dark:text-navy-100"
-                            stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M15.375 17.556h-6.75m6.75 0H21l-1.58-1.562a2.254 2.254 0 01-.67-1.596v-3.51a6.612 6.612 0 00-1.238-3.85 6.744 6.744 0 00-3.262-2.437v-.379c0-.59-.237-1.154-.659-1.571A2.265 2.265 0 0012 2c-.597 0-1.169.234-1.591.65a2.208 2.208 0 00-.659 1.572v.38c-2.621.915-4.5 3.385-4.5 6.287v3.51c0 .598-.24 1.172-.67 1.595L3 17.556h12.375zm0 0v1.11c0 .885-.356 1.733-.989 2.358A3.397 3.397 0 0112 22a3.397 3.397 0 01-2.386-.976 3.313 3.313 0 01-.989-2.357v-1.111h6.75z" />
-                        </svg>
-
-                        <span class="absolute -top-px -right-px flex size-3 items-center justify-center">
-                            <span
-                                class="absolute inline-flex h-full w-full animate-ping rounded-full bg-secondary opacity-80"></span>
-                            <span class="inline-flex size-2 rounded-full bg-secondary"></span>
-                        </span>
-                    </button>
-                    <div :class="isShowPopper && 'show'" class="popper-root" x-ref="popperRoot">
-                        <div x-data="{ activeTab: 'tabAll' }"
-                            class="popper-box mx-4 mt-1 flex max-h-[calc(100vh-6rem)] w-[calc(100vw-2rem)] flex-col rounded-lg border border-slate-150 bg-white shadow-soft dark:border-navy-800 dark:bg-navy-700 dark:shadow-soft-dark sm:m-0 sm:w-80">
-                            <div class="rounded-t-lg bg-slate-100 text-slate-600 dark:bg-navy-800 dark:text-navy-200">
-                                <div class="flex items-center justify-between px-4 pt-2">
-                                    <div class="flex items-center space-x-2">
-                                        <h3 class="font-medium text-slate-700 dark:text-navy-100">
-                                            Notifications
-                                        </h3>
-                                        <div
-                                            class="badge h-5 rounded-full bg-primary/10 px-1.5 text-primary dark:bg-accent-light/15 dark:text-accent-light">
-                                            26
-                                        </div>
-                                    </div>
-
-                                    <button
-                                        class="btn -mr-1.5 size-7 rounded-full p-0 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        </svg>
-                                    </button>
-                                </div>
-
-                                <div class="is-scrollbar-hidden flex shrink-0 overflow-x-auto px-3">
-                                    <button @click="activeTab = 'tabAll'"
-                                        :class="activeTab === 'tabAll' ?
-                                            'border-primary dark:border-accent text-primary dark:text-accent-light' :
-                                            'border-transparent hover:text-slate-800 focus:text-slate-800 dark:hover:text-navy-100 dark:focus:text-navy-100'"
-                                        class="btn shrink-0 rounded-none border-b-2 px-3.5 py-2.5">
-                                        <span>All</span>
-                                    </button>
-                                    <button @click="activeTab = 'tabAlerts'"
-                                        :class="activeTab === 'tabAlerts' ?
-                                            'border-primary dark:border-accent text-primary dark:text-accent-light' :
-                                            'border-transparent hover:text-slate-800 focus:text-slate-800 dark:hover:text-navy-100 dark:focus:text-navy-100'"
-                                        class="btn shrink-0 rounded-none border-b-2 px-3.5 py-2.5">
-                                        <span>Alerts</span>
-                                    </button>
-                                    <button @click="activeTab = 'tabEvents'"
-                                        :class="activeTab === 'tabEvents' ?
-                                            'border-primary dark:border-accent text-primary dark:text-accent-light' :
-                                            'border-transparent hover:text-slate-800 focus:text-slate-800 dark:hover:text-navy-100 dark:focus:text-navy-100'"
-                                        class="btn shrink-0 rounded-none border-b-2 px-3.5 py-2.5">
-                                        <span>Events</span>
-                                    </button>
-                                    <button @click="activeTab = 'tabLogs'"
-                                        :class="activeTab === 'tabLogs' ?
-                                            'border-primary dark:border-accent text-primary dark:text-accent-light' :
-                                            'border-transparent hover:text-slate-800 focus:text-slate-800 dark:hover:text-navy-100 dark:focus:text-navy-100'"
-                                        class="btn shrink-0 rounded-none border-b-2 px-3.5 py-2.5">
-                                        <span>Logs</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="tab-content flex flex-col overflow-hidden">
-                                <div x-show="activeTab === 'tabAll'"
-                                    x-transition:enter="transition-all duration-300 easy-in-out"
-                                    x-transition:enter-start="opacity-0 [transform:translate3d(1rem,0,0)]"
-                                    x-transition:enter-end="opacity-100 [transform:translate3d(0,0,0)]"
-                                    class="is-scrollbar-hidden space-y-4 overflow-y-auto px-4 py-4">
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-secondary/10 dark:bg-secondary-light/15">
-                                            <i class="fa fa-user-edit text-secondary dark:text-secondary-light"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-slate-600 dark:text-navy-100">
-                                                User Photo Changed
-                                            </p>
-                                            <div class="mt-1 text-xs text-slate-400 line-clamp-1 dark:text-navy-300">
-                                                John Doe changed his avatar photo
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-info/10 dark:bg-info/15">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-info"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                stroke-width="1.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-slate-600 dark:text-navy-100">
-                                                Mon, June 14, 2021
-                                            </p>
-                                            <div class="mt-1 flex text-xs text-slate-400 dark:text-navy-300">
-                                                <span class="shrink-0">08:00 - 09:00</span>
-                                                <div class="mx-2 my-1 w-px bg-slate-200 dark:bg-navy-500"></div>
-
-                                                <span class="line-clamp-1">Frontend Conf</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 dark:bg-accent-light/15">
-                                            <i class="fa-solid fa-image text-primary dark:text-accent-light"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-slate-600 dark:text-navy-100">
-                                                Images Added
-                                            </p>
-                                            <div class="mt-1 text-xs text-slate-400 line-clamp-1 dark:text-navy-300">
-                                                Mores Clarke added new image gallery
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-success/10 dark:bg-success/15">
-                                            <i class="fa fa-leaf text-success"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-slate-600 dark:text-navy-100">
-                                                Design Completed
-                                            </p>
-                                            <div class="mt-1 text-xs text-slate-400 line-clamp-1 dark:text-navy-300">
-                                                Robert Nolan completed the design of the CRM
-                                                application
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-info/10 dark:bg-info/15">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-info"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                stroke-width="1.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-slate-600 dark:text-navy-100">
-                                                Wed, June 21, 2021
-                                            </p>
-                                            <div class="mt-1 flex text-xs text-slate-400 dark:text-navy-300">
-                                                <span class="shrink-0">16:00 - 20:00</span>
-                                                <div class="mx-2 my-1 w-px bg-slate-200 dark:bg-navy-500"></div>
-
-                                                <span class="line-clamp-1">UI/UX Conf</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-warning/10 dark:bg-warning/15">
-                                            <i class="fa fa-project-diagram text-warning"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-slate-600 dark:text-navy-100">
-                                                ER Diagram
-                                            </p>
-                                            <div class="mt-1 text-xs text-slate-400 line-clamp-1 dark:text-navy-300">
-                                                Team completed the ER diagram app
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-warning/10 dark:bg-warning/15">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-warning"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                stroke-width="1.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-slate-600 dark:text-navy-100">
-                                                THU, May 11, 2021
-                                            </p>
-                                            <div class="mt-1 flex text-xs text-slate-400 dark:text-navy-300">
-                                                <span class="shrink-0">10:00 - 11:30</span>
-                                                <div class="mx-2 my-1 w-px bg-slate-200 dark:bg-navy-500"></div>
-                                                <span class="line-clamp-1">Interview, Konnor Guzman
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-error/10 dark:bg-error/15">
-                                            <i class="fa fa-history text-error"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-slate-600 dark:text-navy-100">
-                                                Weekly Report
-                                            </p>
-                                            <div class="mt-1 text-xs text-slate-400 line-clamp-1 dark:text-navy-300">
-                                                The weekly report was uploaded
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div x-show="activeTab === 'tabAlerts'"
-                                    x-transition:enter="transition-all duration-300 easy-in-out"
-                                    x-transition:enter-start="opacity-0 [transform:translate3d(1rem,0,0)]"
-                                    x-transition:enter-end="opacity-100 [transform:translate3d(0,0,0)]"
-                                    class="is-scrollbar-hidden space-y-4 overflow-y-auto px-4 py-4">
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-secondary/10 dark:bg-secondary-light/15">
-                                            <i class="fa fa-user-edit text-secondary dark:text-secondary-light"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-slate-600 dark:text-navy-100">
-                                                User Photo Changed
-                                            </p>
-                                            <div class="mt-1 text-xs text-slate-400 line-clamp-1 dark:text-navy-300">
-                                                John Doe changed his avatar photo
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 dark:bg-accent-light/15">
-                                            <i class="fa-solid fa-image text-primary dark:text-accent-light"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-slate-600 dark:text-navy-100">
-                                                Images Added
-                                            </p>
-                                            <div class="mt-1 text-xs text-slate-400 line-clamp-1 dark:text-navy-300">
-                                                Mores Clarke added new image gallery
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-success/10 dark:bg-success/15">
-                                            <i class="fa fa-leaf text-success"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-slate-600 dark:text-navy-100">
-                                                Design Completed
-                                            </p>
-                                            <div class="mt-1 text-xs text-slate-400 line-clamp-1 dark:text-navy-300">
-                                                Robert Nolan completed the design of the CRM
-                                                application
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-warning/10 dark:bg-warning/15">
-                                            <i class="fa fa-project-diagram text-warning"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-slate-600 dark:text-navy-100">
-                                                ER Diagram
-                                            </p>
-                                            <div class="mt-1 text-xs text-slate-400 line-clamp-1 dark:text-navy-300">
-                                                Team completed the ER diagram app
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-error/10 dark:bg-error/15">
-                                            <i class="fa fa-history text-error"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-slate-600 dark:text-navy-100">
-                                                Weekly Report
-                                            </p>
-                                            <div class="mt-1 text-xs text-slate-400 line-clamp-1 dark:text-navy-300">
-                                                The weekly report was uploaded
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div x-show="activeTab === 'tabEvents'"
-                                    x-transition:enter="transition-all duration-300 easy-in-out"
-                                    x-transition:enter-start="opacity-0 [transform:translate3d(1rem,0,0)]"
-                                    x-transition:enter-end="opacity-100 [transform:translate3d(0,0,0)]"
-                                    class="is-scrollbar-hidden space-y-4 overflow-y-auto px-4 py-4">
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-info/10 dark:bg-info/15">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-info"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                stroke-width="1.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-slate-600 dark:text-navy-100">
-                                                Mon, June 14, 2021
-                                            </p>
-                                            <div class="mt-1 flex text-xs text-slate-400 dark:text-navy-300">
-                                                <span class="shrink-0">08:00 - 09:00</span>
-                                                <div class="mx-2 my-1 w-px bg-slate-200 dark:bg-navy-500"></div>
-
-                                                <span class="line-clamp-1">Frontend Conf</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-info/10 dark:bg-info/15">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-info"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                stroke-width="1.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-slate-600 dark:text-navy-100">
-                                                Wed, June 21, 2021
-                                            </p>
-                                            <div class="mt-1 flex text-xs text-slate-400 dark:text-navy-300">
-                                                <span class="shrink-0">16:00 - 20:00</span>
-                                                <div class="mx-2 my-1 w-px bg-slate-200 dark:bg-navy-500"></div>
-
-                                                <span class="line-clamp-1">UI/UX Conf</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-warning/10 dark:bg-warning/15">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-warning"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                stroke-width="1.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-slate-600 dark:text-navy-100">
-                                                THU, May 11, 2021
-                                            </p>
-                                            <div class="mt-1 flex text-xs text-slate-400 dark:text-navy-300">
-                                                <span class="shrink-0">10:00 - 11:30</span>
-                                                <div class="mx-2 my-1 w-px bg-slate-200 dark:bg-navy-500"></div>
-                                                <span class="line-clamp-1">Interview, Konnor Guzman
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-info/10 dark:bg-info/15">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-info"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                stroke-width="1.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-slate-600 dark:text-navy-100">
-                                                Mon, Jul 16, 2021
-                                            </p>
-                                            <div class="mt-1 flex text-xs text-slate-400 dark:text-navy-300">
-                                                <span class="shrink-0">06:00 - 16:00</span>
-                                                <div class="mx-2 my-1 w-px bg-slate-200 dark:bg-navy-500"></div>
-
-                                                <span class="line-clamp-1">Laravel Conf</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-3">
-                                        <div
-                                            class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-warning/10 dark:bg-warning/15">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-warning"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                stroke-width="1.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <p class="font-medium text-slate-600 dark:text-navy-100">
-                                                Wed, Jun 16, 2021
-                                            </p>
-                                            <div class="mt-1 flex text-xs text-slate-400 dark:text-navy-300">
-                                                <span class="shrink-0">15:30 - 11:30</span>
-                                                <div class="mx-2 my-1 w-px bg-slate-200 dark:bg-navy-500"></div>
-                                                <span class="line-clamp-1">Interview, Jonh Doe
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div x-show="activeTab === 'tabLogs'"
-                                    x-transition:enter="transition-all duration-300 easy-in-out"
-                                    x-transition:enter-start="opacity-0 [transform:translate3d(1rem,0,0)]"
-                                    x-transition:enter-end="opacity-100 [transform:translate3d(0,0,0)]"
-                                    class="is-scrollbar-hidden overflow-y-auto px-4">
-                                    <div class="mt-8 pb-8 text-center">
-                                        <img class="mx-auto w-36"
-                                            src="{{ asset('images/illustrations/empty-girl-box.svg') }}"
-                                            alt="image" />
-                                        <div class="mt-5">
-                                            <p class="text-base font-semibold text-slate-700 dark:text-navy-100">
-                                                No any logs
-                                            </p>
-                                            <p class="text-slate-400 dark:text-navy-300">
-                                                There are no unread logs yet
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Profile -->
                 @php

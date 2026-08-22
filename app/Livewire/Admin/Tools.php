@@ -35,6 +35,7 @@ class Tools extends Component
     public $imageFile = null;
     public $component = '';
     public $badge = '';
+    public $is_pro_only = false;
     public $is_highlighted = false;
     public $is_active = true;
     public $is_maintenance = false;
@@ -51,6 +52,7 @@ class Tools extends Component
         'imageFile' => 'nullable|image|max:2048', // max 2MB
         'component' => 'nullable|string|max:255',
         'badge' => 'nullable|string|max:50',
+        'is_pro_only' => 'boolean',
         'is_highlighted' => 'boolean',
         'is_active' => 'boolean',
         'is_maintenance' => 'boolean',
@@ -109,6 +111,7 @@ class Tools extends Component
         $this->image = $tool->image ?? '';
         $this->component = $tool->component ?? '';
         $this->badge = $tool->badge ?? '';
+        $this->is_pro_only = (bool) $tool->is_pro_only;
         $this->is_highlighted = (bool) $tool->is_highlighted;
         $this->is_active = (bool) $tool->is_active;
         $this->is_maintenance = (bool) $tool->is_maintenance;
@@ -149,6 +152,7 @@ class Tools extends Component
                 'image' => $savedImagePath,
                 'component' => $this->component,
                 'badge' => $this->badge ? strtoupper(trim($this->badge)) : null,
+                'is_pro_only' => (bool) $this->is_pro_only,
                 'is_highlighted' => (bool) $this->is_highlighted,
                 'is_active' => $this->is_active,
                 'is_maintenance' => $this->is_maintenance,
@@ -160,6 +164,15 @@ class Tools extends Component
         $this->isModalOpen = false;
         $this->toast($this->toolId ? 'Tool berhasil diperbarui!' : 'Tool baru berhasil ditambahkan!', 'success');
         $this->resetForm();
+    }
+
+    public function toggleProOnly($id)
+    {
+        $tool = Tool::findOrFail($id);
+        $tool->update(['is_pro_only' => !$tool->is_pro_only]);
+
+        $statusText = $tool->is_pro_only ? 'dikunci khusus Member PRO (👑 PRO Only)' : 'dibuka untuk Semua Pengguna (Free)';
+        $this->toast("Akses tool {$tool->name} berhasil {$statusText}!", 'success');
     }
 
     public function toggleHighlighted($id)
@@ -230,6 +243,7 @@ class Tools extends Component
         $this->imageFile = null;
         $this->component = '';
         $this->badge = '';
+        $this->is_pro_only = false;
         $this->is_highlighted = false;
         $this->is_active = true;
         $this->is_maintenance = false;
@@ -243,6 +257,7 @@ class Tools extends Component
         $totalTools = Tool::count();
         $activeToolsCount = Tool::where('is_active', true)->where('is_maintenance', false)->count();
         $maintenanceToolsCount = Tool::where('is_maintenance', true)->count();
+        $proToolsCount = Tool::where('is_pro_only', true)->count();
         $totalProcessed = Tool::sum('total_usage_count');
 
         $categories = Tool::select('category')->distinct()->pluck('category')->filter()->values();
@@ -262,6 +277,8 @@ class Tools extends Component
             ->when($this->statusFilter, function ($q) {
                 if ($this->statusFilter === 'active') {
                     $q->where('is_active', true)->where('is_maintenance', false);
+                } elseif ($this->statusFilter === 'pro_only') {
+                    $q->where('is_pro_only', true);
                 } elseif ($this->statusFilter === 'highlighted') {
                     $q->where('is_highlighted', true);
                 } elseif ($this->statusFilter === 'maintenance') {
@@ -280,6 +297,7 @@ class Tools extends Component
             'totalTools' => $totalTools,
             'activeToolsCount' => $activeToolsCount,
             'maintenanceToolsCount' => $maintenanceToolsCount,
+            'proToolsCount' => $proToolsCount,
             'totalProcessed' => $totalProcessed,
         ])->title('Kelola Tools & Fitur - ' . config('app.name'));
     }

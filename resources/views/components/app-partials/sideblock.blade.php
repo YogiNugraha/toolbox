@@ -88,8 +88,8 @@
             <ul class="flex flex-1 flex-col px-4 space-y-1.5 font-inter font-medium">
                 <li>
                     <a href="{{ route('dashboard') }}" wire:navigate
-                        class="flex items-center space-x-2 rounded-lg px-4 py-2.5 tracking-wide outline-hidden transition-all {{ request()->routeIs('dashboard') ? 'bg-primary text-white dark:bg-accent' : 'group text-slate-600 hover:bg-slate-100 hover:text-slate-800 dark:text-navy-200 dark:hover:bg-navy-600 dark:hover:text-navy-100' }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5 {{ request()->routeIs('dashboard') ? '' : 'text-slate-400 transition-colors group-hover:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        class="flex items-center space-x-2 rounded-lg px-4 py-2.5 tracking-wide outline-hidden transition-all {{ request()->routeIs('dashboard') || request()->is('tool/*') || request()->is('category/*') ? 'bg-primary text-white dark:bg-accent' : 'group text-slate-600 hover:bg-slate-100 hover:text-slate-800 dark:text-navy-200 dark:hover:bg-navy-600 dark:hover:text-navy-100' }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5 {{ request()->routeIs('dashboard') || request()->is('tool/*') || request()->is('category/*') ? '' : 'text-slate-400 transition-colors group-hover:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1v-2zM14 13a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1h-4a1 1 0 01-1-1v-5z" />
                         </svg>
                         <span>Dashboard</span>
@@ -113,48 +113,6 @@
                         <span>Billing & Paket</span>
                     </a>
                 </li>
-
-                <!-- Divider Kumpulan Tools -->
-                <li class="pt-4 pb-1 px-1">
-                    <div class="flex items-center space-x-2">
-                        <div class="h-px flex-1 bg-slate-200 dark:bg-navy-600"></div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300">Kumpulan Tools</span>
-                        <div class="h-px flex-1 bg-slate-200 dark:bg-navy-600"></div>
-                    </div>
-                </li>
-
-                @php
-                    $activeTools = \App\Models\Tool::getActiveTools();
-                    $groupedCategories = $activeTools->groupBy('category');
-                @endphp
-
-                @foreach($groupedCategories as $categoryName => $catTools)
-                    @php
-                        $categorySlug = \Illuminate\Support\Str::slug($categoryName);
-                        $isCatActive = request()->is('category/' . $categorySlug) || request()->is('category/' . strtolower($categoryName));
-                        $displayName = $categoryName;
-                        if (strtolower($categoryName) === 'image') $displayName = 'Gambar & Foto';
-                        if (strtolower($categoryName) === 'document') $displayName = 'Dokumen & PDF';
-                    @endphp
-                    <li>
-                        <a href="{{ route('dashboard.category', $categorySlug) }}" wire:navigate
-                            class="flex items-center justify-between rounded-lg px-4 py-2.5 tracking-wide outline-hidden transition-all {{ $isCatActive ? 'bg-primary text-white dark:bg-accent' : 'group text-slate-600 hover:bg-slate-100 hover:text-slate-800 dark:text-navy-200 dark:hover:bg-navy-600 dark:hover:text-navy-100' }}">
-                            <div class="flex items-center space-x-2">
-                                @if(stripos($categoryName, 'image') !== false)
-                                    <x-lucide-image class="size-5 {{ $isCatActive ? '' : 'text-slate-400 group-hover:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200' }}" />
-                                @elseif(stripos($categoryName, 'doc') !== false || stripos($categoryName, 'pdf') !== false)
-                                    <x-lucide-file-text class="size-5 {{ $isCatActive ? '' : 'text-slate-400 group-hover:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200' }}" />
-                                @else
-                                    <x-lucide-boxes class="size-5 {{ $isCatActive ? '' : 'text-slate-400 group-hover:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200' }}" />
-                                @endif
-                                <span>{{ $displayName }}</span>
-                            </div>
-                            <span class="badge rounded-full {{ $isCatActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600 dark:bg-navy-600 dark:text-navy-200' }} text-[10px] font-bold px-2 py-0.5">
-                                {{ $catTools->count() }}
-                            </span>
-                        </a>
-                    </li>
-                @endforeach
             </ul>
             @endif
         </div>

@@ -72,17 +72,17 @@
             </div>
         </div>
 
-        {{-- Total Processed Files --}}
+        {{-- PRO Only Tools --}}
         <div class="card p-4 sm:p-5">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300">Total Penggunaan</span>
-                <div class="mask is-squircle flex size-10 items-center justify-center bg-info/10 text-info font-bold">
-                    <x-lucide-sparkles class="size-5" />
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300">Khusus PRO</span>
+                <div class="mask is-squircle flex size-10 items-center justify-center bg-purple-500/10 text-purple-600 dark:text-purple-400 font-bold">
+                    <x-lucide-crown class="size-5" />
                 </div>
             </div>
             <div class="mt-3">
-                <p class="text-2xl font-bold text-slate-800 dark:text-navy-100">{{ number_format($totalProcessed) }}</p>
-                <p class="text-[11px] text-slate-400 dark:text-navy-300 mt-0.5">File & dokumen diproses</p>
+                <p class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ $proToolsCount }}</p>
+                <p class="text-[11px] text-slate-400 dark:text-navy-300 mt-0.5">Terkunci untuk member PRO</p>
             </div>
         </div>
     </div>
@@ -114,6 +114,7 @@
                 <select wire:model.live="statusFilter" class="form-select rounded-lg border border-slate-300 bg-transparent px-3 py-1.5 text-xs hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent">
                     <option value="">Semua Status</option>
                     <option value="active">Aktif & Normal</option>
+                    <option value="pro_only">👑 Khusus Member PRO</option>
                     <option value="highlighted">🌟 Highlight di Beranda</option>
                     <option value="maintenance">Maintenance</option>
                     <option value="inactive">Non-Aktif (Hidden)</option>
@@ -137,6 +138,9 @@
                         </th>
                         <th class="bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs text-center">
                             BADGE
+                        </th>
+                        <th class="bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs text-center">
+                            AKSES PRO
                         </th>
                         <th class="bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs text-center">
                             BERANDA
@@ -184,6 +188,12 @@
                                             <span class="badge rounded-full bg-slate-100 text-slate-600 dark:bg-navy-600 dark:text-navy-200 text-[10px] font-semibold px-2 py-0.5">
                                                 {{ $tool->category }}
                                             </span>
+                                            @if($tool->is_pro_only)
+                                                <span class="badge rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 text-[9px] font-extrabold px-2 py-0.5 uppercase flex items-center gap-0.5">
+                                                    <x-lucide-crown class="size-2.5" />
+                                                    <span>PRO ONLY</span>
+                                                </span>
+                                            @endif
                                         </div>
                                         <div class="text-[11px] text-slate-400 dark:text-navy-300 font-mono mt-0.5 flex items-center gap-1.5">
                                             <span>/tool/{{ $tool->slug }}</span>
@@ -221,6 +231,15 @@
                                 @else
                                     <span class="text-slate-300 dark:text-navy-400 text-xs">-</span>
                                 @endif
+                            </td>
+
+                            {{-- PRO Only Access Toggle --}}
+                            <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-center">
+                                <button wire:click="toggleProOnly({{ $tool->id }})" 
+                                        title="{{ $tool->is_pro_only ? 'Khusus Member PRO (Klik untuk buka akses Free)' : 'Akses Free / Semua (Klik untuk kunci ke Member PRO)' }}"
+                                        class="btn size-7 rounded-full p-0 transition-all {{ $tool->is_pro_only ? 'bg-purple-100 text-purple-600 dark:bg-purple-900/40 dark:text-purple-300 shadow-xs ring-1 ring-purple-400' : 'bg-slate-100 text-slate-400 dark:bg-navy-600 dark:text-navy-300 hover:text-purple-500' }}">
+                                    <x-lucide-crown class="size-3.5 {{ $tool->is_pro_only ? 'stroke-[2.5]' : '' }}" />
+                                </button>
                             </td>
 
                             {{-- Highlighted on Landing Page Toggle --}}
@@ -448,7 +467,7 @@
                         Kontrol Operasional & Visibilitas
                     </h4>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                         {{-- Active Switch --}}
                         <div class="flex items-center justify-between rounded-lg border border-slate-200 dark:border-navy-600 p-3 bg-white dark:bg-navy-700">
                             <div>
@@ -460,11 +479,25 @@
                             </label>
                         </div>
 
+                        {{-- PRO Only Switch --}}
+                        <div class="flex items-center justify-between rounded-lg border border-slate-200 dark:border-navy-600 p-3 bg-white dark:bg-navy-700">
+                            <div>
+                                <p class="font-bold text-slate-700 dark:text-navy-100 flex items-center gap-1">
+                                    <x-lucide-crown class="size-3.5 text-purple-600 dark:text-purple-400" />
+                                    <span>Khusus PRO</span>
+                                </p>
+                                <p class="text-[10px] text-slate-400">Kunci untuk Free tier</p>
+                            </div>
+                            <label class="inline-flex cursor-pointer items-center">
+                                <input class="form-switch h-5 w-10 rounded-full bg-slate-300 before:rounded-full before:bg-slate-50 checked:bg-purple-600 checked:before:bg-white dark:bg-navy-900 dark:before:bg-navy-300 dark:checked:bg-purple-600 dark:checked:before:bg-white" type="checkbox" wire:model="is_pro_only" />
+                            </label>
+                        </div>
+
                         {{-- Highlighted on Landing Page Switch --}}
                         <div class="flex items-center justify-between rounded-lg border border-slate-200 dark:border-navy-600 p-3 bg-white dark:bg-navy-700">
                             <div>
-                                <p class="font-bold text-slate-700 dark:text-navy-100">Highlight Beranda</p>
-                                <p class="text-[10px] text-slate-400">Katalog Welcome Page</p>
+                                <p class="font-bold text-slate-700 dark:text-navy-100">Highlight</p>
+                                <p class="text-[10px] text-slate-400">Welcome Page</p>
                             </div>
                             <label class="inline-flex cursor-pointer items-center">
                                 <input class="form-switch h-5 w-10 rounded-full bg-slate-300 before:rounded-full before:bg-slate-50 checked:bg-amber-500 checked:before:bg-white dark:bg-navy-900 dark:before:bg-navy-300 dark:checked:bg-amber-500 dark:checked:before:bg-white" type="checkbox" wire:model="is_highlighted" />

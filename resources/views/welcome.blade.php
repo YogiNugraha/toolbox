@@ -277,17 +277,20 @@
                                             <template x-if="tool.is_maintenance">
                                                 <span class="badge rounded-full bg-warning/15 text-warning text-[10px] font-bold px-2 py-0.5">Maintenance</span>
                                             </template>
-                                            <template x-if="!tool.is_maintenance && tool.badge === 'HOT'">
+                                            <template x-if="!tool.is_maintenance && tool.is_pro_only">
+                                                <span class="badge rounded-full bg-linear-to-r from-amber-500 via-purple-600 to-indigo-600 text-white text-[10px] font-black px-2.5 py-0.5 shadow-xs uppercase">👑 PRO ONLY</span>
+                                            </template>
+                                            <template x-if="!tool.is_maintenance && !tool.is_pro_only && tool.badge === 'HOT'">
                                                 <span class="badge rounded-full bg-linear-to-r from-red-500 to-orange-500 text-white text-[10px] font-black px-2.5 py-0.5 shadow-xs">🔥 HOT</span>
                                             </template>
-                                            <template x-if="!tool.is_maintenance && tool.badge === 'NEW'">
+                                            <template x-if="!tool.is_maintenance && !tool.is_pro_only && tool.badge === 'NEW'">
                                                 <span class="badge rounded-full bg-linear-to-r from-emerald-500 to-teal-500 text-white text-[10px] font-black px-2.5 py-0.5 shadow-xs">✨ NEW</span>
                                             </template>
-                                            <template x-if="!tool.is_maintenance && tool.badge === 'PRO'">
+                                            <template x-if="!tool.is_maintenance && !tool.is_pro_only && tool.badge === 'PRO'">
                                                 <span class="badge rounded-full bg-linear-to-r from-amber-500 to-purple-600 text-white text-[10px] font-black px-2.5 py-0.5 shadow-xs">👑 PRO</span>
                                             </template>
-                                            <template x-if="!tool.is_maintenance && tool.badge && !['HOT', 'NEW', 'PRO'].includes(tool.badge)">
-                                                <span class="badge rounded-full bg-slate-150 text-slate-700 dark:bg-navy-500 dark:text-navy-200 text-[10px] font-bold px-2 py-0.5" x-text="tool.badge"></span>
+                                            <template x-if="!tool.is_maintenance && !tool.is_pro_only && tool.badge && !['HOT', 'NEW', 'PRO'].includes(tool.badge)">
+                                                <span class="badge rounded-full bg-slate-150 text-slate-700 dark:bg-navy-500 dark:text-navy-200 text-[10px] font-bold px-2.5 py-0.5" x-text="tool.badge"></span>
                                             </template>
                                         </div>
                                         <h4 class="text-lg font-semibold text-slate-700 dark:text-navy-100" x-text="tool.name"></h4>

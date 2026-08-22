@@ -19,6 +19,7 @@ class Tool extends Model
         'image',
         'component',
         'badge',
+        'is_pro_only',
         'is_highlighted',
         'is_active',
         'is_maintenance',
@@ -46,6 +47,7 @@ class Tool extends Model
     }
 
     protected $casts = [
+        'is_pro_only' => 'boolean',
         'is_highlighted' => 'boolean',
         'is_active' => 'boolean',
         'is_maintenance' => 'boolean',
