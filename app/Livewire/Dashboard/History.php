@@ -129,7 +129,7 @@ class History extends Component
 
         return view('livewire.dashboard.history', [
             'activities' => $activities,
-            'tools' => config('tools', [])
+            'tools' => \App\Models\Tool::orderBy('name')->get(),
         ])->layout('layouts.dashboard');
     }
 }
