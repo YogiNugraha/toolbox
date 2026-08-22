@@ -2,12 +2,22 @@
     <div class="flex h-full grow flex-col border-r border-slate-150 bg-white dark:border-navy-700 dark:bg-navy-750">
         <div class="flex items-center justify-between px-3 pt-4">
             <!-- Application Logo -->
+            @php
+                $siteName = \App\Models\Setting::get('site_name', \App\Models\Setting::get('brand_name', config('app.name')));
+                $siteLogo = \App\Models\Setting::get('site_logo');
+            @endphp
             <div class="flex">
                 <a href="/" wire:navigate class="flex items-center space-x-3">
-                    <img class="size-10 transition-transform duration-500 ease-in-out hover:rotate-[360deg]"
-                        src="{{ asset('images/app-logo.svg') }}" alt="logo" />
-                    <span class="text-xl font-bold uppercase tracking-wider text-slate-700 dark:text-navy-100">
-                        {{ config('app.name') }}
+                    @if($siteLogo && \Illuminate\Support\Facades\Storage::disk('public')->exists($siteLogo))
+                        <div class="flex size-10 shrink-0 items-center justify-center">
+                            <img class="size-full object-contain" src="{{ \Illuminate\Support\Facades\Storage::url($siteLogo) }}" alt="{{ $siteName }}" />
+                        </div>
+                    @else
+                        <img class="size-10 transition-transform duration-500 ease-in-out hover:rotate-[360deg]"
+                            src="{{ asset('images/app-logo.svg') }}" alt="logo" />
+                    @endif
+                    <span class="text-lg font-bold uppercase tracking-wider text-slate-700 dark:text-navy-100">
+                        {{ $siteName }}
                     </span>
                 </a>
             </div>
@@ -32,6 +42,13 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('admin.tools') }}" wire:navigate
+                        class="flex items-center space-x-2 rounded-lg px-4 py-2.5 tracking-wide outline-hidden transition-all {{ request()->routeIs('admin.tools') ? 'bg-primary text-white dark:bg-accent' : 'group text-slate-600 hover:bg-slate-100 hover:text-slate-800 dark:text-navy-200 dark:hover:bg-navy-600 dark:hover:text-navy-100' }}">
+                        <x-lucide-wrench class="size-5 {{ request()->routeIs('admin.tools') ? '' : 'text-slate-400 transition-colors group-hover:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200' }}" />
+                        <span>Kelola Tools</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('admin.plans') }}" wire:navigate
                         class="flex items-center space-x-2 rounded-lg px-4 py-2.5 tracking-wide outline-hidden transition-all {{ request()->routeIs('admin.plans') ? 'bg-primary text-white dark:bg-accent' : 'group text-slate-600 hover:bg-slate-100 hover:text-slate-800 dark:text-navy-200 dark:hover:bg-navy-600 dark:hover:text-navy-100' }}">
                         <svg xmlns="http://www.w3.org/2000/svg" class="size-5 {{ request()->routeIs('admin.plans') ? '' : 'text-slate-400 transition-colors group-hover:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -47,6 +64,13 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
                         <span>Pengguna</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.transactions') }}" wire:navigate
+                        class="flex items-center space-x-2 rounded-lg px-4 py-2.5 tracking-wide outline-hidden transition-all {{ request()->routeIs('admin.transactions') ? 'bg-primary text-white dark:bg-accent' : 'group text-slate-600 hover:bg-slate-100 hover:text-slate-800 dark:text-navy-200 dark:hover:bg-navy-600 dark:hover:text-navy-100' }}">
+                        <x-lucide-receipt class="size-5 {{ request()->routeIs('admin.transactions') ? '' : 'text-slate-400 transition-colors group-hover:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200' }}" />
+                        <span>Transaksi</span>
                     </a>
                 </li>
                 <li>
@@ -90,40 +114,47 @@
                     </a>
                 </li>
 
-                <!-- Tools Accordion -->
-                <li x-data="accordionItem('tools')" x-init="if({{ request()->is('tool/*') ? 'true' : 'false' }}) expanded = true">
-                    <a :class="expanded ? 'bg-slate-100 text-slate-800 dark:bg-navy-600 dark:text-navy-100' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-800 dark:text-navy-200 dark:hover:bg-navy-600 dark:hover:text-navy-100'"
-                        @click="expanded = !expanded"
-                        class="group flex items-center justify-between rounded-lg px-4 py-2.5 tracking-wide outline-hidden transition-all cursor-pointer"
-                        href="javascript:void(0);">
-                        <div class="flex items-center space-x-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5" :class="expanded ? 'text-slate-600 dark:text-navy-100' : 'text-slate-400 group-hover:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200'" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            <span>Kumpulan Tools</span>
-                        </div>
-                        <svg :class="expanded && 'rotate-90'" xmlns="http://www.w3.org/2000/svg"
-                            class="size-4 text-slate-400 transition-transform ease-in-out" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                        </svg>
-                    </a>
-                    <ul x-collapse x-show="expanded" class="mt-1 space-y-1 pl-4">
-                        @if(config('tools'))
-                            @foreach (config('tools') as $tool)
-                                <li>
-                                    <a href="{{ route('tool', $tool['slug']) }}" wire:navigate
-                                        class="flex items-center space-x-2 rounded-lg px-4 py-2 text-xs-plus tracking-wide outline-hidden transition-all
-                                         {{ request()->is('tool/' . $tool['slug']) ? 'bg-primary/10 text-primary font-medium dark:bg-accent/15 dark:text-accent-light' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-navy-300 dark:hover:bg-navy-600 dark:hover:text-navy-100' }}">
-                                        <div class="size-1.5 rounded-full border border-current opacity-40"></div>
-                                        <span>{{ $tool['name'] }}</span>
-                                    </a>
-                                </li>
-                            @endforeach
-                        @endif
-                    </ul>
+                <!-- Divider Kumpulan Tools -->
+                <li class="pt-4 pb-1 px-1">
+                    <div class="flex items-center space-x-2">
+                        <div class="h-px flex-1 bg-slate-200 dark:bg-navy-600"></div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300">Kumpulan Tools</span>
+                        <div class="h-px flex-1 bg-slate-200 dark:bg-navy-600"></div>
+                    </div>
                 </li>
+
+                @php
+                    $activeTools = \App\Models\Tool::getActiveTools();
+                    $groupedCategories = $activeTools->groupBy('category');
+                @endphp
+
+                @foreach($groupedCategories as $categoryName => $catTools)
+                    @php
+                        $categorySlug = \Illuminate\Support\Str::slug($categoryName);
+                        $isCatActive = request()->is('category/' . $categorySlug) || request()->is('category/' . strtolower($categoryName));
+                        $displayName = $categoryName;
+                        if (strtolower($categoryName) === 'image') $displayName = 'Gambar & Foto';
+                        if (strtolower($categoryName) === 'document') $displayName = 'Dokumen & PDF';
+                    @endphp
+                    <li>
+                        <a href="{{ route('dashboard.category', $categorySlug) }}" wire:navigate
+                            class="flex items-center justify-between rounded-lg px-4 py-2.5 tracking-wide outline-hidden transition-all {{ $isCatActive ? 'bg-primary text-white dark:bg-accent' : 'group text-slate-600 hover:bg-slate-100 hover:text-slate-800 dark:text-navy-200 dark:hover:bg-navy-600 dark:hover:text-navy-100' }}">
+                            <div class="flex items-center space-x-2">
+                                @if(stripos($categoryName, 'image') !== false)
+                                    <x-lucide-image class="size-5 {{ $isCatActive ? '' : 'text-slate-400 group-hover:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200' }}" />
+                                @elseif(stripos($categoryName, 'doc') !== false || stripos($categoryName, 'pdf') !== false)
+                                    <x-lucide-file-text class="size-5 {{ $isCatActive ? '' : 'text-slate-400 group-hover:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200' }}" />
+                                @else
+                                    <x-lucide-boxes class="size-5 {{ $isCatActive ? '' : 'text-slate-400 group-hover:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200' }}" />
+                                @endif
+                                <span>{{ $displayName }}</span>
+                            </div>
+                            <span class="badge rounded-full {{ $isCatActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600 dark:bg-navy-600 dark:text-navy-200' }} text-[10px] font-bold px-2 py-0.5">
+                                {{ $catTools->count() }}
+                            </span>
+                        </a>
+                    </li>
+                @endforeach
             </ul>
             @endif
         </div>

@@ -30,9 +30,17 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 
 Route::get('/', function () {
-    $tools = config('tools', []);
+    $tools = \App\Models\Tool::getActiveTools()->where('is_highlighted', true)->values();
+    $totalAllTools = \App\Models\Tool::getActiveTools()->count();
+    $categories = $tools->groupBy('category')->map(function ($items, $category) {
+        return [
+            'name' => $category,
+            'count' => $items->count(),
+            'slug' => \Illuminate\Support\Str::slug($category),
+        ];
+    })->values();
     $plans = \App\Models\Plan::where('is_active', true)->orderBy('sort_order')->get();
-    return view('welcome', compact('tools', 'plans'));
+    return view('welcome', compact('tools', 'totalAllTools', 'categories', 'plans'));
 })->name('home');
 
 // GUEST ONLY (belum login)
@@ -97,15 +105,21 @@ Route::middleware(['auth', EnsureUserIsNotBanned::class, EnsureSingleSession::cl
     Route::get('/billing', Billing::class)->name('dashboard.billing');
     Route::get('/billing/invoice/{order_id}', Invoice::class)->name('dashboard.invoice');
 
-    Route::get('/tool/{slug}', function ($slug) {
-        $tools = config('tools');
-        $tool = collect($tools)->firstWhere('slug', $slug);
+    // Kategori Tools
+    Route::get('/category/{category}', \App\Livewire\Dashboard\CategoryTools::class)->name('dashboard.category');
 
-        if (!$tool) {
+    Route::get('/tool/{slug}', function ($slug) {
+        $tool = \App\Models\Tool::where('slug', $slug)->first();
+
+        if (!$tool || !$tool->is_active) {
             abort(404);
         }
 
-        return view('tool_wrapper', ['tool' => $tool]);
+        if ($tool->is_maintenance) {
+            return view('tool_maintenance', ['tool' => $tool]);
+        }
+
+        return view('tool_wrapper', ['tool' => $tool->toArray()]);
     })->name('tool');
 
     Route::get('/download/{activity}', function (Activity $activity) {
@@ -124,6 +138,7 @@ Route::middleware(['auth', EnsureUserIsNotBanned::class, EnsureSingleSession::cl
 // ADMIN ONLY
 Route::middleware(['auth', EnsureUserIsNotBanned::class, EnsureSingleSession::class, 'verified', IsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', AdminOverview::class)->name('overview');
+    Route::get('/tools', \App\Livewire\Admin\Tools::class)->name('tools');
     Route::get('/plans', Plans::class)->name('plans');
     Route::get('/users', Users::class)->name('users');
     Route::get('/transactions', Transactions::class)->name('transactions');

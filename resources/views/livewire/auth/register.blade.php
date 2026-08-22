@@ -1,9 +1,21 @@
 <div class="flex w-full grow">
+    @php
+        $siteName = \App\Models\Setting::get('site_name', \App\Models\Setting::get('brand_name', config('app.name')));
+        $siteLogo = \App\Models\Setting::get('site_logo');
+        $footerCopyright = \App\Models\Setting::get('footer_copyright', '© ' . date('Y') . ' ' . $siteName . '. All rights reserved.');
+    @endphp
+
     <div class="fixed top-0 hidden p-6 lg:block lg:px-12">
-        <a href="/" class="flex items-center space-x-2">
-            <img class="size-12" src="{{ asset('images/app-logo.svg') }}" alt="logo" />
-            <p class="text-xl font-semibold uppercase text-slate-700 dark:text-navy-100">
-                {{ config('app.name') }}
+        <a href="/" class="flex items-center space-x-3">
+            @if($siteLogo && \Illuminate\Support\Facades\Storage::disk('public')->exists($siteLogo))
+                <div class="flex size-10 shrink-0 items-center justify-center">
+                    <img class="size-full object-contain" src="{{ \Illuminate\Support\Facades\Storage::url($siteLogo) }}" alt="{{ $siteName }}" />
+                </div>
+            @else
+                <img class="size-10 transition-transform duration-500 ease-in-out hover:rotate-[360deg]" src="{{ asset('images/app-logo.svg') }}" alt="logo" />
+            @endif
+            <p class="text-xl font-bold uppercase tracking-wider text-slate-700 dark:text-navy-100">
+                {{ $siteName }}
             </p>
         </a>
     </div>
@@ -18,7 +30,13 @@
     <main class="flex w-full flex-col items-center bg-white dark:bg-navy-700 lg:max-w-md">
         <div class="flex w-full max-w-sm grow flex-col justify-center p-5">
             <div class="text-center">
-                <img class="mx-auto size-16 lg:hidden" src="{{ asset('images/app-logo.svg') }}" alt="logo" />
+                @if($siteLogo && \Illuminate\Support\Facades\Storage::disk('public')->exists($siteLogo))
+                    <div class="mx-auto flex size-14 shrink-0 items-center justify-center lg:hidden">
+                        <img class="size-full object-contain" src="{{ \Illuminate\Support\Facades\Storage::url($siteLogo) }}" alt="{{ $siteName }}" />
+                    </div>
+                @else
+                    <img class="mx-auto size-14 lg:hidden" src="{{ asset('images/app-logo.svg') }}" alt="logo" />
+                @endif
                 <div class="mt-4">
                     <h2 class="text-2xl font-semibold text-slate-600 dark:text-navy-100">
                         Daftar Akun
@@ -59,11 +77,6 @@
                         <span wire:loading wire:target="email" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
                             Memeriksa...
                         </span>
-                        @if($emailValid)
-                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-success">
-                                <svg class="size-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                            </span>
-                        @endif
                     </label>
                     @error('email')
                         <span class="text-tiny-plus text-error">{{ $message }}</span>
@@ -99,21 +112,32 @@
                     </label>
                 </div>
 
+                <div class="mt-4">
+                    <label class="inline-flex items-center space-x-2">
+                        <input
+                            class="form-checkbox is-basic size-4.5 rounded border-slate-400/70 checked:bg-primary checked:border-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:checked:bg-accent dark:checked:border-accent dark:hover:border-accent dark:focus:border-accent"
+                            type="checkbox" required />
+                        <span class="text-xs">Saya menyetujui <a href="#" class="text-primary hover:underline dark:text-accent-light">Syarat & Ketentuan</a></span>
+                    </label>
+                </div>
+
                 <button type="submit"
                     class="btn mt-10 h-10 w-full bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
-                    Daftar
+                    <span wire:loading.remove wire:target="register">Daftar</span>
+                    <span wire:loading wire:target="register">Mendaftarkan...</span>
                 </button>
-                <div class="mt-4 text-center text-xs-plus">
-                    <p class="line-clamp-1">
-                        <span>Sudah punya akun?</span>
-                        <a class="text-primary transition-colors hover:text-primary-focus dark:text-accent-light dark:hover:text-accent"
-                            href="{{ route('login') }}">Login</a>
-                    </p>
-                </div>
             </form>
+
+            <div class="mt-4 text-center text-xs-plus">
+                <p class="line-clamp-1">
+                    <span>Sudah punya akun?</span>
+                    <a class="text-primary transition-colors hover:text-primary-focus dark:text-accent-light dark:hover:text-accent"
+                        href="{{ route('login') }}">Masuk</a>
+                </p>
+            </div>
         </div>
         <div class="my-5 flex justify-center text-xs text-slate-400 dark:text-navy-300">
-            <span>&copy; {{ date('Y') }} {{ config('app.name') }}</span>
+            <span>{{ $footerCopyright }}</span>
         </div>
     </main>
 </div>

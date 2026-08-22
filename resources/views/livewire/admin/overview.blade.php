@@ -43,11 +43,11 @@
             </div>
         </div>
 
-        {{-- Active Pro Users --}}
+        {{-- Active Subscribed Users --}}
         <div class="card p-4 sm:p-5">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs uppercase font-bold tracking-wider text-slate-400 dark:text-navy-300">Member Pro Aktif</p>
+                    <p class="text-xs uppercase font-bold tracking-wider text-slate-400 dark:text-navy-300">Member Berlangganan</p>
                     <p class="mt-1.5 text-2xl sm:text-3xl font-extrabold text-slate-700 dark:text-navy-100">
                         {{ number_format($activeProUsers, 0, ',', '.') }}
                     </p>
@@ -129,70 +129,112 @@
                                 ORDER ID & PAKET
                             </th>
                             <th class="bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs text-right">
-                                NOMINAL
+                                NOMINAL & METODE
                             </th>
                             <th class="bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs text-center">
                                 STATUS
                             </th>
-                            <th class="rounded-tr-lg bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs text-right">
+                            <th class="bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs text-right">
                                 TANGGAL
+                            </th>
+                            <th class="rounded-tr-lg bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs text-right">
+                                AKSI
                             </th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-150 dark:divide-navy-500">
                         @forelse($recentTransactions as $transaction)
-                            <tr class="border-y border-transparent border-b-slate-200 dark:border-b-navy-500">
+                            @php
+                                $planName = $transaction->plan->name ?? ucfirst($transaction->plan_slug);
+                                $isProMax = ($transaction->plan_slug === 'pro-max' || strtolower((string)$planName) === 'pro max');
+                            @endphp
+                            <tr class="border-y border-transparent border-b-slate-200 dark:border-b-navy-500 hover:bg-slate-50/80 dark:hover:bg-navy-700/50 transition-colors">
+                                {{-- User Info --}}
                                 <td class="whitespace-nowrap px-4 py-3 sm:px-5">
                                     <div class="flex items-center space-x-3">
                                         <div class="avatar size-8 shrink-0">
-                                            <div class="is-initial rounded-full bg-primary/10 text-xs font-bold uppercase text-primary dark:bg-accent-light/10 dark:text-accent-light">
-                                                {{ substr($transaction->user->name ?? 'User', 0, 2) }}
-                                            </div>
+                                            @if($transaction->user && $transaction->user->profile_photo_path)
+                                                <img class="rounded-full object-cover" src="{{ Storage::url($transaction->user->profile_photo_path) }}" alt="{{ $transaction->user->name }}" />
+                                            @else
+                                                <div class="is-initial rounded-full bg-primary/10 text-xs font-bold uppercase text-primary dark:bg-accent-light/10 dark:text-accent-light">
+                                                    {{ substr($transaction->user->name ?? 'U', 0, 2) }}
+                                                </div>
+                                            @endif
                                         </div>
                                         <div>
-                                            <p class="font-bold text-slate-700 dark:text-navy-100 text-xs sm:text-sm">
-                                                {{ $transaction->user->name ?? 'User Terhapus' }}
-                                            </p>
-                                            <p class="text-[11px] text-slate-400 dark:text-navy-300">
+                                            <div class="font-bold text-slate-700 dark:text-navy-100 text-xs sm:text-sm">
+                                                {{ $transaction->user->name ?? 'Pengguna Terhapus' }}
+                                            </div>
+                                            <div class="text-[11px] text-slate-400 dark:text-navy-300 mt-0.5">
                                                 {{ $transaction->user->email ?? '-' }}
-                                            </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="whitespace-nowrap px-4 py-3 text-xs sm:px-5">
-                                    <p class="font-bold text-slate-700 dark:text-navy-100">
-                                        #{{ $transaction->midtrans_order_id ?? '-' }}
-                                    </p>
-                                    <span class="badge rounded-full bg-info/10 text-info text-[10px] font-bold px-2 py-0.5 mt-0.5">
-                                        Paket {{ $transaction->plan->name ?? ucfirst($transaction->plan_slug) }}
-                                    </span>
+
+                                {{-- Order ID & Plan --}}
+                                <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-xs">
+                                    <a href="{{ route('dashboard.invoice', ['order_id' => $transaction->midtrans_order_id]) }}"
+                                       class="font-mono font-bold text-primary transition-colors hover:text-primary-focus dark:text-accent-light dark:hover:text-accent text-sm flex items-center gap-1">
+                                        <span>#{{ $transaction->midtrans_order_id ?? '-' }}</span>
+                                    </a>
+                                    <div class="mt-1 flex items-center gap-1.5">
+                                        @if($isProMax)
+                                            <span class="badge rounded-full bg-linear-to-r from-amber-500 via-purple-600 to-indigo-600 text-white font-black text-[9px] px-2 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
+                                                <x-lucide-crown class="size-2.5 stroke-[2.5]" />
+                                                <span>{{ $planName }}</span>
+                                            </span>
+                                        @else
+                                            <span class="badge rounded-full bg-linear-to-r from-amber-500 to-orange-500 text-white font-black text-[9px] px-2 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
+                                                <x-lucide-star class="size-2.5 stroke-[2.5] fill-current" />
+                                                <span>{{ $planName }}</span>
+                                            </span>
+                                        @endif
+
+                                        @if($transaction->midtrans_transaction_id)
+                                            <span class="text-[10px] text-slate-400 dark:text-navy-300 font-mono" title="Midtrans Transaction ID">
+                                                {{ Str::limit($transaction->midtrans_transaction_id, 12) }}
+                                            </span>
+                                        @endif
+                                    </div>
                                 </td>
-                                <td class="whitespace-nowrap px-4 py-3 font-bold text-slate-700 dark:text-navy-100 sm:px-5 text-xs text-right">
-                                    Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+
+                                {{-- Nominal & Method --}}
+                                <td class="whitespace-nowrap px-4 py-3 text-right sm:px-5">
+                                    <div class="font-bold text-slate-700 dark:text-navy-100 text-xs sm:text-sm">
+                                        Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                                    </div>
+                                    <div class="mt-0.5">
+                                        <span class="badge rounded-full bg-slate-100 text-slate-600 dark:bg-navy-600 dark:text-navy-200 text-[10px] uppercase font-semibold px-2 py-0.5">
+                                            {{ $transaction->payment_type ? str_replace('_', ' ', $transaction->payment_type) : 'Midtrans' }}
+                                        </span>
+                                    </div>
                                 </td>
-                                <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-center">
+
+                                {{-- Status --}}
+                                <td class="whitespace-nowrap px-4 py-3 text-center sm:px-5">
                                     @if($transaction->status === 'active' || $transaction->status === 'settlement' || $transaction->status === 'capture')
-                                        <span class="badge space-x-1.5 rounded-full bg-success/10 text-success text-[11px] font-bold px-2.5 py-1">
+                                        <span class="badge space-x-1.5 rounded-full bg-success/10 text-success text-[11px] font-bold px-2.5 py-1 inline-flex items-center">
                                             <span class="size-1.5 rounded-full bg-current"></span>
                                             <span>Berhasil</span>
                                         </span>
                                     @elseif($transaction->status === 'pending')
-                                        <span class="badge space-x-1.5 rounded-full bg-warning/10 text-warning text-[11px] font-bold px-2.5 py-1">
+                                        <span class="badge space-x-1.5 rounded-full bg-warning/10 text-warning text-[11px] font-bold px-2.5 py-1 inline-flex items-center">
                                             <span class="size-1.5 rounded-full bg-current animate-ping"></span>
                                             <span>Menunggu</span>
                                         </span>
                                     @elseif($transaction->status === 'expired')
-                                        <span class="badge space-x-1.5 rounded-full bg-slate-150 text-slate-600 dark:bg-navy-500 dark:text-navy-200 text-[11px] font-bold px-2.5 py-1">
+                                        <span class="badge space-x-1.5 rounded-full bg-slate-150 text-slate-600 dark:bg-navy-500 dark:text-navy-200 text-[11px] font-bold px-2.5 py-1 inline-flex items-center">
                                             <span class="size-1.5 rounded-full bg-current"></span>
                                             <span>Expired</span>
                                         </span>
                                     @elseif($transaction->status === 'cancelled')
-                                        <span class="badge space-x-1.5 rounded-full bg-slate-150 text-slate-600 dark:bg-navy-500 dark:text-navy-200 text-[11px] font-bold px-2.5 py-1">
+                                        <span class="badge space-x-1.5 rounded-full bg-info/10 text-info dark:bg-info/15 text-[11px] font-bold px-2.5 py-1 inline-flex items-center">
                                             <span class="size-1.5 rounded-full bg-current"></span>
                                             <span>Dibatalkan</span>
                                         </span>
                                     @elseif($transaction->status === 'failed')
-                                        <span class="badge space-x-1.5 rounded-full bg-error/10 text-error text-[11px] font-bold px-2.5 py-1">
+                                        <span class="badge space-x-1.5 rounded-full bg-error/10 text-error text-[11px] font-bold px-2.5 py-1 inline-flex items-center">
                                             <span class="size-1.5 rounded-full bg-current"></span>
                                             <span>Gagal</span>
                                         </span>
@@ -202,14 +244,31 @@
                                         </span>
                                     @endif
                                 </td>
-                                <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-xs text-slate-400 dark:text-navy-300 text-right">
-                                    {{ $transaction->created_at->format('d M Y, H:i') }}
+
+                                {{-- Date --}}
+                                <td class="whitespace-nowrap px-4 py-3 text-right text-xs text-slate-500 dark:text-navy-300 sm:px-5">
+                                    <div>{{ $transaction->created_at->translatedFormat('d M Y') }}</div>
+                                    <div class="text-[10px] text-slate-400 dark:text-navy-400 mt-0.5">{{ $transaction->created_at->format('H:i') }} WIB</div>
+                                </td>
+
+                                {{-- Actions --}}
+                                <td class="whitespace-nowrap px-4 py-3 text-right sm:px-5">
+                                    <div class="flex items-center justify-end">
+                                        @if($transaction->midtrans_order_id)
+                                            <a href="{{ route('dashboard.invoice', ['order_id' => $transaction->midtrans_order_id]) }}"
+                                               class="btn h-7 space-x-1 rounded-md bg-primary/10 text-primary hover:bg-primary hover:text-white dark:bg-accent-light/10 dark:text-accent-light dark:hover:bg-accent dark:hover:text-white px-2.5 text-xs font-semibold transition-colors flex items-center">
+                                                <x-lucide-receipt class="size-3.5" />
+                                                <span>Invoice</span>
+                                            </a>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-4 py-8 text-center text-slate-400 dark:text-navy-300 sm:px-5 text-xs">
-                                    Belum ada catatan transaksi yang masuk.
+                                <td colspan="6" class="px-4 py-8 text-center text-slate-400 dark:text-navy-300 sm:px-5 text-xs">
+                                    <x-lucide-receipt-text class="size-10 mx-auto text-slate-300 dark:text-navy-400 mb-2" />
+                                    <p>Belum ada catatan transaksi yang masuk.</p>
                                 </td>
                             </tr>
                         @endforelse

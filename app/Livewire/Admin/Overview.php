@@ -23,7 +23,7 @@ class Overview extends Component
             ->whereYear('starts_at', now()->year)
             ->sum('amount');
 
-        $recentTransactions = Subscription::with('user')
+        $recentTransactions = Subscription::with(['user', 'plan'])
             ->orderBy('created_at', 'desc')
             ->take(10)
             ->get();

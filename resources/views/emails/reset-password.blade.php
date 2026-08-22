@@ -10,7 +10,7 @@
         $supportEmail = \App\Models\Setting::get('support_email', 'support@mudahkerja.com');
         $footerCopyright = \App\Models\Setting::get('footer_copyright', '© ' . date('Y') . ' ' . $siteName . '. All rights reserved.');
     @endphp
-    <title>Berhenti Berlangganan - {{ $siteName }}</title>
+    <title>Atur Ulang Kata Sandi - {{ $siteName }}</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #334155; font-size: 14px; line-height: 1.6;">
     <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8fafc; padding: 30px 15px;">
@@ -42,8 +42,8 @@
                         <td style="padding: 32px;">
                             <!-- Info Pill Badge -->
                             <div style="text-align: center; margin-bottom: 20px;">
-                                <span style="display: inline-block; background-color: #fee2e2; color: #b91c1c; font-size: 11px; font-weight: 800; padding: 4px 14px; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    Langganan Dihentikan
+                                <span style="display: inline-block; background-color: #e0e7ff; color: #4338ca; font-size: 11px; font-weight: 800; padding: 4px 14px; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    Keamanan Akun &bull; Atur Ulang Kata Sandi
                                 </span>
                             </div>
 
@@ -51,36 +51,33 @@
                                 Halo, {{ $user->name }}
                             </h2>
                             <p style="margin: 0 0 20px 0; font-size: 13px; color: #475569; text-align: center; line-height: 1.6;">
-                                Kami menginformasikan bahwa paket langganan <strong>{{ $siteName }} Pro</strong> Anda telah berhasil diberhentikan sesuai permintaan Anda.
-                            </p>
-
-                            <!-- Status Box -->
-                            <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 24px;">
-                                <tr>
-                                    <td style="padding: 18px; font-size: 12px; color: #475569; line-height: 1.6;">
-                                        <p style="margin: 0 0 8px 0; font-weight: 700; color: #0f172a;">Informasi Status Akun:</p>
-                                        <ul style="margin: 0; padding-left: 18px;">
-                                            <li style="margin-bottom: 4px;">Status akun Anda saat ini telah beralih menjadi akun <strong>Free (Gratis)</strong>.</li>
-                                            <li style="margin-bottom: 4px;">Anda tetap dapat menggunakan seluruh perkakas dasar kami dengan batasan kuota harian standar.</li>
-                                            <li>Tidak akan ada tagihan otomatis berikutnya yang ditarik dari akun Anda.</li>
-                                        </ul>
-                                    </td>
-                                </tr>
-                            </table>
-
-                            <p style="margin: 0 0 24px 0; font-size: 13px; color: #475569; text-align: center; line-height: 1.6;">
-                                Jika Anda memiliki kritik, saran, atau kendala teknis saat menggunakan layanan kami, jangan ragu untuk membalas email ini untuk membantu kami berkembang lebih baik.
+                                Kami menerima permintaan untuk mengatur ulang kata sandi akun <strong>{{ $siteName }}</strong> Anda. Silakan klik tombol di bawah ini untuk membuat kata sandi baru:
                             </p>
 
                             <!-- CTA Button (Lineone Capsule Style) -->
                             <div style="text-align: center; margin-bottom: 24px;">
-                                <a href="{{ route('dashboard') }}" style="background-color: #4f46e5; color: #ffffff; font-size: 13px; font-weight: 700; text-decoration: none; padding: 12px 32px; border-radius: 9999px; display: inline-block; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);">
-                                    Buka Dashboard {{ $siteName }} &rarr;
+                                <a href="{{ $url }}" style="background-color: #4f46e5; color: #ffffff; font-size: 13px; font-weight: 700; text-decoration: none; padding: 12px 32px; border-radius: 9999px; display: inline-block; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);">
+                                    Atur Ulang Kata Sandi &rarr;
                                 </a>
                             </div>
 
-                            <p style="margin: 0; font-size: 12px; color: #94a3b8; text-align: center; line-height: 1.5;">
-                                Butuh mengaktifkan Pro kembali sewaktu-waktu? Kunjungi halaman <a href="{{ route('pricing') }}" style="color: #4f46e5; text-decoration: none; font-weight: 600;">Paket & Harga</a>.
+                            <!-- Expiry & Security Notice Box -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 24px;">
+                                <tr>
+                                    <td style="padding: 16px; font-size: 12px; color: #475569; line-height: 1.6;">
+                                        <p style="margin: 0 0 6px 0;">
+                                            Tautan reset kata sandi ini akan kedaluwarsa dalam waktu <strong>{{ config('auth.passwords.users.expire', 60) }} menit</strong>.
+                                        </p>
+                                        <p style="margin: 0; color: #64748b;">
+                                            Jika Anda tidak merasa melakukan permintaan ini, tidak ada tindakan lebih lanjut yang diperlukan. Akun Anda tetap aman.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p style="margin: 0; font-size: 11px; color: #94a3b8; text-align: center; word-break: break-all;">
+                                Tombol bermasalah? Salin URL berikut ke browser Anda:<br>
+                                <a href="{{ $url }}" style="color: #4f46e5;">{{ $url }}</a>
                             </p>
                         </td>
                     </tr>

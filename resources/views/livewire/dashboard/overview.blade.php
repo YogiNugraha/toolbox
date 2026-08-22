@@ -8,19 +8,43 @@
         <div class="col-span-12 lg:col-span-8 xl:col-span-9 space-y-4 sm:space-y-5 lg:space-y-6">
             
             {{-- Teacher Dashboard Welcome Hero Banner --}}
-            <div class="card bg-linear-to-l from-pink-300 to-indigo-400 p-5 sm:flex-row items-center relative overflow-hidden shadow-md">
+            @php
+                $planName = $activeSub ? ($activeSub->plan->name ?? ucfirst($activeSub->plan_slug)) : null;
+                $isProMax = $activeSub && ($activeSub->plan_slug === 'pro-max' || strtolower((string)$planName) === 'pro max');
+            @endphp
+            <div class="card {{ $activeSub ? ($isProMax ? 'bg-linear-to-r from-purple-700 via-indigo-600 to-primary text-white shadow-lg shadow-purple-500/20' : 'bg-linear-to-r from-indigo-600 via-primary to-purple-600 text-white shadow-lg shadow-primary/20') : 'bg-linear-to-l from-pink-300 to-indigo-400 text-white shadow-md' }} p-5 sm:flex-row items-center relative overflow-hidden">
                 <div class="flex justify-center sm:order-last shrink-0">
                     <img class="-mt-6 sm:-mt-2 h-36 sm:h-40 object-contain drop-shadow" 
                          src="{{ asset('images/illustrations/teacher.svg') }}" 
                          alt="Teacher Illustration" />
                 </div>
                 <div class="mt-4 flex-1 pt-1 text-center text-white sm:mt-0 sm:text-left sm:pr-4">
-                    <h3 class="text-xl sm:text-2xl font-bold">
-                        Selamat Datang Kembali, <span class="font-extrabold">{{ auth()->user()->name }}</span>!
-                    </h3>
+                    <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                        <h3 class="text-xl sm:text-2xl font-bold">
+                            Selamat Datang Kembali, <span class="font-extrabold">{{ auth()->user()->name }}</span>!
+                        </h3>
+                        @if($activeSub)
+                            @if($isProMax)
+                                <span class="badge rounded-full bg-linear-to-r from-amber-400 to-yellow-300 text-slate-900 px-2.5 py-0.5 text-xs font-black shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
+                                    <x-lucide-crown class="size-3.5 stroke-[2.5]" />
+                                    <span>{{ $planName }}</span>
+                                </span>
+                            @else
+                                <span class="badge rounded-full bg-linear-to-r from-amber-400 to-orange-400 text-white px-2.5 py-0.5 text-xs font-black shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
+                                    <x-lucide-star class="size-3.5 stroke-[2.5] fill-current" />
+                                    <span>{{ $planName }}</span>
+                                </span>
+                            @endif
+                        @endif
+                    </div>
                     <p class="mt-2 text-sm text-indigo-50 leading-relaxed">
-                        Anda telah berhasil memproses 
-                        <span class="font-bold text-navy-900 bg-white/40 px-2 py-0.5 rounded-md">{{ $totalFiles }} file</span> sejauh ini.
+                        @if($activeSub)
+                            Akun Anda aktif dengan <strong>Akses Kuota Unlimited</strong>. Anda telah memproses 
+                            <span class="font-bold text-navy-900 bg-white/60 px-2 py-0.5 rounded-md">{{ $totalFiles }} file</span> sejauh ini.
+                        @else
+                            Anda telah berhasil memproses 
+                            <span class="font-bold text-navy-900 bg-white/40 px-2 py-0.5 rounded-md">{{ $totalFiles }} file</span> sejauh ini.
+                        @endif
                     </p>
                     <p class="text-xs text-indigo-100 mt-1">
                         Total efisiensi penyimpanan: <span class="font-bold text-white">{{ \Illuminate\Support\Number::fileSize($totalSaved) }}</span> dihemat.
@@ -42,7 +66,7 @@
                                 Kelola Langganan
                             </a>
                             <span class="badge rounded-lg bg-white/20 text-white text-xs px-3 py-1.5 backdrop-blur-xs font-semibold">
-                                Paket Pro Aktif
+                                ✓ Kuota Unlimited Aktif
                             </span>
                         @endif
                     </div>
@@ -61,7 +85,7 @@
                     </a>
                 </div>
                 <div class="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
-                    @foreach(array_slice($tools, 0, 3) as $tool)
+                    @foreach($tools->take(3) as $tool)
                         @php
                             $gradients = [
                                 0 => 'from-blue-500 to-purple-600',
@@ -69,47 +93,66 @@
                                 2 => 'from-secondary-light to-secondary',
                             ];
                             $grad = $gradients[$loop->index % 3];
+                            $toolSlug = is_array($tool) ? $tool['slug'] : $tool->slug;
+                            $toolName = is_array($tool) ? $tool['name'] : $tool->name;
+                            $toolDesc = is_array($tool) ? ($tool['description'] ?? '') : ($tool->description ?? '');
+                            $toolCat = is_array($tool) ? ($tool['category'] ?? 'General') : ($tool->category ?? 'General');
+                            $toolBadge = is_array($tool) ? ($tool['badge'] ?? null) : ($tool->badge ?? null);
+                            $toolMaint = is_array($tool) ? ($tool['is_maintenance'] ?? false) : ($tool->is_maintenance ?? false);
                         @endphp
                         <div class="card flex-row overflow-hidden hover:shadow-md transition-shadow">
                             <div class="h-full w-1.5 bg-linear-to-b {{ $grad }}"></div>
                             <div class="flex flex-1 flex-col justify-between p-4 sm:px-5">
                                 <div>
-                                    <div class="mask is-squircle flex size-12 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light mb-3">
-                                        @if($tool['slug'] === 'compress-image')
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-                                        @elseif($tool['slug'] === 'convert-image')
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                                            </svg>
-                                        @else
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                            </svg>
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="mask is-squircle flex size-12 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light">
+                                            @if($toolCat === 'Image')
+                                                <x-lucide-image class="size-6" />
+                                            @elseif($toolCat === 'PDF' || $toolCat === 'Document')
+                                                <x-lucide-file-text class="size-6" />
+                                            @else
+                                                <x-lucide-wrench class="size-6" />
+                                            @endif
+                                        </div>
+                                        @if($toolMaint)
+                                            <span class="badge rounded-full bg-warning/15 text-warning text-[10px] font-bold px-2 py-0.5">
+                                                Maintenance
+                                            </span>
+                                        @elseif($toolBadge === 'HOT')
+                                            <span class="badge rounded-full bg-linear-to-r from-red-500 to-orange-500 text-white text-[10px] font-black px-2 py-0.5 shadow-xs">
+                                                🔥 HOT
+                                            </span>
+                                        @elseif($toolBadge === 'NEW')
+                                            <span class="badge rounded-full bg-linear-to-r from-emerald-500 to-teal-500 text-white text-[10px] font-black px-2 py-0.5 shadow-xs">
+                                                ✨ NEW
+                                            </span>
+                                        @elseif($toolBadge === 'PRO')
+                                            <span class="badge rounded-full bg-linear-to-r from-amber-500 to-purple-600 text-white text-[10px] font-black px-2 py-0.5 shadow-xs">
+                                                👑 PRO
+                                            </span>
+                                        @elseif($toolBadge)
+                                            <span class="badge rounded-full bg-slate-150 text-slate-700 dark:bg-navy-500 dark:text-navy-200 text-[10px] font-bold px-2 py-0.5">
+                                                {{ $toolBadge }}
+                                            </span>
                                         @endif
                                     </div>
-                                    <h3 class="font-medium text-slate-700 line-clamp-1 dark:text-navy-100 text-sm">
-                                        {{ $tool['name'] }}
+                                    <h3 class="font-bold text-slate-700 line-clamp-1 dark:text-navy-100 text-sm">
+                                        {{ $toolName }}
                                     </h3>
                                     <p class="text-xs text-slate-400 dark:text-navy-300 mt-1 line-clamp-2">
-                                        {{ $tool['description'] }}
+                                        {{ $toolDesc }}
                                     </p>
                                     <div class="mt-3 flex space-x-1.5">
                                         <span class="tag bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light py-0.5 px-2 rounded text-[11px] font-semibold">
-                                            {{ ucfirst($tool['category']) }}
+                                            {{ ucfirst($toolCat) }}
                                         </span>
                                     </div>
                                 </div>
                                 <div class="mt-6 flex justify-between items-center pt-2 border-t border-slate-100 dark:border-navy-600">
                                     <span class="text-[11px] text-slate-400 dark:text-navy-300 font-medium">Buka Tool</span>
-                                    <a href="{{ route('tool', $tool['slug']) }}"
+                                    <a href="{{ route('tool', $toolSlug) }}"
                                         class="btn size-7 rounded-full bg-slate-150 p-0 font-medium text-slate-800 hover:bg-slate-200 hover:shadow-lg focus:bg-slate-200 dark:bg-navy-500 dark:text-navy-50 dark:hover:bg-navy-450 flex items-center justify-center transition-all">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 rotate-45" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M7 11l5-5m0 0l5 5m-5-5v12" />
-                                        </svg>
+                                        <x-lucide-arrow-up-right class="size-4" />
                                     </a>
                                 </div>
                             </div>
@@ -244,23 +287,43 @@
                     <h2 class="font-medium tracking-wide text-slate-700 dark:text-navy-100 text-sm">
                         Paket & Status Kuota
                     </h2>
-                    <span class="badge rounded-full {{ $activeSub ? 'bg-success/10 text-success' : 'bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light' }} text-xs font-semibold px-2.5 py-0.5">
-                        {{ $activeSub ? 'PRO' : 'FREE' }}
-                    </span>
+                    @if($activeSub)
+                        @if($isProMax)
+                            <span class="badge rounded-full bg-linear-to-r from-amber-500 via-purple-600 to-indigo-600 text-white text-xs font-black px-2.5 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
+                                <x-lucide-crown class="size-3 stroke-[2.5]" />
+                                <span>{{ $planName }}</span>
+                            </span>
+                        @else
+                            <span class="badge rounded-full bg-linear-to-r from-amber-500 to-orange-500 text-white text-xs font-black px-2.5 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
+                                <x-lucide-star class="size-3 stroke-[2.5] fill-current" />
+                                <span>{{ $planName }}</span>
+                            </span>
+                        @endif
+                    @else
+                        <span class="badge rounded-full bg-slate-150 text-slate-600 dark:bg-navy-600 dark:text-navy-200 text-xs font-semibold px-2.5 py-0.5">
+                            FREE
+                        </span>
+                    @endif
                 </div>
 
                 <div class="py-4 space-y-3.5">
                     <div>
                         <div class="flex justify-between text-xs font-medium text-slate-600 dark:text-navy-200 mb-1">
                             <span>Aktivitas Hari Ini</span>
-                            <span class="font-bold text-slate-800 dark:text-navy-100">{{ $todayFiles }} file</span>
+                            <span class="font-bold text-slate-800 dark:text-navy-100">
+                                {{ $todayFiles }} file @if($activeSub) <span class="text-success font-bold">(Unlimited)</span> @endif
+                            </span>
                         </div>
                         <div class="progress h-2 rounded-full bg-slate-150 dark:bg-navy-500 overflow-hidden">
-                            @php
-                                $quotaLimit = $currentPlan ? $currentPlan->daily_limit : 10;
-                                $quotaPercent = min(100, round(($todayFiles / max(1, $quotaLimit)) * 100));
-                            @endphp
-                            <div class="h-full rounded-full bg-primary dark:bg-accent transition-all" style="width: {{ $quotaPercent }}%"></div>
+                            @if($activeSub)
+                                <div class="h-full rounded-full bg-linear-to-r from-emerald-500 to-teal-400 w-full"></div>
+                            @else
+                                @php
+                                    $quotaLimit = $currentPlan ? ($currentPlan->daily_limit ?? 10) : 10;
+                                    $quotaPercent = min(100, round(($todayFiles / max(1, $quotaLimit)) * 100));
+                                @endphp
+                                <div class="h-full rounded-full bg-primary dark:bg-accent transition-all" style="width: {{ $quotaPercent }}%"></div>
+                            @endif
                         </div>
                     </div>
 

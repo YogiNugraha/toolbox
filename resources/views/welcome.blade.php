@@ -4,18 +4,26 @@
         selectedCategory: 'all',
         faqOpen: null,
         tools: {{ json_encode($tools) }},
+        categories: {{ json_encode($categories) }},
+        get highlightedCount() {
+            return this.tools.filter(t => t.is_highlighted).length;
+        },
         get filteredTools() {
             return this.tools.filter(tool => {
-                const matchSearch = tool.name.toLowerCase().includes(this.search.toLowerCase()) || 
-                                    tool.description.toLowerCase().includes(this.search.toLowerCase()) ||
-                                    tool.category.toLowerCase().includes(this.search.toLowerCase());
-                const matchCategory = this.selectedCategory === 'all' || tool.category.toLowerCase() === this.selectedCategory.toLowerCase();
+                const matchSearch = !this.search || 
+                                    tool.name.toLowerCase().includes(this.search.toLowerCase()) || 
+                                    (tool.description && tool.description.toLowerCase().includes(this.search.toLowerCase())) ||
+                                    (tool.category && tool.category.toLowerCase().includes(this.search.toLowerCase()));
+                
+                let matchCategory = true;
+                if (this.selectedCategory === 'highlighted') {
+                    matchCategory = Boolean(tool.is_highlighted);
+                } else if (this.selectedCategory !== 'all') {
+                    matchCategory = tool.category.toLowerCase() === this.selectedCategory.toLowerCase();
+                }
+
                 return matchSearch && matchCategory;
             });
-        },
-        get categories() {
-            const list = [...new Set(this.tools.map(t => t.category))];
-            return list;
         }
     }" class="w-full min-h-screen flex flex-col justify-between bg-slate-50 dark:bg-navy-900 transition-colors duration-300">
 
@@ -23,19 +31,33 @@
             {{-- Navigation Header (Lineone Starter Blurred Header Style) --}}
             <header class="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/90 backdrop-blur-md dark:border-navy-700/80 dark:bg-navy-900/90 transition-colors duration-300">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
-                    {{-- Brand Logo (Lineone Squircle) --}}
+                    @php
+                        $siteName = \App\Models\Setting::get('site_name', \App\Models\Setting::get('brand_name', config('app.name')));
+                        $siteTagline = \App\Models\Setting::get('site_tagline', \App\Models\Setting::get('brand_tagline', 'Online Web Tools'));
+                        $siteLogo = \App\Models\Setting::get('site_logo');
+                        $siteDesc = \App\Models\Setting::get('site_description', 'Solusi perkakas digital instan untuk mengolah, mengompres, dan mengonversi file Anda setiap hari tanpa instalasi software.');
+                        $footerCopyright = \App\Models\Setting::get('footer_copyright', '© ' . date('Y') . ' ' . $siteName . '. All rights reserved.');
+                    @endphp
+
+                    {{-- Brand Logo --}}
                     <a href="{{ route('home') }}" class="flex items-center space-x-3 group">
-                        <div class="mask is-squircle flex size-10 items-center justify-center bg-primary text-white shadow-md shadow-primary/20 dark:bg-accent dark:shadow-accent/20">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
-                        </div>
+                        @if($siteLogo && \Illuminate\Support\Facades\Storage::disk('public')->exists($siteLogo))
+                            <div class="flex size-10 shrink-0 items-center justify-center">
+                                <img src="{{ \Illuminate\Support\Facades\Storage::url($siteLogo) }}" class="size-full object-contain" alt="{{ $siteName }}" />
+                            </div>
+                        @else
+                            <div class="mask is-squircle flex size-10 shrink-0 items-center justify-center bg-primary text-white shadow-md shadow-primary/20 dark:bg-accent dark:shadow-accent/20">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            </div>
+                        @endif
                         <div class="flex flex-col">
                             <span class="text-base sm:text-lg font-bold tracking-tight text-slate-800 dark:text-navy-50 uppercase leading-none">
-                                {{ config('app.name') }}
+                                {{ $siteName }}
                             </span>
                             <span class="text-[10px] font-semibold tracking-widest text-slate-400 dark:text-navy-300 uppercase mt-0.5">
-                                Online Web Tools
+                                {{ $siteTagline }}
                             </span>
                         </div>
                     </a>
@@ -90,13 +112,6 @@
                 <div class="card relative overflow-hidden bg-gradient-to-l from-pink-200 via-indigo-100 to-indigo-200 dark:from-navy-700 dark:via-navy-800 dark:to-navy-900 p-6 sm:p-10 lg:p-12">
                     <div class="grid grid-cols-12 gap-6 items-center">
                         <div class="col-span-12 lg:col-span-7 space-y-4 text-center lg:text-left">
-                            <div class="inline-flex items-center space-x-2 rounded-full bg-white/80 px-3.5 py-1 text-xs font-semibold text-primary shadow-xs backdrop-blur-xs dark:bg-navy-800/80 dark:text-accent-light">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                </svg>
-                                <span>Platform Produktivitas & Pengolah Dokumen</span>
-                            </div>
-
                             <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-800 dark:text-navy-50 leading-tight">
                                 Compress, Convert & Olah File <span class="text-primary dark:text-accent-light">Online Cepat.</span>
                             </h1>
@@ -205,31 +220,27 @@
                     {{-- Section Header --}}
                     <div class="flex flex-col md:flex-row md:items-end justify-between mb-8">
                         <div>
-                            <div class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light font-bold text-xs px-3 py-1 mb-2">
-                                DIREKTORI TOOLS
-                            </div>
-                            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-navy-50">
+                            <p class="text-sm uppercase text-slate-400 dark:text-navy-300">Direktori Tools</p>
+                            <h2 class="mt-1 text-xl font-semibold text-slate-600 dark:text-navy-100">
                                 Katalog Alat Produktivitas
                             </h2>
-                            <p class="mt-1 text-slate-400 dark:text-navy-300 text-xs sm:text-sm">
-                                Pilih alat di bawah untuk langsung mengunggah dan memproses file Anda secara gratis.
-                            </p>
                         </div>
-
                         {{-- Category Filter Pills --}}
-                        <div class="mt-4 md:mt-0 flex flex-wrap gap-1.5">
+                        <div class="mt-4 md:mt-0 flex flex-wrap gap-1.5 items-center">
                             <button 
                                 @click="selectedCategory = 'all'"
                                 :class="selectedCategory === 'all' ? 'bg-primary text-white dark:bg-accent' : 'bg-slate-100 text-slate-600 hover:bg-slate-200/80 dark:bg-navy-700 dark:text-navy-200 dark:hover:bg-navy-600'"
                                 class="btn h-8 rounded-full px-3.5 text-xs font-semibold transition-all">
-                                Semua (<span x-text="tools.length"></span>)
+                                Semua Pilihan (<span x-text="tools.length"></span>)
                             </button>
-                            <template x-for="cat in categories" :key="cat">
+
+                            <template x-for="cat in categories" :key="cat.name">
                                 <button 
-                                    @click="selectedCategory = cat"
-                                    :class="selectedCategory === cat ? 'bg-primary text-white dark:bg-accent' : 'bg-slate-100 text-slate-600 hover:bg-slate-200/80 dark:bg-navy-700 dark:text-navy-200 dark:hover:bg-navy-600'"
-                                    class="btn h-8 rounded-full px-3.5 text-xs font-semibold transition-all"
-                                    x-text="cat">
+                                    @click="selectedCategory = cat.name"
+                                    :class="selectedCategory.toLowerCase() === cat.name.toLowerCase() ? 'bg-primary text-white dark:bg-accent' : 'bg-slate-100 text-slate-600 hover:bg-slate-200/80 dark:bg-navy-700 dark:text-navy-200 dark:hover:bg-navy-600'"
+                                    class="btn h-8 rounded-full px-3.5 text-xs font-semibold transition-all flex items-center space-x-1">
+                                    <span x-text="cat.name"></span>
+                                    <span class="opacity-70 text-[11px]">(<span x-text="cat.count"></span>)</span>
                                 </button>
                             </template>
                         </div>
@@ -238,31 +249,52 @@
                     {{-- Tools Grid (Exact Lineone layouts/onboarding-1 Style) --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <template x-for="tool in filteredTools" :key="tool.slug">
-                            <div class="card flex flex-col justify-between h-full hover:shadow-xl transition-shadow duration-300">
-                                <div class="flex justify-center p-6 bg-slate-50/50 dark:bg-navy-700/30 rounded-t-lg">
-                                    <template x-if="tool.slug === 'compress-image'">
-                                        <img class="h-36 w-auto object-contain" src="{{ asset('images/illustrations/upload-cloud.svg') }}" :alt="tool.name" />
+                            <div class="card flex flex-col justify-between h-full">
+                                <div class="flex h-48 items-center justify-center p-5">
+                                    <template x-if="tool.image_url">
+                                        <img class="max-h-40 max-w-full object-contain" :src="tool.image_url" :alt="tool.name" />
                                     </template>
-                                    <template x-if="tool.slug === 'convert-image'">
-                                        <img class="h-36 w-auto object-contain" src="{{ asset('images/illustrations/responsive.svg') }}" :alt="tool.name" />
+                                    <template x-if="!tool.image_url && tool.slug === 'compress-image'">
+                                        <img class="max-h-40 max-w-full object-contain" src="{{ asset('images/illustrations/upload-cloud.svg') }}" :alt="tool.name" />
                                     </template>
-                                    <template x-if="tool.slug === 'pdf-to-word'">
-                                        <img class="h-36 w-auto object-contain" src="{{ asset('images/illustrations/writer.svg') }}" :alt="tool.name" />
+                                    <template x-if="!tool.image_url && tool.slug === 'convert-image'">
+                                        <img class="max-h-40 max-w-full object-contain" src="{{ asset('images/illustrations/responsive.svg') }}" :alt="tool.name" />
                                     </template>
-                                    <template x-if="!['compress-image', 'convert-image', 'pdf-to-word'].includes(tool.slug)">
-                                        <img class="h-36 w-auto object-contain" src="{{ asset('images/illustrations/creativedesign.svg') }}" :alt="tool.name" />
+                                    <template x-if="!tool.image_url && tool.slug === 'pdf-to-word'">
+                                        <img class="max-h-40 max-w-full object-contain" src="{{ asset('images/illustrations/writer.svg') }}" :alt="tool.name" />
+                                    </template>
+                                    <template x-if="!tool.image_url && !['compress-image', 'convert-image', 'pdf-to-word'].includes(tool.slug)">
+                                        <img class="max-h-40 max-w-full object-contain" src="{{ asset('images/illustrations/creativedesign.svg') }}" :alt="tool.name" />
                                     </template>
                                 </div>
-                                <div class="px-4 pb-8 pt-5 text-center sm:px-5 flex flex-col justify-between flex-1">
+                                <div class="flex flex-1 flex-col justify-between px-4 pb-8 text-center sm:px-5">
                                     <div>
-                                        <div class="mb-2">
+                                        <div class="mb-2 flex flex-wrap items-center justify-center gap-1.5">
                                             <span class="badge rounded-full bg-slate-150 text-slate-700 dark:bg-navy-600 dark:text-navy-200 text-[11px] font-semibold px-2.5 py-0.5" x-text="tool.category"></span>
+                                            <template x-if="tool.is_highlighted">
+                                                <span class="badge rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 text-[10px] font-bold px-2 py-0.5 shadow-xs">🌟 Featured</span>
+                                            </template>
+                                            <template x-if="tool.is_maintenance">
+                                                <span class="badge rounded-full bg-warning/15 text-warning text-[10px] font-bold px-2 py-0.5">Maintenance</span>
+                                            </template>
+                                            <template x-if="!tool.is_maintenance && tool.badge === 'HOT'">
+                                                <span class="badge rounded-full bg-linear-to-r from-red-500 to-orange-500 text-white text-[10px] font-black px-2.5 py-0.5 shadow-xs">🔥 HOT</span>
+                                            </template>
+                                            <template x-if="!tool.is_maintenance && tool.badge === 'NEW'">
+                                                <span class="badge rounded-full bg-linear-to-r from-emerald-500 to-teal-500 text-white text-[10px] font-black px-2.5 py-0.5 shadow-xs">✨ NEW</span>
+                                            </template>
+                                            <template x-if="!tool.is_maintenance && tool.badge === 'PRO'">
+                                                <span class="badge rounded-full bg-linear-to-r from-amber-500 to-purple-600 text-white text-[10px] font-black px-2.5 py-0.5 shadow-xs">👑 PRO</span>
+                                            </template>
+                                            <template x-if="!tool.is_maintenance && tool.badge && !['HOT', 'NEW', 'PRO'].includes(tool.badge)">
+                                                <span class="badge rounded-full bg-slate-150 text-slate-700 dark:bg-navy-500 dark:text-navy-200 text-[10px] font-bold px-2 py-0.5" x-text="tool.badge"></span>
+                                            </template>
                                         </div>
                                         <h4 class="text-lg font-semibold text-slate-700 dark:text-navy-100" x-text="tool.name"></h4>
-                                        <p class="pt-2 text-xs text-slate-500 dark:text-navy-300 leading-relaxed" x-text="tool.description"></p>
+                                        <p class="pt-3 text-slate-500 dark:text-navy-300" x-text="tool.description"></p>
                                     </div>
-                                    <div class="pt-6">
-                                        <a :href="'/tool/' + tool.slug" class="btn bg-primary font-medium text-white shadow-lg shadow-primary/50 hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:shadow-accent/50 dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90 w-full rounded-lg text-xs py-2.5">
+                                    <div class="pt-8">
+                                        <a :href="'/tool/' + tool.slug" class="btn bg-primary font-medium text-white shadow-lg shadow-primary/50 hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:shadow-accent/50 dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90">
                                             Buka Tool
                                         </a>
                                     </div>
@@ -286,6 +318,14 @@
                             Reset Pencarian
                         </button>
                     </div>
+
+                    {{-- Bottom Explore All Tools Link --}}
+                    <div class="mt-12 text-center">
+                        <a href="{{ auth()->check() ? route('dashboard') : route('register') }}" class="btn rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-navy-700 dark:hover:bg-navy-600 font-bold px-6 py-3 text-xs text-slate-700 dark:text-navy-100 shadow-xs inline-flex items-center space-x-2 transition-all">
+                            <span>Jelajahi Seluruh {{ $totalAllTools ?? 99 }}+ Tools di Dashboard</span>
+                            <x-lucide-arrow-right class="size-4" />
+                        </a>
+                    </div>
                 </div>
             </section>
 
@@ -294,16 +334,11 @@
             {{-- Why Choose Us / Features (Lineone layouts-onboarding-1 style cards) --}}
             <section id="features-section" class="w-full bg-slate-100/60 dark:bg-navy-800/60 py-16 lg:py-24 border-y border-slate-200 dark:border-navy-700 transition-colors">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center max-w-2xl mx-auto mb-12">
-                        <div class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light font-bold text-xs px-3 py-1 mb-2">
-                            KEUNGGULAN UTAMA
-                        </div>
-                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-navy-50">
+                    <div class="py-5 text-center lg:py-6">
+                        <p class="text-sm uppercase text-slate-400 dark:text-navy-300">Keunggulan Utama</p>
+                        <h2 class="mt-1 text-xl font-semibold text-slate-600 dark:text-navy-100">
                             Mengapa Memilih {{ config('app.name') }}?
                         </h2>
-                        <p class="text-slate-400 dark:text-navy-300 mt-1 text-xs sm:text-sm">
-                            Platform yang dirancang untuk kecepatan tinggi, privasi ketat, dan fleksibilitas kerja.
-                        </p>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -372,18 +407,38 @@
 
             {{-- Pricing Section (Exact from Lineone layouts/price-list-1) --}}
             <section id="pricing-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-                <div class="py-5 text-center max-w-2xl mx-auto mb-10">
-                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300">PILIHAN PAKET</p>
-                    <h3 class="mt-1 text-2xl font-bold text-slate-700 dark:text-navy-100 sm:text-3xl">
+                <div class="py-5 text-center lg:py-6 max-w-2xl mx-auto mb-6">
+                    <p class="text-sm uppercase text-slate-400 dark:text-navy-300">Pilihan Paket</p>
+                    <h2 class="mt-1 text-xl font-semibold text-slate-600 dark:text-navy-100">
                         Tingkatkan Produktivitas Anda Tanpa Batas
-                    </h3>
-                    <p class="mt-1 text-xs text-slate-400 dark:text-navy-300">Pilih paket yang paling sesuai dengan kebutuhan produktivitas harian Anda.</p>
+                    </h2>
                 </div>
 
                 <div class="grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-{{ min($plans->count(), 3) }} sm:gap-5 lg:gap-6 mx-auto items-stretch">
                     @forelse($plans as $plan)
                         @php
                             $isRecommended = $plan->price > 0 && ($plan->slug === 'pro' || $plan->slug === 'premium' || $loop->iteration === 2);
+                            $breakdown = app(\App\Services\PriceCalculator::class)->breakdown($plan);
+                            
+                            // Dynamic Features Fallback
+                            $planFeatures = $plan->features;
+                            if (empty($planFeatures)) {
+                                if ($plan->price == 0) {
+                                    $planFeatures = [
+                                        '5x / hari Kompres Gambar',
+                                        '5x / hari Convert Gambar',
+                                        '2x / hari PDF ke Word (Maks 5MB)',
+                                        'Waktu Proses Standar'
+                                    ];
+                                } else {
+                                    $planFeatures = [
+                                        'Tanpa Batas Kuota Harian',
+                                        'Buka Semua Fitur Preset Kustom',
+                                        'Konversi PDF ke Word File Besar (50MB)',
+                                        'Prioritas Server Kecepatan Tinggi'
+                                    ];
+                                }
+                            }
                         @endphp
                         <div class="card p-4 text-center sm:p-5 relative flex flex-col justify-between h-full">
                             {{-- Top Badge for Recommended --}}
@@ -417,19 +472,31 @@
                                     </p>
                                 </div>
 
-                                {{-- Price --}}
-                                <div class="mt-4">
-                                    <span class="text-2xl sm:text-3xl tracking-tight font-extrabold text-primary dark:text-accent-light">
-                                        Rp {{ number_format($plan->price, 0, ',', '.') }}
-                                    </span>
-                                    <span class="text-xs text-slate-400 dark:text-navy-300">
-                                        /{{ $plan->duration_days ? $plan->duration_days . ' hari' : 'bulan' }}
-                                    </span>
+                                {{-- Price & Discount --}}
+                                <div class="mt-4 min-h-[56px] flex flex-col justify-center">
+                                    @if($breakdown['discount'] > 0)
+                                        <div class="flex items-center justify-center space-x-1.5 mb-1">
+                                            <span class="line-through text-slate-400 dark:text-navy-300 text-xs font-semibold">
+                                                Rp {{ number_format($breakdown['basePrice'], 0, ',', '.') }}
+                                            </span>
+                                            <span class="badge rounded-full bg-success/15 text-success dark:bg-success/20 font-bold text-[10px] px-2 py-0.5">
+                                                Hemat {{ $plan->discount_type === 'percent' ? $plan->discount_value . '%' : 'Rp ' . number_format($breakdown['discount'], 0, ',', '.') }}
+                                            </span>
+                                        </div>
+                                    @endif
+                                    <div>
+                                        <span class="text-2xl sm:text-3xl tracking-tight font-extrabold text-primary dark:text-accent-light">
+                                            Rp {{ number_format($breakdown['subtotal'], 0, ',', '.') }}
+                                        </span>
+                                        <span class="text-xs text-slate-400 dark:text-navy-300">
+                                            /{{ $plan->duration_days ? $plan->duration_days . ' hari' : 'bulan' }}
+                                        </span>
+                                    </div>
                                 </div>
 
                                 {{-- Features List (Price List 1 Exact Style) --}}
                                 <div class="mt-6 space-y-3 text-left">
-                                    @foreach($plan->features ?? [] as $feature)
+                                    @foreach($planFeatures as $feature)
                                         <div class="flex items-start space-x-2.5">
                                             <div class="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary dark:bg-accent/10 dark:text-accent-light mt-0.5">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5" viewBox="0 0 20 20" fill="currentColor">
@@ -446,19 +513,13 @@
 
                             {{-- CTA Button (Price List 1 Style) --}}
                             <div class="mt-6">
-                                @auth
-                                    <a href="{{ route('pricing') }}" class="btn rounded-full {{ $isRecommended ? 'bg-primary font-bold text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus' : 'border border-slate-200 font-semibold text-primary hover:bg-slate-150 dark:border-navy-500 dark:text-accent-light dark:hover:bg-navy-500' }} w-full text-xs py-2">
-                                        {{ $plan->price == 0 ? 'Paket Aktif' : 'Pilih Paket' }}
-                                    </a>
-                                @else
-                                    <a href="{{ route('register') }}" class="btn rounded-full {{ $isRecommended ? 'bg-primary font-bold text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus' : 'border border-slate-200 font-semibold text-primary hover:bg-slate-150 dark:border-navy-500 dark:text-accent-light dark:hover:bg-navy-500' }} w-full text-xs py-2">
-                                        {{ $plan->price == 0 ? 'Daftar Gratis' : 'Pilih Paket' }}
-                                    </a>
-                                @endauth
+                                <a href="{{ auth()->check() ? route('dashboard') : route('register') }}" class="btn rounded-full {{ $isRecommended ? 'bg-primary font-bold text-white shadow-md shadow-primary/30 hover:bg-primary-focus dark:bg-accent dark:shadow-accent/30 dark:hover:bg-accent-focus' : 'border border-slate-300 dark:border-navy-450 font-semibold text-slate-700 dark:text-navy-100 hover:bg-slate-100 dark:hover:bg-navy-600' }} w-full py-2.5 text-xs">
+                                    Pilih Paket
+                                </a>
                             </div>
                         </div>
                     @empty
-                        <div class="col-span-full card p-8 text-center text-slate-400 text-xs">
+                        <div class="col-span-full card p-8 text-center text-slate-400 dark:text-navy-300 text-xs">
                             Belum ada data paket yang tersedia.
                         </div>
                     @endforelse
@@ -468,16 +529,11 @@
             {{-- FAQ Section (Lineone Clean Accordion Style) --}}
             <section id="faq-section" class="w-full bg-slate-100/60 dark:bg-navy-800/60 py-16 lg:py-24 border-y border-slate-200 dark:border-navy-700 transition-colors">
                 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center max-w-2xl mx-auto mb-12">
-                        <div class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light font-bold text-xs px-3 py-1 mb-2">
-                            PERTANYAAN UMUM
-                        </div>
-                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-navy-50">
+                    <div class="py-5 text-center lg:py-6 max-w-2xl mx-auto mb-6">
+                        <p class="text-sm uppercase text-slate-400 dark:text-navy-300">Pertanyaan Umum</p>
+                        <h2 class="mt-1 text-xl font-semibold text-slate-600 dark:text-navy-100">
                             Frequently Asked Questions
                         </h2>
-                        <p class="text-slate-400 dark:text-navy-300 mt-1 text-xs sm:text-sm">
-                            Jawaban atas pertanyaan yang sering diajukan mengenai layanan kami.
-                        </p>
                     </div>
 
                     <div class="space-y-3 text-xs">
@@ -576,15 +632,21 @@
                         {{-- Col 1: Brand --}}
                         <div class="md:col-span-2 space-y-3">
                             <div class="flex items-center space-x-2.5">
-                                <div class="mask is-squircle flex size-8 items-center justify-center bg-primary text-white dark:bg-accent shadow-xs">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                    </svg>
-                                </div>
-                                <span class="text-base font-bold uppercase tracking-wider text-slate-800 dark:text-navy-50">{{ config('app.name') }}</span>
+                                @if($siteLogo && \Illuminate\Support\Facades\Storage::disk('public')->exists($siteLogo))
+                                    <div class="flex size-8 shrink-0 items-center justify-center">
+                                        <img src="{{ \Illuminate\Support\Facades\Storage::url($siteLogo) }}" class="size-full object-contain" alt="{{ $siteName }}" />
+                                    </div>
+                                @else
+                                    <div class="mask is-squircle flex size-8 shrink-0 items-center justify-center bg-primary text-white dark:bg-accent shadow-xs">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                        </svg>
+                                    </div>
+                                @endif
+                                <span class="text-base font-bold uppercase tracking-wider text-slate-800 dark:text-navy-50">{{ $siteName }}</span>
                             </div>
                             <p class="text-slate-400 dark:text-navy-300 max-w-sm leading-relaxed">
-                                Solusi perkakas digital instan untuk mengolah, mengompres, dan mengonversi file Anda setiap hari tanpa instalasi software.
+                                {{ $siteDesc }}
                             </p>
                         </div>
 
@@ -615,9 +677,8 @@
                         </div>
                     </div>
 
-                    <div class="border-t border-slate-150 dark:border-navy-700/80 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400 dark:text-navy-300">
-                        <p>&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
-                        <span>Lineone Theme Architecture</span>
+                    <div class="border-t border-slate-150 dark:border-navy-700/80 pt-6 flex items-center justify-between text-xs text-slate-400 dark:text-navy-300">
+                        <p>{{ $footerCopyright }}</p>
                     </div>
                 </div>
             </footer>

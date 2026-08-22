@@ -837,55 +837,106 @@
                 </div>
 
                 <!-- Profile -->
+                @php
+                    $isProUser = auth()->check() && auth()->user()->isSubscribed();
+                    $activePlanName = auth()->check() ? auth()->user()->activePlanName() : null;
+                    $activePlanSlug = auth()->check() ? auth()->user()->activePlanSlug() : null;
+                    $isProMax = $activePlanSlug === 'pro-max' || strtolower($activePlanName) === 'pro max';
+                    $subExpiry = auth()->check() && auth()->user()->activeSubscription() ? auth()->user()->activeSubscription()->expires_at : null;
+                @endphp
                 <div x-data="usePopper({ placement: 'bottom-end', offset: 12 })" @click.outside="if(isShowPopper) isShowPopper = false" class="flex">
-                    <button @click="isShowPopper = !isShowPopper" x-ref="popperRef" class="avatar size-8 cursor-pointer">
+                    <button @click="isShowPopper = !isShowPopper" x-ref="popperRef" class="avatar size-8 cursor-pointer relative rounded-full {{ $isProUser ? ($isProMax ? 'ring-2 ring-purple-500 ring-offset-2 ring-offset-white dark:ring-offset-navy-750' : 'ring-2 ring-amber-400 ring-offset-2 ring-offset-white dark:ring-offset-navy-750') : '' }}">
                         @if(auth()->check() && auth()->user()->profile_photo_path)
-                            <img class="rounded-full" src="{{ Storage::url(auth()->user()->profile_photo_path) }}" alt="avatar" />
+                            <img class="rounded-full object-cover" src="{{ Storage::url(auth()->user()->profile_photo_path) }}" alt="avatar" />
                         @else
-                            <div class="rounded-full bg-slate-200 dark:bg-navy-500 w-full h-full flex items-center justify-center font-bold text-slate-500 dark:text-navy-100">
+                            <div class="rounded-full {{ $isProUser ? ($isProMax ? 'bg-gradient-to-tr from-purple-600 to-indigo-500 text-white' : 'bg-gradient-to-tr from-amber-400 to-orange-500 text-white') : 'bg-slate-200 text-slate-500 dark:bg-navy-500 dark:text-navy-100' }} w-full h-full flex items-center justify-center font-bold text-xs">
                                 {{ auth()->check() ? substr(auth()->user()->name, 0, 1) : 'U' }}
                             </div>
                         @endif
-                        <span class="absolute right-0 size-2.5 rounded-full border-2 border-white bg-success dark:border-navy-700"></span>
+
+                        @if($isProUser)
+                            <span class="absolute -top-1 -right-1 flex size-3.5 items-center justify-center rounded-full {{ $isProMax ? 'bg-linear-to-r from-amber-400 to-yellow-300 text-slate-900' : 'bg-amber-400 text-slate-900' }} shadow-xs ring-1 ring-white dark:ring-navy-700">
+                                @if($isProMax)
+                                    <x-lucide-crown class="size-2.5 stroke-[2.5]" />
+                                @else
+                                    <x-lucide-star class="size-2.5 stroke-[2.5] fill-current" />
+                                @endif
+                            </span>
+                        @else
+                            <span class="absolute right-0 size-2.5 rounded-full border-2 border-white bg-success dark:border-navy-700"></span>
+                        @endif
                     </button>
                     <div :class="isShowPopper && 'show'" class="popper-root fixed" x-ref="popperRoot">
-                        <div class="popper-box w-64 rounded-lg border border-slate-150 bg-white shadow-soft dark:border-navy-600 dark:bg-navy-700">
-                            <div class="flex items-center space-x-4 rounded-t-lg bg-slate-100 py-5 px-4 dark:bg-navy-800">
-                                <div class="avatar size-14">
+                        <div class="popper-box w-72 rounded-xl border border-slate-150 bg-white shadow-soft dark:border-navy-600 dark:bg-navy-700 overflow-hidden">
+                            <div class="flex items-center space-x-3.5 rounded-t-xl {{ $isProUser ? ($isProMax ? 'bg-gradient-to-r from-purple-50 via-indigo-50 to-amber-50/50 dark:from-purple-950/40 dark:via-navy-800 dark:to-navy-800' : 'bg-gradient-to-r from-amber-50/80 to-orange-50/40 dark:from-amber-950/30 dark:to-navy-800') : 'bg-slate-100 dark:bg-navy-800' }} py-4.5 px-4 border-b border-slate-150 dark:border-navy-600">
+                                <div class="avatar size-12 shrink-0 relative rounded-full {{ $isProUser ? ($isProMax ? 'ring-2 ring-purple-500 ring-offset-2 ring-offset-white dark:ring-offset-navy-800' : 'ring-2 ring-amber-400 ring-offset-2 ring-offset-white dark:ring-offset-navy-800') : '' }}">
                                     @if(auth()->check() && auth()->user()->profile_photo_path)
-                                        <img class="rounded-full" src="{{ Storage::url(auth()->user()->profile_photo_path) }}" alt="avatar" />
+                                        <img class="rounded-full object-cover" src="{{ Storage::url(auth()->user()->profile_photo_path) }}" alt="avatar" />
                                     @else
-                                        <div class="rounded-full bg-slate-200 dark:bg-navy-500 w-full h-full flex items-center justify-center font-bold text-slate-500 dark:text-navy-100">
+                                        <div class="rounded-full {{ $isProUser ? ($isProMax ? 'bg-gradient-to-tr from-purple-600 to-indigo-500 text-white' : 'bg-gradient-to-tr from-amber-400 to-orange-500 text-white') : 'bg-slate-200 text-slate-500 dark:bg-navy-500 dark:text-navy-100' }} w-full h-full flex items-center justify-center font-bold text-base">
                                             {{ auth()->check() ? substr(auth()->user()->name, 0, 1) : 'U' }}
                                         </div>
                                     @endif
                                 </div>
-                                <div>
-                                    <a href="{{ route('profile') }}" class="text-base font-medium text-slate-700 hover:text-primary focus:text-primary dark:text-navy-100 dark:hover:text-accent-light dark:focus:text-accent-light" wire:navigate>
-                                        {{ auth()->check() ? auth()->user()->name : 'User' }}
-                                    </a>
-                                    <p class="text-xs text-slate-400 dark:text-navy-300">
+                                <div class="overflow-hidden flex-1">
+                                    <div class="flex items-center gap-1.5">
+                                        <a href="{{ route('profile') }}" class="text-sm font-bold text-slate-700 hover:text-primary focus:text-primary dark:text-navy-100 dark:hover:text-accent-light dark:focus:text-accent-light truncate" wire:navigate>
+                                            {{ auth()->check() ? auth()->user()->name : 'User' }}
+                                        </a>
+                                    </div>
+                                    <p class="text-xs text-slate-400 dark:text-navy-300 truncate">
                                         {{ auth()->check() ? auth()->user()->email : '' }}
                                     </p>
-                                </div>
-                            </div>
-                            <div class="flex flex-col pt-2 pb-5">
-                                @if(auth()->check() && auth()->user()->is_admin)
-                                <a href="{{ request()->is('admin*') ? route('dashboard') : route('admin.overview') }}" class="group flex items-center space-x-3 py-2 px-4 tracking-wide outline-hidden transition-all hover:bg-slate-100 focus:bg-slate-100 dark:hover:bg-navy-600 dark:focus:bg-navy-600" wire:navigate>
-                                    <div class="flex size-8 items-center justify-center rounded-lg bg-info text-white">
-                                        @if(request()->is('admin*'))
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                                        </svg>
+                                    <div class="mt-1 flex items-center gap-1.5 flex-wrap">
+                                        @if($isProUser)
+                                            @if($isProMax)
+                                                <span class="badge rounded-full bg-linear-to-r from-amber-500 via-purple-600 to-indigo-600 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-xs inline-flex items-center gap-1">
+                                                    <x-lucide-crown class="size-3 stroke-[2.5]" />
+                                                    <span>{{ $activePlanName }}</span>
+                                                </span>
+                                            @else
+                                                <span class="badge rounded-full bg-linear-to-r from-amber-500 to-orange-500 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-white shadow-xs inline-flex items-center gap-1">
+                                                    <x-lucide-star class="size-3 stroke-[2.5] fill-current" />
+                                                    <span>{{ $activePlanName }}</span>
+                                                </span>
+                                            @endif
+                                            @if($subExpiry)
+                                                <span class="text-[10px] text-slate-400 dark:text-navy-300 font-medium">
+                                                    s/d {{ $subExpiry->translatedFormat('d M Y') }}
+                                                </span>
+                                            @endif
                                         @else
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                        </svg>
+                                            <span class="badge rounded-full bg-slate-200 dark:bg-navy-600 px-2 py-0.5 text-[9px] font-bold text-slate-600 dark:text-navy-200">
+                                                FREE PLAN
+                                            </span>
+                                            <a href="{{ route('pricing') }}" wire:navigate class="text-[10px] text-primary hover:underline dark:text-accent-light font-bold">
+                                                Upgrade &rarr;
+                                            </a>
                                         @endif
                                     </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col pt-2 pb-5"
+                                 x-data="{ isAdminPath: window.location.pathname.startsWith('/admin') }"
+                                 x-init="isAdminPath = window.location.pathname.startsWith('/admin')"
+                                 x-on:livewire:navigated.window="isAdminPath = window.location.pathname.startsWith('/admin')">
+                                @if(auth()->check() && auth()->user()->is_admin)
+                                <a :href="isAdminPath ? '{{ route('dashboard') }}' : '{{ route('admin.overview') }}'" class="group flex items-center space-x-3 py-2 px-4 tracking-wide outline-hidden transition-all hover:bg-slate-100 focus:bg-slate-100 dark:hover:bg-navy-600 dark:focus:bg-navy-600" wire:navigate>
+                                    <div class="flex size-8 items-center justify-center rounded-lg bg-info text-white">
+                                        <template x-if="isAdminPath">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                            </svg>
+                                        </template>
+                                        <template x-if="!isAdminPath">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                            </svg>
+                                        </template>
+                                    </div>
                                     <div>
-                                        <h2 class="font-medium text-slate-700 transition-colors group-hover:text-primary group-focus:text-primary dark:text-navy-100 dark:group-hover:text-accent-light dark:group-focus:text-accent-light">{{ request()->is('admin*') ? 'User Panel' : 'Admin Panel' }}</h2>
-                                        <div class="text-xs text-slate-400 line-clamp-1 dark:text-navy-300">{{ request()->is('admin*') ? 'Kembali ke dashboard' : 'Manajemen sistem' }}</div>
+                                        <h2 class="font-medium text-slate-700 transition-colors group-hover:text-primary group-focus:text-primary dark:text-navy-100 dark:group-hover:text-accent-light dark:group-focus:text-accent-light" x-text="isAdminPath ? 'Kembali ke Dashboard' : 'Admin Panel'"></h2>
+                                        <div class="text-xs text-slate-400 line-clamp-1 dark:text-navy-300" x-text="isAdminPath ? 'Halaman utama user' : 'Manajemen sistem'"></div>
                                     </div>
                                 </a>
                                 @endif

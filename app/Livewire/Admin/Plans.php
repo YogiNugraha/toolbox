@@ -40,13 +40,20 @@ class Plans extends Component
 
     public function mount()
     {
-        $this->toolsConfig = config('tools', []);
+        $this->toolsConfig = \App\Models\Tool::getAllTools()->toArray();
         
         $this->is_tax_enabled = filter_var(\App\Models\Setting::get('is_tax_enabled', true), FILTER_VALIDATE_BOOLEAN);
         $this->tax_percent = \App\Models\Setting::get('tax_percent', 11);
         $this->is_service_fee_enabled = filter_var(\App\Models\Setting::get('is_service_fee_enabled', true), FILTER_VALIDATE_BOOLEAN);
         $this->service_fee_type = \App\Models\Setting::get('service_fee_type', 'fixed');
         $this->service_fee_value = \App\Models\Setting::get('service_fee_value', 2500);
+    }
+
+    public function updatedName($value)
+    {
+        if (!$this->planId && empty($this->slug)) {
+            $this->slug = Str::slug($value);
+        }
     }
 
     public function create()

@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        \Illuminate\Pagination\Paginator::defaultView('components.lineone-pagination');
         \Carbon\Carbon::setLocale('id');
 
         try {

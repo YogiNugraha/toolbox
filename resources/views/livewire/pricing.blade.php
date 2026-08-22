@@ -234,24 +234,52 @@
                                 </p>
                             </div>
 
+                            @php
+                                $planFeatures = $plan->features;
+                                if (empty($planFeatures)) {
+                                    if ($plan->price == 0) {
+                                        $planFeatures = [
+                                            '5x / hari Kompres Gambar',
+                                            '5x / hari Convert Gambar',
+                                            '2x / hari PDF ke Word (Maks 5MB)',
+                                            'Waktu Proses Standar'
+                                        ];
+                                    } else {
+                                        $planFeatures = [
+                                            'Tanpa Batas Kuota Harian',
+                                            'Buka Semua Fitur Preset Kustom',
+                                            'Konversi PDF ke Word File Besar (50MB)',
+                                            'Prioritas Server Kecepatan Tinggi'
+                                        ];
+                                    }
+                                }
+                            @endphp
+
                             {{-- Price --}}
-                            <div class="mt-5">
+                            <div class="mt-5 min-h-[56px] flex flex-col justify-center">
                                 @if($breakdown['discount'] > 0)
-                                    <p class="line-through text-slate-400 text-xs">
-                                        Rp {{ number_format($breakdown['basePrice'], 0, ',', '.') }}
-                                    </p>
+                                    <div class="flex items-center justify-center space-x-1.5 mb-1">
+                                        <span class="line-through text-slate-400 dark:text-navy-300 text-xs font-semibold">
+                                            Rp {{ number_format($breakdown['basePrice'], 0, ',', '.') }}
+                                        </span>
+                                        <span class="badge rounded-full bg-success/15 text-success dark:bg-success/20 font-bold text-[10px] px-2 py-0.5">
+                                            Hemat {{ $plan->discount_type === 'percent' ? $plan->discount_value . '%' : 'Rp ' . number_format($breakdown['discount'], 0, ',', '.') }}
+                                        </span>
+                                    </div>
                                 @endif
-                                <span class="text-3xl sm:text-4xl tracking-tight font-bold text-primary dark:text-accent-light">
-                                    Rp {{ number_format($breakdown['subtotal'], 0, ',', '.') }}
-                                </span>
-                                <span class="text-xs text-slate-500 dark:text-navy-300">
-                                    /{{ $plan->duration_days ? $plan->duration_days . ' hari' : 'bulan' }}
-                                </span>
+                                <div>
+                                    <span class="text-3xl sm:text-4xl tracking-tight font-bold text-primary dark:text-accent-light">
+                                        Rp {{ number_format($breakdown['subtotal'], 0, ',', '.') }}
+                                    </span>
+                                    <span class="text-xs text-slate-500 dark:text-navy-300">
+                                        /{{ $plan->duration_days ? $plan->duration_days . ' hari' : 'bulan' }}
+                                    </span>
+                                </div>
                             </div>
 
                             {{-- Features List (Price List 1 Exact Style) --}}
                             <div class="mt-8 space-y-4 text-left">
-                                @foreach($plan->features ?? [] as $feature)
+                                @foreach($planFeatures as $feature)
                                     <div class="flex items-start space-x-3">
                                         <div class="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary dark:bg-accent/10 dark:text-accent-light">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5" viewBox="0 0 20 20" fill="currentColor">

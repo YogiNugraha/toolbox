@@ -30,8 +30,9 @@ class SubscriptionCancelledMail extends Mailable
      */
     public function envelope(): Envelope
     {
+        $siteName = \App\Models\Setting::get('site_name', \App\Models\Setting::get('brand_name', config('app.name')));
         return new Envelope(
-            subject: 'Konfirmasi Berhenti Berlangganan - ' . config('app.name') . ' Pro',
+            subject: 'Konfirmasi Berhenti Berlangganan - ' . $siteName . ' Pro',
         );
     }
 
@@ -41,7 +42,7 @@ class SubscriptionCancelledMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.subscription-cancelled',
+            view: 'emails.subscription-cancelled',
         );
     }
 

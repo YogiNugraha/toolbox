@@ -18,7 +18,10 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
                 </li>
-                <li>@yield('page_breadcrumb')</li>
+                @if(View::hasSection('breadcrumb_parent'))
+                    @yield('breadcrumb_parent')
+                @endif
+                <li class="text-slate-600 dark:text-navy-200">@yield('page_breadcrumb')</li>
             </ul>
         </div>
         @endif

@@ -31,8 +31,9 @@ class PaymentSuccessMail extends Mailable
      */
     public function envelope(): Envelope
     {
+        $siteName = \App\Models\Setting::get('site_name', \App\Models\Setting::get('brand_name', config('app.name')));
         return new Envelope(
-            subject: 'Pembayaran Berhasil - ' . config('app.name') . ' Pro',
+            subject: 'Pembayaran Berhasil - ' . $siteName . ' Pro',
         );
     }
 
@@ -42,7 +43,7 @@ class PaymentSuccessMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.payment-success',
+            view: 'emails.payment-success',
         );
     }
 

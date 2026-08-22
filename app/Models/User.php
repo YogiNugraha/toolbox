@@ -48,4 +48,51 @@ class User extends Authenticatable implements MustVerifyEmail
             ->latest('expires_at')
             ->first();
     }
+
+    public function isSubscribed(): bool
+    {
+        $sub = $this->activeSubscription();
+        return $sub !== null && $sub->plan_slug !== 'free';
+    }
+
+    public function activePlanName(): string
+    {
+        $sub = $this->activeSubscription();
+        if (!$sub || $sub->plan_slug === 'free') {
+            return 'Free';
+        }
+
+        return $sub->plan?->name ?? ucfirst($sub->plan_slug);
+    }
+
+    public function activePlanSlug(): string
+    {
+        $sub = $this->activeSubscription();
+        if (!$sub) {
+            return 'free';
+        }
+
+        return $sub->plan_slug;
+    }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\ResetPasswordNotification($token));
+    }
+
+    /**
+     * Send the email verification notification.
+     *
+     * @return void
+     */
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new \App\Notifications\VerifyEmailNotification);
+    }
 }

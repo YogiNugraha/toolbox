@@ -43,7 +43,7 @@ class Overview extends Component
             'todayFiles' => $todayFiles,
             'currentPlan' => $currentPlan,
             'activeSub' => $activeSub,
-            'tools' => config('tools'),
+            'tools' => \App\Models\Tool::getActiveTools(),
         ])->layout('layouts.dashboard');
     }
 }

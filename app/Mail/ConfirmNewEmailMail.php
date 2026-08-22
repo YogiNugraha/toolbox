@@ -31,8 +31,9 @@ class ConfirmNewEmailMail extends Mailable
      */
     public function envelope(): Envelope
     {
+        $siteName = \App\Models\Setting::get('site_name', \App\Models\Setting::get('brand_name', config('app.name')));
         return new Envelope(
-            subject: 'Konfirmasi Perubahan Email Akun',
+            subject: 'Konfirmasi Perubahan Email Akun - ' . $siteName,
         );
     }
 
@@ -42,7 +43,7 @@ class ConfirmNewEmailMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.confirm-new-email',
+            view: 'emails.confirm-new-email',
         );
     }
 

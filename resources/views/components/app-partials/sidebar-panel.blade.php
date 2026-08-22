@@ -36,37 +36,41 @@
                     </a>
                 </li>
 
-                <!-- Tools Accordion -->
-                <li x-data="accordionItem('tools')" x-init="if({{ request()->is('tool/*') ? 'true' : 'false' }}) expanded = true">
-                    <a :class="expanded ? 'text-slate-800 font-semibold dark:text-navy-50' : 'text-slate-600 dark:text-navy-200'"
-                        @click="expanded = !expanded"
-                        class="flex items-center justify-between py-2 text-xs-plus tracking-wide outline-hidden transition-[color,padding-left] duration-300 ease-in-out hover:text-slate-800 dark:hover:text-navy-50"
-                        href="javascript:void(0);">
-                        <span>Kumpulan Tools</span>
-                        <svg :class="expanded && 'rotate-90'" xmlns="http://www.w3.org/2000/svg"
-                            class="size-4 text-slate-400 transition-transform ease-in-out" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                        </svg>
-                    </a>
-                    <ul x-collapse x-show="expanded">
-                        @if(config('tools'))
-                            @foreach (config('tools') as $tool)
-                                <li>
-                                    <a href="{{ route('tool', $tool['slug']) }}"
-                                        class="flex items-center justify-between p-2 text-xs-plus tracking-wide
-                                         outline-hidden transition-[color,padding-left] duration-300 ease-in-out hover:pl-4
-                                         {{ request()->is('tool/' . $tool['slug']) ? 'text-primary dark:text-accent-light font-medium' : 'text-slate-600 hover:text-slate-800 dark:text-navy-200 dark:hover:text-navy-50' }}">
-                                        <div class="flex items-center space-x-2">
-                                            <div class="size-1.5 rounded-full border border-current opacity-40"></div>
-                                            <span>{{ $tool['name'] }}</span>
-                                        </div>
-                                    </a>
-                                </li>
-                            @endforeach
-                        @endif
-                    </ul>
+                <!-- Divider Kumpulan Tools -->
+                <li class="pt-4 pb-1">
+                    <div class="flex items-center space-x-2">
+                        <div class="h-px flex-1 bg-slate-200 dark:bg-navy-600"></div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300">Kumpulan Tools</span>
+                        <div class="h-px flex-1 bg-slate-200 dark:bg-navy-600"></div>
+                    </div>
                 </li>
+
+                @php
+                    $activeTools = \App\Models\Tool::getActiveTools();
+                    $groupedCategories = $activeTools->groupBy('category');
+                @endphp
+
+                @foreach($groupedCategories as $categoryName => $catTools)
+                    @php
+                        $categorySlug = \Illuminate\Support\Str::slug($categoryName);
+                        $isCatActive = request()->is('category/' . $categorySlug) || request()->is('category/' . strtolower($categoryName));
+                        $displayName = $categoryName;
+                        if (strtolower($categoryName) === 'image') $displayName = 'Gambar & Foto';
+                        if (strtolower($categoryName) === 'document') $displayName = 'Dokumen & PDF';
+                    @endphp
+                    <li>
+                        <a href="{{ route('dashboard.category', $categorySlug) }}"
+                            class="flex items-center justify-between text-xs-plus py-2 tracking-wide outline-hidden transition-colors duration-300 ease-in-out {{ $isCatActive ? 'text-primary dark:text-accent-light font-medium' : 'text-slate-600 hover:text-slate-800 dark:text-navy-200 dark:hover:text-navy-50' }}">
+                            <div class="flex items-center space-x-2">
+                                <div class="size-1.5 rounded-full border border-current opacity-40"></div>
+                                <span>{{ $displayName }}</span>
+                            </div>
+                            <span class="badge rounded-full {{ $isCatActive ? 'bg-primary/10 text-primary dark:bg-accent/20 dark:text-accent-light' : 'bg-slate-150 text-slate-600 dark:bg-navy-600 dark:text-navy-200' }} text-[10px] font-bold px-1.5 py-0.5">
+                                {{ $catTools->count() }}
+                            </span>
+                        </a>
+                    </li>
+                @endforeach
             </ul>
 
             @if(auth()->check() && auth()->user()->is_admin)
@@ -79,9 +83,27 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('admin.tools') }}"
+                        class="flex text-xs-plus py-2 tracking-wide outline-hidden transition-colors duration-300 ease-in-out {{ request()->routeIs('admin.tools') ? 'text-primary dark:text-accent-light font-medium' : 'text-slate-600 hover:text-slate-800 dark:text-navy-200 dark:hover:text-navy-50' }}">
+                        Kelola Tools
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('admin.plans') }}"
                         class="flex text-xs-plus py-2 tracking-wide outline-hidden transition-colors duration-300 ease-in-out {{ request()->routeIs('admin.plans') ? 'text-primary dark:text-accent-light font-medium' : 'text-slate-600 hover:text-slate-800 dark:text-navy-200 dark:hover:text-navy-50' }}">
                         Paket & Harga
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.users') }}"
+                        class="flex text-xs-plus py-2 tracking-wide outline-hidden transition-colors duration-300 ease-in-out {{ request()->routeIs('admin.users') ? 'text-primary dark:text-accent-light font-medium' : 'text-slate-600 hover:text-slate-800 dark:text-navy-200 dark:hover:text-navy-50' }}">
+                        Pengguna
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.transactions') }}"
+                        class="flex text-xs-plus py-2 tracking-wide outline-hidden transition-colors duration-300 ease-in-out {{ request()->routeIs('admin.transactions') ? 'text-primary dark:text-accent-light font-medium' : 'text-slate-600 hover:text-slate-800 dark:text-navy-200 dark:hover:text-navy-50' }}">
+                        Transaksi
                     </a>
                 </li>
                 <li>
