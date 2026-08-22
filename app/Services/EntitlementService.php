@@ -33,9 +33,23 @@ class EntitlementService
 
     public function isFeatureLocked(User $user, string $toolSlug, string $featureKey): bool
     {
+        if ($user->isSubscribed()) {
+            return false;
+        }
+
         $plan = $this->getCurrentPlan($user);
-        $locked = $plan->limits[$toolSlug]['locked_features'] ?? [];
-        return in_array($featureKey, $locked);
+        
+        if (isset($plan->limits[$toolSlug]['locked_features'])) {
+            return in_array($featureKey, $plan->limits[$toolSlug]['locked_features']);
+        }
+
+        // Fallback to config if not present in DB record yet
+        $lockedConfig = config("plans.{$plan->slug}.limits.{$toolSlug}.locked_features");
+        if ($lockedConfig !== null) {
+            return in_array($featureKey, $lockedConfig);
+        }
+
+        return false;
     }
 
     public function canProcessFile(User $user, string $toolSlug, int $fileSizeBytes): bool

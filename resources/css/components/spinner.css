@@ -1,3 +1,7 @@
+.spinner {
+    @apply inline-block animate-spin rounded-full shrink-0;
+}
+
 .spinner.is-grow span {
     animation: spinner-grow 1.5s ease-in-out infinite;
 }

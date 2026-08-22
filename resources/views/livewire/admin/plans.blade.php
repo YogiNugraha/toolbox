@@ -397,12 +397,14 @@
                                     </div>
                                 </div>
 
-                                @if($tool['slug'] === 'compress-image')
-                                <div class="mt-2.5 pt-2 border-t border-slate-200 dark:border-navy-600">
+                                @if(!empty($tool['lockable_features']))
+                                <div class="mt-2.5 pt-2 border-t border-slate-200 dark:border-navy-600 space-y-2">
+                                    @foreach($tool['lockable_features'] as $featureKey => $featureLabel)
                                     <label class="inline-flex items-center space-x-2 cursor-pointer">
-                                        <input type="checkbox" wire:model="limits.{{ $tool['slug'] }}.locked_features" value="preset_custom" class="form-checkbox is-outline size-4.5 rounded border-slate-400/70 before:bg-primary checked:border-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:before:bg-accent dark:checked:border-accent" />
-                                        <span class="font-semibold text-slate-700 dark:text-navy-100">Kunci Preset Custom (Khusus Pro)</span>
+                                        <input type="checkbox" wire:model="limits.{{ $tool['slug'] }}.locked_features" value="{{ $featureKey }}" class="form-checkbox is-outline size-4.5 rounded border-slate-400/70 before:bg-primary checked:border-primary hover:border-primary focus:border-primary dark:border-navy-400 dark:before:bg-accent dark:checked:border-accent" />
+                                        <span class="font-semibold text-slate-700 dark:text-navy-100 text-xs">{{ $featureLabel }}</span>
                                     </label>
+                                    @endforeach
                                 </div>
                                 @endif
                             </div>

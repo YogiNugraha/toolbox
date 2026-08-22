@@ -8,6 +8,9 @@ return [
         'icon' => 'photo',
         'category' => 'Image',
         'component' => 'tools.image-compressor',
+        'lockable_features' => [
+            'preset_custom' => 'Kunci Preset Custom (Khusus Pro)',
+        ],
     ],
     [
         'slug' => 'convert-image',
@@ -16,6 +19,7 @@ return [
         'icon' => 'arrows-right-left',
         'category' => 'Image',
         'component' => 'tools.image-converter',
+        'lockable_features' => [],
     ],
     [
         'slug' => 'pdf-to-word',
@@ -24,5 +28,17 @@ return [
         'icon' => 'document-text',
         'category' => 'Document',
         'component' => 'tools.pdf-to-word',
+        'lockable_features' => [],
+    ],
+    [
+        'slug' => 'compress-pdf',
+        'name' => 'Compress PDF',
+        'description' => 'Perkecil ukuran dokumen PDF dengan cepat tanpa merusak tata letak teks dan kualitas bacaan.',
+        'icon' => 'document-arrow-down',
+        'category' => 'Document',
+        'component' => 'tools.pdf-compressor',
+        'lockable_features' => [
+            'preset_custom' => 'Kunci Preset Custom (Khusus Pro)',
+        ],
     ],
 ];

@@ -27,7 +27,21 @@ class PdfToWord extends Component
     public function updatedFile()
     {
         $this->resetResult();
+        if (! $this->file) {
+            $this->resetValidation();
+            $this->resetErrorBag();
+            return;
+        }
         $this->validateFile();
+    }
+
+    public function resetFile()
+    {
+        $this->file = null;
+        $this->resetResult();
+        $this->resetValidation();
+        $this->resetErrorBag();
+        $this->errorMsg = null;
     }
 
     public function validateFile()
@@ -163,6 +177,8 @@ class PdfToWord extends Component
         $this->originalSize = null;
         $this->newSize = null;
         $this->errorMsg = null;
+        $this->resetValidation();
+        $this->resetErrorBag();
     }
 
     public function render(\App\Services\EntitlementService $entitlementService)
@@ -175,8 +191,11 @@ class PdfToWord extends Component
         $dailyLimit = $currentPlan->limits[$toolSlug]['daily_quota'] ?? null;
         $maxMb = $currentPlan->limits[$toolSlug]['max_file_size_mb'] ?? null;
 
+        $isPro = $user && $user->isSubscribed();
+
         return view('livewire.tools.pdf-to-word', [
             'remainingQuota' => $remainingQuota,
+            'isPro' => $isPro,
             'dailyLimit' => $dailyLimit,
             'currentPlan' => $currentPlan,
             'maxMb' => $maxMb,

@@ -1,6 +1,20 @@
 import sys
-from pdf2docx import Converter
 import os
+import site
+
+# Dynamically add all potential site-packages directories (supports Apache/webserver runner)
+_potential_site_dirs = [
+    os.path.expanduser(r"~\AppData\Roaming\Python\Python313\site-packages"),
+    r"C:\Users\Yogi Nugraha\AppData\Roaming\Python\Python313\site-packages",
+    r"C:\Python313\Lib\site-packages",
+    r"C:\laragon\bin\python\python-3.10\Lib\site-packages",
+]
+
+for _dir in _potential_site_dirs:
+    if os.path.exists(_dir) and _dir not in sys.path:
+        site.addsitedir(_dir)
+
+from pdf2docx import Converter
 
 if len(sys.argv) < 3:
     print("Usage: python pdf2word.py <input.pdf> <output_dir>")

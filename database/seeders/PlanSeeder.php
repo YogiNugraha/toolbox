@@ -24,6 +24,7 @@ class PlanSeeder extends Seeder
                         'compress-image' => ['daily_quota' => 5, 'locked_features' => ['preset_custom']],
                         'convert-image' => ['daily_quota' => 5, 'locked_features' => []],
                         'pdf-to-word' => ['daily_quota' => 2, 'max_file_size_mb' => 5, 'locked_features' => []],
+                        'compress-pdf' => ['daily_quota' => 5, 'max_file_size_mb' => 20, 'locked_features' => ['preset_custom']],
                     ],
                 ],
                 'pro' => [
@@ -34,12 +35,13 @@ class PlanSeeder extends Seeder
                         'compress-image' => ['daily_quota' => null, 'locked_features' => []],
                         'convert-image' => ['daily_quota' => null, 'locked_features' => []],
                         'pdf-to-word' => ['daily_quota' => null, 'max_file_size_mb' => 50, 'locked_features' => []],
+                        'compress-pdf' => ['daily_quota' => null, 'max_file_size_mb' => 50, 'locked_features' => []],
                     ],
                 ]
             ];
         }
 
-        \App\Models\Plan::firstOrCreate(['slug' => 'free'], [
+        \App\Models\Plan::updateOrCreate(['slug' => 'free'], [
             'name' => $plansConfig['free']['name'],
             'price' => $plansConfig['free']['price'],
             'duration_days' => null,
@@ -50,7 +52,7 @@ class PlanSeeder extends Seeder
             'sort_order' => 1,
         ]);
 
-        \App\Models\Plan::firstOrCreate(['slug' => 'pro'], [
+        \App\Models\Plan::updateOrCreate(['slug' => 'pro'], [
             'name' => $plansConfig['pro']['name'],
             'price' => $plansConfig['pro']['price'],
             'duration_days' => $plansConfig['pro']['duration_days'] ?? 30,

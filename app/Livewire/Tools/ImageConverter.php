@@ -25,6 +25,11 @@ class ImageConverter extends Component
     public function updatedFile()
     {
         $this->resetResult();
+        if (! $this->file) {
+            $this->resetValidation();
+            $this->resetErrorBag();
+            return;
+        }
         $this->validateFile();
         
         // Auto-select a different output format than the input
@@ -38,6 +43,15 @@ class ImageConverter extends Component
                 $this->outputFormat = 'jpg';
             }
         }
+    }
+
+    public function resetFile()
+    {
+        $this->file = null;
+        $this->resetResult();
+        $this->resetValidation();
+        $this->resetErrorBag();
+        $this->errorMsg = null;
     }
 
     public function updatedOutputFormat()
@@ -131,6 +145,8 @@ class ImageConverter extends Component
         $this->originalSize = null;
         $this->newSize = null;
         $this->errorMsg = null;
+        $this->resetValidation();
+        $this->resetErrorBag();
     }
 
     public function download()
@@ -155,8 +171,11 @@ class ImageConverter extends Component
         $currentPlan = $entitlementService->getCurrentPlan($user);
         $dailyLimit = $currentPlan->limits[$toolSlug]['daily_quota'] ?? null;
 
+        $isPro = $user && $user->isSubscribed();
+
         return view('livewire.tools.image-converter', [
             'remainingQuota' => $remainingQuota,
+            'isPro' => $isPro,
             'dailyLimit' => $dailyLimit,
             'currentPlan' => $currentPlan,
         ]);

@@ -33,12 +33,12 @@
                 @else
                     <div class="badge rounded-full space-x-2 bg-success/10 px-3 py-1 text-success text-xs font-semibold">
                         <span>Kuota:</span>
-                        <span>Unlimited (Pro)</span>
+                        <span>{{ $isPro ? 'Unlimited (Pro)' : 'Tanpa Batas' }}</span>
                     </div>
                 @endif
 
                 @if($file)
-                    <button wire:click="resetResult; $set('file', null)" class="text-xs text-error hover:underline flex items-center space-x-1">
+                    <button wire:click="resetFile" class="text-xs text-error hover:underline flex items-center space-x-1 font-medium">
                         <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
@@ -61,8 +61,13 @@
                     </a>
                 </div>
             @else
-                {{-- Upload Drag & Drop Area --}}
-                <div class="card p-4 sm:p-5">
+                {{-- Upload Drag & Drop Area with Lineone Real-time Progress --}}
+                <div x-data="{ isUploading: false, progress: 0 }"
+                     x-on:livewire-upload-start="isUploading = true; progress = 0"
+                     x-on:livewire-upload-finish="isUploading = false"
+                     x-on:livewire-upload-error="isUploading = false"
+                     x-on:livewire-upload-progress="progress = $event.detail.progress"
+                     class="card p-4 sm:p-5">
                     <label x-data="{ isDropping: false }" 
                            x-on:dragover.prevent="isDropping = true"
                            x-on:dragleave.prevent="isDropping = false"
@@ -102,9 +107,18 @@
                         <input type="file" x-ref="fileInput" wire:model="file" class="hidden" accept="image/jpeg, image/png, image/webp, image/gif, image/bmp" />
                     </label>
 
-                    <div wire:loading wire:target="file" class="mt-3 flex items-center justify-center space-x-2 text-xs font-semibold text-primary dark:text-accent-light">
-                        <div class="spinner size-4 animate-spin rounded-full border-2 border-current border-r-transparent"></div>
-                        <span>Mengunggah file...</span>
+                    {{-- Lineone Upload Real-time Progress Bar --}}
+                    <div x-show="isUploading" x-transition class="w-full mt-3.5 rounded-xl bg-slate-100 p-3.5 dark:bg-navy-700/60 border border-slate-200 dark:border-navy-600 space-y-2">
+                        <div class="flex items-center justify-between text-xs font-semibold text-slate-700 dark:text-navy-100">
+                            <span class="flex items-center space-x-2">
+                                <div class="spinner size-3.5 border-2 border-primary border-r-transparent rounded-full dark:border-accent-light"></div>
+                                <span>Mengunggah file gambar ke server...</span>
+                            </span>
+                            <span class="text-primary dark:text-accent-light font-bold" x-text="progress + '%'"></span>
+                        </div>
+                        <div class="progress h-2 bg-slate-200 dark:bg-navy-600 rounded-full overflow-hidden">
+                            <div class="is-active rounded-full bg-primary dark:bg-accent transition-all duration-150" :style="`width: ${progress}%`"></div>
+                        </div>
                     </div>
                 </div>
             @endif
@@ -138,85 +152,122 @@
                     </div>
 
                     {{-- Action Button --}}
-                    <button wire:click="convert" wire:loading.attr="disabled" class="btn rounded-full w-full bg-primary font-bold text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus text-xs py-2.5 shadow-sm disabled:opacity-60">
-                        <span wire:loading.remove wire:target="convert">Ubah Format Gambar</span>
-                        <div wire:loading wire:target="convert" class="flex items-center justify-center space-x-2">
-                            <div class="spinner size-4 animate-spin rounded-full border-2 border-current border-r-transparent"></div>
-                            <span>Mengonversi Gambar...</span>
-                        </div>
+                    <button wire:click="convert" 
+                            wire:loading.attr="disabled" 
+                            class="btn w-full h-11 rounded-lg bg-primary font-bold text-white shadow-lg shadow-primary/30 hover:bg-primary-focus dark:bg-accent dark:shadow-accent/30 dark:hover:bg-accent-focus text-xs sm:text-sm flex items-center justify-center space-x-2 transition-all disabled:opacity-75 disabled:cursor-not-allowed">
+                        <div wire:loading wire:target="convert" class="spinner size-4.5 border-2 border-white border-r-transparent rounded-full"></div>
+                        <span wire:loading.remove wire:target="convert" class="flex items-center space-x-1.5">
+                            <x-lucide-arrow-left-right class="size-4" />
+                            <span>Ubah Format Gambar Sekarang</span>
+                        </span>
+                        <span wire:loading wire:target="convert">Sedang Mengonversi Gambar...</span>
                     </button>
                 </div>
             @endif
         </div>
 
         {{-- Right: Result & Preview Area (5 Columns) --}}
-        <div class="col-span-12 lg:col-span-5">
-            @if ($resultPath)
-                <div class="card flex h-full flex-col items-center justify-center p-6 text-center shadow-md">
-                    <div class="mask is-squircle flex size-16 items-center justify-center bg-success/10 text-success mb-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="size-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+        <div class="col-span-12 lg:col-span-5 space-y-4 sm:space-y-5">
+            {{-- Processing State Card (Lineone Indeterminate Progress) --}}
+            <div wire:loading wire:target="convert" class="w-full">
+                <div class="card flex min-h-[380px] h-full flex-col items-center justify-center p-6 text-center border border-primary/30 dark:border-accent/30 bg-primary/5 dark:bg-accent/5">
+                    <div class="mask is-squircle flex size-16 items-center justify-center bg-primary/10 text-primary dark:bg-accent/10 dark:text-accent-light mb-4 shadow-sm">
+                        <x-lucide-refresh-cw class="size-8 animate-spin" />
                     </div>
-
-                    <h3 class="text-lg font-bold text-slate-700 dark:text-navy-100">
-                        Konversi Format Berhasil!
+                    <h3 class="text-base font-bold text-slate-800 dark:text-navy-100">
+                        Sedang Mengonversi Format Gambar...
                     </h3>
-                    <p class="text-xs text-slate-400 dark:text-navy-300 mt-0.5">
-                        File berhasil diubah ke format <span class="font-bold uppercase text-primary dark:text-accent-light">.{{ $resultExtension }}</span>.
+                    <p class="mt-1 text-xs text-slate-500 dark:text-navy-300 max-w-xs leading-relaxed">
+                        Sistem sedang menyusun ulang kanal warna piksel dan metadata ke format target <strong class="uppercase text-primary dark:text-accent-light">.{{ $outputFormat }}</strong>.
                     </p>
 
-                    {{-- Comparison Box --}}
-                    <div class="mt-5 w-full rounded-xl border border-slate-150 bg-slate-50 p-4 dark:border-navy-600 dark:bg-navy-700/60 space-y-2.5 text-xs">
-                        <div class="flex items-center justify-between border-b border-slate-200/80 pb-2.5 dark:border-navy-600">
-                            <span class="text-slate-500 dark:text-navy-200">Format Asli</span>
-                            <span class="font-bold text-slate-700 dark:text-navy-100 uppercase">
-                                {{ strtoupper($file->getClientOriginalExtension()) }} ({{ number_format($originalSize / 1024, 2) }} KB)
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-between pt-0.5">
-                            <span class="text-slate-500 dark:text-navy-200">Format Baru</span>
-                            <span class="font-bold text-primary dark:text-accent-light uppercase">
-                                {{ strtoupper($resultExtension) }} ({{ number_format($newSize / 1024, 2) }} KB)
-                            </span>
+                    {{-- Lineone Indeterminate Progress Bar --}}
+                    <div class="w-full max-w-xs mt-5">
+                        <div class="progress h-2 bg-primary/20 dark:bg-accent/20 rounded-full overflow-hidden">
+                            <div class="is-indeterminate rounded-full bg-primary dark:bg-accent"></div>
                         </div>
                     </div>
 
-                    {{-- Download Action --}}
-                    <div class="mt-6 w-full space-y-2">
-                        <button wire:click="download" class="btn rounded-full w-full space-x-2 bg-success font-bold text-white hover:bg-success-focus text-xs py-2.5 shadow-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                            </svg>
-                            <span>Unduh File (.{{ $resultExtension }})</span>
-                        </button>
-                        <button wire:click="resetResult; $set('file', null)" class="btn rounded-full w-full border border-slate-300 text-slate-700 hover:bg-slate-150 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 text-xs py-2">
-                            Konversi Gambar Lainnya
-                        </button>
-                    </div>
-                </div>
-            @elseif ($file && !$errors->has('file'))
-                <div class="card flex min-h-[350px] h-full flex-col items-center justify-center p-4 relative overflow-hidden group">
-                    <img src="{{ $file->temporaryUrl() }}" class="max-h-[420px] max-w-full rounded-lg object-contain shadow-sm" alt="Preview Gambar">
-                    <div class="absolute bottom-4 left-0 right-0 flex justify-center">
-                        <span class="badge rounded-full bg-slate-800/80 text-white backdrop-blur-xs shadow-md px-3 py-1 text-xs font-semibold">
-                            Preview File Siap Konversi
+                    <div class="mt-5 flex flex-wrap items-center justify-center gap-2">
+                        <span class="badge rounded-full bg-white/80 text-slate-700 dark:bg-navy-700 dark:text-navy-200 text-[10px] font-semibold px-2.5 py-0.5 shadow-xs flex items-center gap-1">
+                            <x-lucide-shield-check class="size-3 text-success" />
+                            <span>Kualitas Terjaga</span>
+                        </span>
+                        <span class="badge rounded-full bg-white/80 text-slate-700 dark:bg-navy-700 dark:text-navy-200 text-[10px] font-semibold px-2.5 py-0.5 shadow-xs flex items-center gap-1">
+                            <x-lucide-zap class="size-3 text-warning" />
+                            <span>High Fidelity</span>
                         </span>
                     </div>
                 </div>
-            @else
-                <div class="card flex min-h-[350px] h-full flex-col items-center justify-center border-2 border-dashed border-slate-200 bg-slate-50/50 dark:border-navy-600 dark:bg-navy-800/50 p-6 text-center">
-                    <div class="mask is-squircle mx-auto flex size-16 items-center justify-center bg-slate-200 text-slate-400 dark:bg-navy-600 dark:text-navy-300 mb-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="size-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
+            </div>
+
+            {{-- Result Panel (Hidden during convert loading) --}}
+            <div wire:loading.remove wire:target="convert">
+                @if ($resultPath)
+                    <div class="card flex h-full flex-col items-center justify-center p-6 text-center border border-slate-200/80 dark:border-navy-700 shadow-md">
+                        <div class="mask is-squircle flex size-16 items-center justify-center bg-success/10 text-success mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+
+                        <h3 class="text-lg font-bold text-slate-700 dark:text-navy-100">
+                            Konversi Format Berhasil!
+                        </h3>
+                        <p class="text-xs text-slate-400 dark:text-navy-300 mt-0.5">
+                            File berhasil diubah ke format <span class="font-bold uppercase text-primary dark:text-accent-light">.{{ $resultExtension }}</span>.
+                        </p>
+
+                        {{-- Comparison Box --}}
+                        <div class="mt-5 w-full rounded-xl border border-slate-150 bg-slate-50 p-4 dark:border-navy-600 dark:bg-navy-700/60 space-y-2.5 text-xs">
+                            <div class="flex items-center justify-between border-b border-slate-200/80 pb-2.5 dark:border-navy-600">
+                                <span class="text-slate-500 dark:text-navy-200">Format Asli</span>
+                                <span class="font-bold text-slate-700 dark:text-navy-100 uppercase">
+                                    {{ strtoupper($file->getClientOriginalExtension()) }} ({{ number_format($originalSize / 1024, 2) }} KB)
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between pt-0.5">
+                                <span class="text-slate-500 dark:text-navy-200">Format Baru</span>
+                                <span class="font-bold text-primary dark:text-accent-light uppercase">
+                                    {{ strtoupper($resultExtension) }} ({{ number_format($newSize / 1024, 2) }} KB)
+                                </span>
+                            </div>
+                        </div>
+
+                        {{-- Download Action --}}
+                        <div class="mt-6 w-full space-y-2">
+                            <button wire:click="download" class="btn w-full h-11 rounded-lg bg-success font-bold text-white shadow-lg shadow-success/30 hover:bg-success-focus text-xs sm:text-sm flex items-center justify-center space-x-2">
+                                <x-lucide-download class="size-4.5" />
+                                <span>Unduh File (.{{ $resultExtension }})</span>
+                            </button>
+                            <button wire:click="resetFile" class="btn w-full h-9 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 dark:border-navy-600 dark:text-navy-200 dark:hover:bg-navy-700 text-xs font-semibold">
+                                Konversi Gambar Lainnya
+                            </button>
+                        </div>
                     </div>
-                    <p class="font-bold text-slate-500 dark:text-navy-300 text-xs uppercase tracking-wider">Area Pratinjau & Hasil</p>
-                    <p class="text-[11px] text-slate-400 dark:text-navy-300 mt-1 max-w-xs">
-                        Unggah gambar di panel sebelah kiri untuk melihat pratinjau dan hasil konversi di sini.
-                    </p>
-                </div>
-            @endif
+                @elseif ($file && !$errors->has('file'))
+                    <div class="card flex min-h-[350px] h-full flex-col items-center justify-center p-4 relative overflow-hidden group border border-slate-200/80 dark:border-navy-700">
+                        <img src="{{ $file->temporaryUrl() }}" class="max-h-[420px] max-w-full rounded-lg object-contain shadow-sm" alt="Preview Gambar">
+                        <div class="absolute bottom-4 left-0 right-0 flex justify-center">
+                            <span class="badge rounded-full bg-slate-800/80 text-white backdrop-blur-xs shadow-md px-3 py-1 text-xs font-semibold">
+                                Preview File Siap Konversi
+                            </span>
+                        </div>
+                    </div>
+                @else
+                    <div class="card flex min-h-[350px] h-full flex-col items-center justify-center border-2 border-dashed border-slate-200 bg-slate-50/50 dark:border-navy-600 dark:bg-navy-800/50 p-6 text-center">
+                        <div class="mask is-squircle mx-auto flex size-16 items-center justify-center bg-slate-200 text-slate-400 dark:bg-navy-600 dark:text-navy-300 mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <p class="font-bold text-slate-500 dark:text-navy-300 text-xs uppercase tracking-wider">Area Pratinjau & Hasil</p>
+                        <p class="text-[11px] text-slate-400 dark:text-navy-300 mt-1 max-w-xs">
+                            Unggah gambar di panel sebelah kiri untuk melihat pratinjau dan hasil konversi di sini.
+                        </p>
+                    </div>
+                @endif
+            </div>
         </div>
     </div>
 </div>

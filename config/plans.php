@@ -18,6 +18,11 @@ return [
                 'max_file_size_mb' => 5,
                 'locked_features' => [],
             ],
+            'compress-pdf' => [
+                'daily_quota' => 5,
+                'max_file_size_mb' => 20,
+                'locked_features' => ['preset_custom'],
+            ],
         ],
     ],
     'pro' => [
@@ -35,6 +40,11 @@ return [
                 'locked_features' => [],
             ],
             'pdf-to-word' => [
+                'daily_quota' => null,
+                'max_file_size_mb' => 50,
+                'locked_features' => [],
+            ],
+            'compress-pdf' => [
                 'daily_quota' => null,
                 'max_file_size_mb' => 50,
                 'locked_features' => [],

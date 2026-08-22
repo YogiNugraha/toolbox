@@ -33,12 +33,24 @@ class ImageCompressor extends Component
     public $newSize;
     public $resultExtension;
     
-    public $errorMsg;
-
     public function updatedFile()
     {
         $this->resetResult();
+        if (! $this->file) {
+            $this->resetValidation();
+            $this->resetErrorBag();
+            return;
+        }
         $this->validateFile();
+    }
+
+    public function resetFile()
+    {
+        $this->file = null;
+        $this->resetResult();
+        $this->resetValidation();
+        $this->resetErrorBag();
+        $this->errorMsg = null;
     }
 
     public function updatedPreset()
@@ -164,6 +176,8 @@ class ImageCompressor extends Component
         $this->originalSize = null;
         $this->newSize = null;
         $this->errorMsg = null;
+        $this->resetValidation();
+        $this->resetErrorBag();
     }
 
     public function download()
@@ -185,10 +199,12 @@ class ImageCompressor extends Component
         $isCustomLocked = $entitlementService->isFeatureLocked($user, $toolSlug, 'preset_custom');
         $currentPlan = $entitlementService->getCurrentPlan($user);
         $dailyLimit = $currentPlan->limits[$toolSlug]['daily_quota'] ?? null;
+        $isPro = $user && $user->isSubscribed();
 
         return view('livewire.tools.image-compressor', [
             'remainingQuota' => $remainingQuota,
             'isCustomLocked' => $isCustomLocked,
+            'isPro' => $isPro,
             'dailyLimit' => $dailyLimit,
             'currentPlan' => $currentPlan,
         ]);

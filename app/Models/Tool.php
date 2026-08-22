@@ -30,6 +30,7 @@ class Tool extends Model
 
     protected $appends = [
         'image_url',
+        'lockable_features',
     ];
 
     /**
@@ -48,6 +49,16 @@ class Tool extends Model
         }
 
         return null;
+    }
+
+    /**
+     * Get lockable PRO features for this tool from config.
+     */
+    public function getLockableFeaturesAttribute(): array
+    {
+        $configTools = config('tools', []);
+        $found = collect($configTools)->firstWhere('slug', $this->slug);
+        return $found['lockable_features'] ?? [];
     }
 
     protected $casts = [
