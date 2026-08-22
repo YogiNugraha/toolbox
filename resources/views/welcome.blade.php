@@ -64,7 +64,7 @@
 
                     {{-- Navigation Links (Desktop) --}}
                     <nav class="hidden md:flex items-center space-x-6 lg:space-x-8 text-xs font-semibold text-slate-600 dark:text-navy-200">
-                        <a href="#tools-section" class="hover:text-primary dark:hover:text-accent-light transition-colors">Katalog Tools</a>
+                        <a href="{{ route('tools.index') }}" class="hover:text-primary dark:hover:text-accent-light transition-colors">Katalog Tools</a>
                         <a href="#features-section" class="hover:text-primary dark:hover:text-accent-light transition-colors">Keunggulan</a>
                         <a href="#pricing-section" class="hover:text-primary dark:hover:text-accent-light transition-colors">Paket & Harga</a>
                         <a href="#faq-section" class="hover:text-primary dark:hover:text-accent-light transition-colors">FAQ</a>
@@ -107,11 +107,11 @@
                 </div>
             </header>
 
-            {{-- Hero Banner (Lineone Teacher / Onboarding Banner Style) --}}
-            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 lg:pt-12 lg:pb-16">
-                <div class="card relative overflow-hidden bg-gradient-to-l from-pink-200 via-indigo-100 to-indigo-200 dark:from-navy-700 dark:via-navy-800 dark:to-navy-900 p-6 sm:p-10 lg:p-12">
-                    <div class="grid grid-cols-12 gap-6 items-center">
-                        <div class="col-span-12 lg:col-span-7 space-y-4 text-center lg:text-left">
+            {{-- Hero Full-Width Section (Edge-to-Edge) --}}
+            <section class="w-full bg-white dark:bg-navy-800 border-b border-slate-200/80 dark:border-navy-700 py-16 sm:py-20 lg:py-24 transition-colors duration-300">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-12 gap-8 lg:gap-12 items-center">
+                        <div class="col-span-12 lg:col-span-7 space-y-5 text-center lg:text-left">
                             <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-800 dark:text-navy-50 leading-tight">
                                 Compress, Convert & Olah File <span class="text-primary dark:text-accent-light">Online Cepat.</span>
                             </h1>
@@ -120,50 +120,52 @@
                                 Solusi lengkap kompresi foto, konversi format gambar, hingga pengubahan dokumen PDF ke Word secara instan langsung di browser Anda.
                             </p>
 
-                            {{-- Lineone Search Bar --}}
-                            <div class="pt-2 max-w-lg mx-auto lg:mx-0">
+                            {{-- Lineone Search Bar (Redirects to /tools?q=...) --}}
+                            <form action="{{ route('tools.index') }}" method="GET" class="pt-2 max-w-lg mx-auto lg:mx-0">
                                 <div class="relative flex items-center">
                                     <input 
-                                        x-model="search" 
+                                        name="q"
                                         type="text" 
                                         placeholder="Cari tool (contoh: Compress Gambar, PDF to Word)..."
-                                        class="form-input h-11 w-full rounded-full border border-slate-300 bg-white px-4 pl-10 pr-24 text-xs placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-500 dark:bg-navy-800 dark:text-navy-50 dark:placeholder:text-navy-400 dark:hover:border-navy-400 dark:focus:border-accent shadow-sm" />
+                                        class="form-input h-11 w-full rounded-full border border-slate-300 bg-slate-50/80 px-4 pl-10 pr-24 text-xs placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-500 dark:bg-navy-900 dark:text-navy-50 dark:placeholder:text-navy-400 dark:hover:border-navy-400 dark:focus:border-accent shadow-xs" />
                                     <span class="pointer-events-none absolute left-3.5 flex items-center justify-center text-slate-400 dark:text-navy-300">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                         </svg>
                                     </span>
-                                    <a href="#tools-section" class="absolute right-1.5 btn h-8 rounded-full bg-primary px-3.5 font-semibold text-white shadow-sm hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs">
+                                    <button type="submit" class="absolute right-1.5 btn h-8 rounded-full bg-primary px-3.5 font-semibold text-white shadow-sm hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs">
                                         Cari
-                                    </a>
+                                    </button>
                                 </div>
-                            </div>
+                            </form>
 
                             {{-- Action Buttons --}}
-                            <div class="pt-3 flex flex-wrap items-center justify-center lg:justify-start gap-3">
-                                <a href="#tools-section" class="btn rounded-full bg-primary px-6 py-2.5 text-xs font-bold text-white shadow-md shadow-primary/30 hover:bg-primary-focus dark:bg-accent dark:shadow-accent/30 dark:hover:bg-accent-focus space-x-2">
+                            <div class="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-3">
+                                <a href="{{ route('tools.index') }}" class="btn rounded-full bg-primary px-6 py-2.5 text-xs font-bold text-white shadow-md shadow-primary/30 hover:bg-primary-focus dark:bg-accent dark:shadow-accent/30 dark:hover:bg-accent-focus space-x-2">
                                     <span>Jelajahi Semua Tools</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                     </svg>
                                 </a>
                                 @guest
-                                    <a href="{{ route('register') }}" class="btn rounded-full border border-slate-300 bg-white/80 px-6 py-2.5 text-xs font-semibold text-slate-700 hover:bg-white dark:border-navy-500 dark:bg-navy-800/80 dark:text-navy-100 dark:hover:bg-navy-700 shadow-xs">
+                                    <a href="{{ route('register') }}" class="btn rounded-full border border-slate-300 bg-white px-6 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-navy-500 dark:bg-navy-700 dark:text-navy-100 dark:hover:bg-navy-600 shadow-xs">
                                         Daftar Gratis
                                     </a>
                                 @endguest
                             </div>
                         </div>
 
-                        {{-- Right Illustration (Lineone user-laptop illustration) --}}
+                        {{-- Right Illustration (Magic Toolbox without background & without hover animation) --}}
                         <div class="col-span-12 lg:col-span-5 flex justify-center lg:justify-end">
-                            <img class="w-72 sm:w-80 lg:w-96 drop-shadow-md" src="{{ asset('images/illustrations/user-laptop.svg') }}" alt="Ilustrasi Pengolah File" />
+                            <img class="w-80 sm:w-96 lg:w-[440px] max-w-full object-contain" src="{{ asset('images/illustrations/magic-toolbox-hero.png') }}" alt="Kotak Alat Digital Ajaib" />
                         </div>
                     </div>
                 </div>
+            </section>
 
-                {{-- 4 Metric Cards (Lineone Squircle Stat Card Style) --}}
-                <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-5">
+            {{-- 4 Metric Cards Section --}}
+            <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+                <div class="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-5">
                     <div class="card p-4 sm:p-5 flex items-center space-x-3.5">
                         <div class="mask is-squircle flex size-11 shrink-0 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light">
                             <svg xmlns="http://www.w3.org/2000/svg" class="size-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -251,21 +253,7 @@
                         <template x-for="tool in filteredTools" :key="tool.slug">
                             <div class="card flex flex-col justify-between h-full">
                                 <div class="flex h-48 items-center justify-center p-5">
-                                    <template x-if="tool.image_url">
-                                        <img class="max-h-40 max-w-full object-contain" :src="tool.image_url" :alt="tool.name" />
-                                    </template>
-                                    <template x-if="!tool.image_url && tool.slug === 'compress-image'">
-                                        <img class="max-h-40 max-w-full object-contain" src="{{ asset('images/illustrations/upload-cloud.svg') }}" :alt="tool.name" />
-                                    </template>
-                                    <template x-if="!tool.image_url && tool.slug === 'convert-image'">
-                                        <img class="max-h-40 max-w-full object-contain" src="{{ asset('images/illustrations/responsive.svg') }}" :alt="tool.name" />
-                                    </template>
-                                    <template x-if="!tool.image_url && tool.slug === 'pdf-to-word'">
-                                        <img class="max-h-40 max-w-full object-contain" src="{{ asset('images/illustrations/writer.svg') }}" :alt="tool.name" />
-                                    </template>
-                                    <template x-if="!tool.image_url && !['compress-image', 'convert-image', 'pdf-to-word'].includes(tool.slug)">
-                                        <img class="max-h-40 max-w-full object-contain" src="{{ asset('images/illustrations/creativedesign.svg') }}" :alt="tool.name" />
-                                    </template>
+                                    <img class="max-h-40 max-w-full object-contain" :src="tool.image_url || '{{ asset('images/illustrations/creativedesign.svg') }}'" :alt="tool.name" />
                                 </div>
                                 <div class="flex flex-1 flex-col justify-between px-4 pb-8 text-center sm:px-5">
                                     <div>
@@ -324,8 +312,8 @@
 
                     {{-- Bottom Explore All Tools Link --}}
                     <div class="mt-12 text-center">
-                        <a href="{{ auth()->check() ? route('dashboard') : route('register') }}" class="btn rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-navy-700 dark:hover:bg-navy-600 font-bold px-6 py-3 text-xs text-slate-700 dark:text-navy-100 shadow-xs inline-flex items-center space-x-2 transition-all">
-                            <span>Jelajahi Seluruh {{ $totalAllTools ?? 99 }}+ Tools di Dashboard</span>
+                        <a href="{{ route('tools.index') }}" class="btn rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-navy-700 dark:hover:bg-navy-600 font-bold px-6 py-3 text-xs text-slate-700 dark:text-navy-100 shadow-xs inline-flex items-center space-x-2 transition-all">
+                            <span>Jelajahi Seluruh {{ $totalAllTools ?? 3 }}+ Tools di Katalog</span>
                             <x-lucide-arrow-right class="size-4" />
                         </a>
                     </div>

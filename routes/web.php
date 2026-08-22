@@ -43,6 +43,9 @@ Route::get('/', function () {
     return view('welcome', compact('tools', 'totalAllTools', 'categories', 'plans'));
 })->name('home');
 
+// KATALOG TOOLS PUBLIK (SEO & Direktori Lengkap)
+Route::get('/tools', \App\Livewire\ToolsDirectory::class)->name('tools.index');
+
 // GUEST ONLY (belum login)
 Route::middleware(['guest', 'throttle:5,1'])->group(function () {
     Route::get('/login', Login::class)->name('login');
@@ -97,7 +100,6 @@ Route::post('/logout', function () {
 
 Route::middleware(['auth', EnsureUserIsNotBanned::class, EnsureSingleSession::class, 'verified', 'throttle:60,1'])->group(function () {
     Route::get('/dashboard', Overview::class)->name('dashboard');
-    Route::get('/tools', function() { return redirect()->route('dashboard'); })->name('tools.index');
     Route::get('/history', History::class)->name('history');
     Route::get('/profile', Profile::class)->name('profile');
 

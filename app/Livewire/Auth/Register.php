@@ -11,6 +11,9 @@ class Register extends Component
     public $password;
     public $password_confirmation;
 
+    #[\Livewire\Attributes\Url]
+    public $redirect = '';
+
     public bool $emailChecking = false;
     public bool $emailValid = false;
 
@@ -48,7 +51,9 @@ class Register extends Component
         event(new \Illuminate\Auth\Events\Registered($user));
 
         \Illuminate\Support\Facades\Auth::login($user);
-        return redirect()->route('dashboard');
+        
+        $target = $this->redirect ?: session()->pull('url.intended', route('dashboard'));
+        return redirect()->to($target);
     }
 
     public function render()

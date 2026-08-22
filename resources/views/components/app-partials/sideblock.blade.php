@@ -5,9 +5,10 @@
             @php
                 $siteName = \App\Models\Setting::get('site_name', \App\Models\Setting::get('brand_name', config('app.name')));
                 $siteLogo = \App\Models\Setting::get('site_logo');
+                $logoTarget = request()->is('admin*') ? route('admin.overview') : route('dashboard');
             @endphp
             <div class="flex">
-                <a href="/" wire:navigate class="flex items-center space-x-3">
+                <a href="{{ $logoTarget }}" wire:navigate class="flex items-center space-x-3">
                     @if($siteLogo && \Illuminate\Support\Facades\Storage::disk('public')->exists($siteLogo))
                         <div class="flex size-10 shrink-0 items-center justify-center">
                             <img class="size-full object-contain" src="{{ \Illuminate\Support\Facades\Storage::url($siteLogo) }}" alt="{{ $siteName }}" />

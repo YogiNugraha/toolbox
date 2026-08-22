@@ -14,6 +14,9 @@ class Login extends Component
     public $password;
     public $remember = false;
 
+    #[\Livewire\Attributes\Url]
+    public $redirect = '';
+
     public function mount()
     {
         if (session()->has('error')) {
@@ -55,7 +58,9 @@ class Login extends Component
         session(['session_token' => $token]);
 
         request()->session()->regenerate();
-        return redirect()->route('dashboard');
+        
+        $target = $this->redirect ?: session()->pull('url.intended', route('dashboard'));
+        return redirect()->to($target);
     }
 
     public function render()

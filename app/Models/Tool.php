@@ -28,6 +28,10 @@ class Tool extends Model
         'total_usage_count',
     ];
 
+    protected $appends = [
+        'image_url',
+    ];
+
     /**
      * Get image URL or asset illustration fallback.
      */

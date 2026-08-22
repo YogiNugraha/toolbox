@@ -126,23 +126,12 @@
                 {{-- Cards Grid (Lineone Onboarding-1 Standard) --}}
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-5 lg:gap-6">
                     @foreach($toolsInCategory as $tool)
-                        @php
-                            $defaultIllustration = match($tool->slug) {
-                                'compress-image' => asset('images/illustrations/upload-cloud.svg'),
-                                'convert-image' => asset('images/illustrations/responsive.svg'),
-                                'pdf-to-word' => asset('images/illustrations/writer.svg'),
-                                default => asset('images/illustrations/creativedesign.svg'),
-                            };
-
-                            $imageSrc = $tool->image_url ?: $defaultIllustration;
-                        @endphp
-
                         <div class="card flex flex-col justify-between h-full hover:shadow-lg transition-all duration-200 border border-slate-150/70 dark:border-navy-600/70 group">
                             {{-- Top Image / Thumbnail --}}
                             <div class="flex h-44 items-center justify-center p-5 bg-slate-50/60 dark:bg-navy-800/40 rounded-t-lg relative overflow-hidden">
                                 <img
                                     class="max-h-36 max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
-                                    src="{{ $imageSrc }}"
+                                    src="{{ $tool->image_url ?: asset('images/illustrations/creativedesign.svg') }}"
                                     alt="{{ $tool->name }}"
                                 />
 
