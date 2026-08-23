@@ -28,6 +28,10 @@ class PlanSeeder extends Seeder
                         'word-to-pdf' => ['monthly_quota' => 5, 'max_file_size_mb' => 20, 'locked_features' => []],
                         'pdf-to-powerpoint' => ['monthly_quota' => 5, 'max_file_size_mb' => 20, 'locked_features' => []],
                         'powerpoint-to-pdf' => ['monthly_quota' => 5, 'max_file_size_mb' => 20, 'locked_features' => []],
+                        'pdf-to-excel' => ['monthly_quota' => 5, 'max_file_size_mb' => 20, 'locked_features' => []],
+                        'excel-to-pdf' => ['monthly_quota' => 5, 'max_file_size_mb' => 20, 'locked_features' => []],
+                        'merge-pdf' => ['monthly_quota' => 5, 'max_file_size_mb' => 20, 'locked_features' => []],
+                        'split-pdf' => ['monthly_quota' => 5, 'max_file_size_mb' => 20, 'locked_features' => []],
                     ],
                 ],
                 'pro' => [
@@ -42,6 +46,10 @@ class PlanSeeder extends Seeder
                         'word-to-pdf' => ['monthly_quota' => null, 'max_file_size_mb' => 50, 'locked_features' => []],
                         'pdf-to-powerpoint' => ['monthly_quota' => null, 'max_file_size_mb' => 50, 'locked_features' => []],
                         'powerpoint-to-pdf' => ['monthly_quota' => null, 'max_file_size_mb' => 50, 'locked_features' => []],
+                        'pdf-to-excel' => ['monthly_quota' => null, 'max_file_size_mb' => 50, 'locked_features' => []],
+                        'excel-to-pdf' => ['monthly_quota' => null, 'max_file_size_mb' => 50, 'locked_features' => []],
+                        'merge-pdf' => ['monthly_quota' => null, 'max_file_size_mb' => 50, 'locked_features' => []],
+                        'split-pdf' => ['monthly_quota' => null, 'max_file_size_mb' => 50, 'locked_features' => []],
                     ],
                 ]
             ];
