@@ -6,22 +6,37 @@ return [
         'price' => 0,
         'limits' => [
             'compress-image' => [
-                'daily_quota' => 5,
+                'monthly_quota' => 5,
                 'locked_features' => ['preset_custom'],
             ],
             'convert-image' => [
-                'daily_quota' => 5,
+                'monthly_quota' => 5,
                 'locked_features' => [],
             ],
             'pdf-to-word' => [
-                'daily_quota' => 2,
-                'max_file_size_mb' => 5,
+                'monthly_quota' => 5,
+                'max_file_size_mb' => 10,
                 'locked_features' => [],
             ],
             'compress-pdf' => [
-                'daily_quota' => 5,
+                'monthly_quota' => 5,
                 'max_file_size_mb' => 20,
                 'locked_features' => ['preset_custom'],
+            ],
+            'word-to-pdf' => [
+                'monthly_quota' => 5,
+                'max_file_size_mb' => 20,
+                'locked_features' => [],
+            ],
+            'pdf-to-powerpoint' => [
+                'monthly_quota' => 5,
+                'max_file_size_mb' => 20,
+                'locked_features' => [],
+            ],
+            'powerpoint-to-pdf' => [
+                'monthly_quota' => 5,
+                'max_file_size_mb' => 20,
+                'locked_features' => [],
             ],
         ],
     ],
@@ -32,20 +47,35 @@ return [
         'midtrans_item_name' => 'ToolBox Pro - 30 Hari',
         'limits' => [
             'compress-image' => [
-                'daily_quota' => null, // unlimited
+                'monthly_quota' => null, // unlimited
                 'locked_features' => [],
             ],
             'convert-image' => [
-                'daily_quota' => null,
+                'monthly_quota' => null,
                 'locked_features' => [],
             ],
             'pdf-to-word' => [
-                'daily_quota' => null,
+                'monthly_quota' => null,
                 'max_file_size_mb' => 50,
                 'locked_features' => [],
             ],
             'compress-pdf' => [
-                'daily_quota' => null,
+                'monthly_quota' => null,
+                'max_file_size_mb' => 50,
+                'locked_features' => [],
+            ],
+            'word-to-pdf' => [
+                'monthly_quota' => null,
+                'max_file_size_mb' => 50,
+                'locked_features' => [],
+            ],
+            'pdf-to-powerpoint' => [
+                'monthly_quota' => null,
+                'max_file_size_mb' => 50,
+                'locked_features' => [],
+            ],
+            'powerpoint-to-pdf' => [
+                'monthly_quota' => null,
                 'max_file_size_mb' => 50,
                 'locked_features' => [],
             ],

@@ -192,9 +192,9 @@ class PdfCompressor extends Component
         $remainingQuota = $entitlementService->getRemainingQuota($user, $toolSlug);
         $isCustomLocked = $entitlementService->isFeatureLocked($user, $toolSlug, 'preset_custom');
         $currentPlan = $entitlementService->getCurrentPlan($user);
-        $dailyLimit = $currentPlan->limits[$toolSlug]['daily_quota'] ?? 5;
+        $monthlyLimit = $currentPlan->limits[$toolSlug]['monthly_quota'] ?? $currentPlan->limits[$toolSlug]['daily_quota'] ?? 5;
         $isPro = $user && $user->isSubscribed();
 
-        return view('livewire.tools.pdf-compressor', compact('remainingQuota', 'dailyLimit', 'isCustomLocked', 'isPro', 'currentPlan'));
+        return view('livewire.tools.pdf-compressor', compact('remainingQuota', 'monthlyLimit', 'isCustomLocked', 'isPro', 'currentPlan'));
     }
 }

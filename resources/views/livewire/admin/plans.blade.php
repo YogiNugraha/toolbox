@@ -384,8 +384,8 @@
                                 <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                     <div>
                                         <label class="block">
-                                            <span class="font-semibold text-slate-600 dark:text-navy-200 text-xs mb-1 block">Kuota Harian <span class="font-normal text-slate-400">(Kosong = Unlimited)</span></span>
-                                            <input type="number" wire:model="limits.{{ $tool['slug'] }}.daily_quota" placeholder="Unlimited" class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-1.5 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent">
+                                            <span class="font-semibold text-slate-600 dark:text-navy-200 text-xs mb-1 block">Kuota Bulanan <span class="font-normal text-slate-400">(Kosong = Unlimited)</span></span>
+                                            <input type="number" wire:model="limits.{{ $tool['slug'] }}.monthly_quota" placeholder="Unlimited" class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-1.5 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent">
                                         </label>
                                     </div>
                                     

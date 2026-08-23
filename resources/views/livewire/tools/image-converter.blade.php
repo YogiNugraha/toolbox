@@ -2,7 +2,7 @@
     @section('page_description', 'Ubah format gambar Anda dari dan ke JPG, PNG, WebP, GIF, dan format lainnya secara instan.')
 
     {{-- Error Flash Alert --}}
-    @if ($errorMsg)
+    @if (!empty($errorMsg))
         <div class="alert flex rounded-lg border border-error px-4 py-4 text-error sm:px-5 mb-6">
             <svg xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0 mr-2.5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
@@ -25,10 +25,15 @@
             
             {{-- Quota Notification Pill --}}
             <div class="flex items-center justify-between">
-                @if($remainingQuota !== null)
+                @if(auth()->check() && auth()->user()->is_admin)
+                    <div class="badge rounded-full space-x-1.5 bg-linear-to-r from-rose-500/15 via-purple-500/15 to-indigo-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/20 px-3 py-1 text-xs font-bold shadow-xs flex items-center">
+                        <x-lucide-shield-check class="size-3.5" />
+                        <span>Akses: Unlimited (Admin)</span>
+                    </div>
+                @elseif($remainingQuota !== null)
                     <div class="badge rounded-full space-x-2 bg-slate-150 px-3 py-1 text-slate-800 dark:bg-navy-600 dark:text-navy-100 text-xs font-semibold">
-                        <span>Sisa Kuota Hari Ini:</span>
-                        <span class="text-primary dark:text-accent-light">{{ $remainingQuota }} / {{ $dailyLimit }}</span>
+                        <span>Sisa Kuota Bulan Ini:</span>
+                        <span class="text-primary dark:text-accent-light">{{ $remainingQuota }} / {{ $monthlyLimit ?? $dailyLimit }}</span>
                     </div>
                 @else
                     <div class="badge rounded-full space-x-2 bg-success/10 px-3 py-1 text-success text-xs font-semibold">
@@ -54,8 +59,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
                     </div>
-                    <h3 class="mt-4 text-lg font-bold text-slate-700 dark:text-navy-100">Kuota Harian Anda Telah Habis</h3>
-                    <p class="mt-1 text-xs text-slate-400 dark:text-navy-300 max-w-sm mx-auto">Tingkatkan akun Anda ke Pro untuk menikmati pemrosesan file tanpa batas kuota harian.</p>
+                    <h3 class="mt-4 text-lg font-bold text-slate-700 dark:text-navy-100">Kuota Bulanan Anda Telah Habis</h3>
+                    <p class="mt-1 text-xs text-slate-400 dark:text-navy-300 max-w-sm mx-auto">Tingkatkan akun Anda ke Pro untuk menikmati pemrosesan file tanpa batas kuota bulanan.</p>
                     <a href="{{ route('pricing') }}" class="btn rounded-full mt-5 bg-warning font-medium text-white hover:bg-warning-focus shadow-sm text-xs px-6 py-2">
                         Upgrade ke Pro Sekarang
                     </a>

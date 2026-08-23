@@ -8,25 +8,11 @@ use Illuminate\Support\Str;
 
 class Overview extends Component
 {
-    public $search = '';
-    public $selectedCategory = 'all';
-
-    public function selectCategory($category)
-    {
-        $this->selectedCategory = $category;
-    }
-
-    public function resetFilters()
-    {
-        $this->search = '';
-        $this->selectedCategory = 'all';
-    }
-
     public function render()
     {
         $allActiveTools = Tool::getActiveTools();
 
-        // Get unique categories with counts and icon colors
+        // Get unique categories with counts
         $categories = $allActiveTools->groupBy('category')->map(function ($items, $key) {
             $displayName = $key;
             if (strtolower($key) === 'image') $displayName = 'Gambar & Foto';
@@ -40,32 +26,13 @@ class Overview extends Component
             ];
         })->values();
 
-        // Filter tools based on search and selected category
-        $filteredTools = $allActiveTools
-            ->when($this->selectedCategory !== 'all', function ($collection) {
-                return $collection->filter(function ($tool) {
-                    return strtolower($tool->category) === strtolower($this->selectedCategory)
-                        || Str::slug($tool->category) === Str::slug($this->selectedCategory);
-                });
-            })
-            ->when($this->search, function ($collection) {
-                $q = strtolower(trim($this->search));
-                return $collection->filter(function ($tool) use ($q) {
-                    return str_contains(strtolower($tool->name), $q)
-                        || str_contains(strtolower($tool->description ?? ''), $q)
-                        || str_contains(strtolower($tool->slug), $q)
-                        || str_contains(strtolower($tool->category), $q);
-                });
-            });
-
-        // Group filtered tools by category
-        $groupedTools = $filteredTools->groupBy('category');
+        // Group active tools by category
+        $groupedTools = $allActiveTools->groupBy('category');
 
         return view('livewire.dashboard.overview', [
             'groupedTools' => $groupedTools,
             'categories' => $categories,
             'totalToolsCount' => $allActiveTools->count(),
-            'filteredCount' => $filteredTools->count(),
         ])->layout('layouts.dashboard');
     }
 }

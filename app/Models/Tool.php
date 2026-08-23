@@ -164,6 +164,9 @@ class Tool extends Model
 
         foreach ($configTools as $t) {
             $order += 10;
+            $imagePath = 'images/illustrations/tool-' . $t['slug'] . '.png';
+            $image = file_exists(public_path($imagePath)) ? $imagePath : null;
+
             static::updateOrCreate(
                 ['slug' => $t['slug']],
                 [
@@ -171,6 +174,7 @@ class Tool extends Model
                     'description' => $t['description'] ?? '',
                     'category' => $t['category'] ?? 'General',
                     'icon' => $t['icon'] ?? 'wrench',
+                    'image' => $image,
                     'component' => $t['component'] ?? null,
                     'is_active' => true,
                     'is_maintenance' => false,

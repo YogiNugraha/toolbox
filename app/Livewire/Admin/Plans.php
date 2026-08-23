@@ -84,10 +84,14 @@ class Plans extends Component
             $slug = $tool['slug'];
             if (!isset($this->limits[$slug])) {
                 $this->limits[$slug] = [
-                    'daily_quota' => null,
+                    'monthly_quota' => null,
                     'locked_features' => [],
                     'max_file_size_mb' => null
                 ];
+            } else {
+                if (isset($this->limits[$slug]['daily_quota']) && !isset($this->limits[$slug]['monthly_quota'])) {
+                    $this->limits[$slug]['monthly_quota'] = $this->limits[$slug]['daily_quota'];
+                }
             }
         }
 
@@ -132,6 +136,9 @@ class Plans extends Component
         }
 
         foreach ($this->limits as $slug => $limit) {
+            if (isset($this->limits[$slug]['monthly_quota']) && $this->limits[$slug]['monthly_quota'] === '') {
+                $this->limits[$slug]['monthly_quota'] = null;
+            }
             if (isset($this->limits[$slug]['daily_quota']) && $this->limits[$slug]['daily_quota'] === '') {
                 $this->limits[$slug]['daily_quota'] = null;
             }
@@ -223,7 +230,7 @@ class Plans extends Component
         $this->limits = [];
         foreach($this->toolsConfig as $tool) {
             $this->limits[$tool['slug']] = [
-                'daily_quota' => null,
+                'monthly_quota' => null,
                 'locked_features' => [],
                 'max_file_size_mb' => null
             ];

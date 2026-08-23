@@ -25,24 +25,34 @@
 
         {{-- Current Plan Card (Lineone Card) --}}
         @php
+            $isAdmin = auth()->user()->is_admin;
             $isSub = (bool) $activeSubscription;
-            $planName = $isSub ? ($activeSubscription->plan->name ?? ucfirst($activeSubscription->plan_slug)) : 'Free Plan';
+            $planName = $isAdmin ? 'Administrator' : ($isSub ? ($activeSubscription->plan->name ?? ucfirst($activeSubscription->plan_slug)) : 'Free Plan');
             $isProMax = $isSub && ($activeSubscription->plan_slug === 'pro-max' || strtolower((string)$planName) === 'pro max');
         @endphp
-        <div class="card p-5 sm:p-6 border {{ $isSub ? ($isProMax ? 'border-purple-500/50 bg-linear-to-r from-purple-50/40 via-white to-white dark:from-purple-950/20 dark:via-navy-700 dark:to-navy-700 shadow-md shadow-purple-500/10' : 'border-amber-400/50 bg-linear-to-r from-amber-50/40 via-white to-white dark:from-amber-950/20 dark:via-navy-700 dark:to-navy-700 shadow-md shadow-amber-400/10') : 'border-slate-200/80 dark:border-navy-600' }}">
+        <div class="card p-5 sm:p-6 border {{ $isAdmin ? 'border-rose-500/50 bg-linear-to-r from-rose-50/40 via-purple-50/20 to-white dark:from-rose-950/20 dark:via-purple-950/10 dark:to-navy-700 shadow-md shadow-rose-500/10' : ($isSub ? ($isProMax ? 'border-purple-500/50 bg-linear-to-r from-purple-50/40 via-white to-white dark:from-purple-950/20 dark:via-navy-700 dark:to-navy-700 shadow-md shadow-purple-500/10' : 'border-amber-400/50 bg-linear-to-r from-amber-50/40 via-white to-white dark:from-amber-950/20 dark:via-navy-700 dark:to-navy-700 shadow-md shadow-amber-400/10') : 'border-slate-200/80 dark:border-navy-600') }}">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4 border-b border-slate-150 dark:border-navy-500">
                 <div class="flex items-center space-x-3">
-                    <div class="mask is-squircle flex size-12 items-center justify-center {{ $isSub ? ($isProMax ? 'bg-linear-to-tr from-purple-600 to-indigo-500 text-white' : 'bg-linear-to-tr from-amber-400 to-orange-500 text-white') : 'bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light' }} shadow-xs">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                        </svg>
+                    <div class="mask is-squircle flex size-12 items-center justify-center {{ $isAdmin ? 'bg-gradient-to-tr from-rose-600 via-purple-600 to-indigo-600 text-white shadow-md shadow-rose-500/20' : ($isSub ? ($isProMax ? 'bg-linear-to-tr from-purple-600 to-indigo-500 text-white' : 'bg-linear-to-tr from-amber-400 to-orange-500 text-white') : 'bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light') }} shadow-xs">
+                        @if($isAdmin)
+                            <x-lucide-shield-check class="size-6 stroke-[2]" />
+                        @else
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                            </svg>
+                        @endif
                     </div>
                     <div>
                         <div class="flex items-center space-x-2">
                             <h3 class="text-xl font-bold text-slate-800 dark:text-navy-100">
                                 {{ $planName }}
                             </h3>
-                            @if($isSub)
+                            @if($isAdmin)
+                                <span class="badge rounded-full bg-linear-to-r from-rose-600 via-purple-600 to-indigo-600 text-white text-[10px] font-black px-2.5 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
+                                    <x-lucide-shield-check class="size-3 stroke-[2.5]" />
+                                    <span>SUPER ADMIN (FULL ACCESS)</span>
+                                </span>
+                            @elseif($isSub)
                                 @if($isProMax)
                                     <span class="badge rounded-full bg-linear-to-r from-amber-500 via-purple-600 to-indigo-600 text-white text-[10px] font-black px-2.5 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
                                         <x-lucide-crown class="size-3 stroke-[2.5]" />
@@ -61,17 +71,24 @@
                             @endif
                         </div>
                         <p class="text-xs text-slate-400 dark:text-navy-300 mt-0.5">
-                            @if($isSub)
+                            @if($isAdmin)
+                                Akun Administrator memiliki akses penuh tanpa batas ke semua tools, fitur Pro, dan sistem.
+                            @elseif($isSub)
                                 Akses tanpa batas ke semua fitur dan alat pemrosesan.
                             @else
-                                Kuota standar harian untuk pemrosesan file.
+                                Kuota standar bulanan untuk pemrosesan file.
                             @endif
                         </p>
                     </div>
                 </div>
 
                 <div class="flex flex-wrap items-center gap-3">
-                    @if($activeSubscription)
+                    @if($isAdmin)
+                        <a href="{{ route('admin.plans') }}" class="btn h-9 rounded-lg bg-primary text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs font-semibold px-4 shadow-sm flex items-center gap-1.5">
+                            <x-lucide-settings class="size-3.5" />
+                            <span>Kelola Paket di Admin</span>
+                        </a>
+                    @elseif($activeSubscription)
                         <button
                             wire:click="confirmCancel"
                             class="btn h-9 rounded-lg border border-error/30 text-error hover:bg-error/10 text-xs font-semibold px-3"

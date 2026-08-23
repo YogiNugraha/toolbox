@@ -51,12 +51,18 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function isSubscribed(): bool
     {
+        if ($this->is_admin) {
+            return true;
+        }
         $sub = $this->activeSubscription();
         return $sub !== null && $sub->plan_slug !== 'free';
     }
 
     public function activePlanName(): string
     {
+        if ($this->is_admin) {
+            return 'Administrator';
+        }
         $sub = $this->activeSubscription();
         if (!$sub || $sub->plan_slug === 'free') {
             return 'Free';
@@ -67,6 +73,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function activePlanSlug(): string
     {
+        if ($this->is_admin) {
+            return 'admin';
+        }
         $sub = $this->activeSubscription();
         if (!$sub) {
             return 'free';

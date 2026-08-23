@@ -25,24 +25,29 @@
         <div class="col-span-12 lg:col-span-4 space-y-4 sm:space-y-5 lg:space-y-6">
             {{-- User Summary Card --}}
             @php
+                $isAdmin = auth()->user()->is_admin;
                 $isProUser = auth()->user()->isSubscribed();
                 $activePlanName = auth()->user()->activePlanName();
                 $activePlanSlug = auth()->user()->activePlanSlug();
                 $isProMax = $activePlanSlug === 'pro-max' || strtolower((string)$activePlanName) === 'pro max';
                 $subExpiry = auth()->user()->activeSubscription() ? auth()->user()->activeSubscription()->expires_at : null;
             @endphp
-            <div class="card p-4 sm:p-5 {{ $isProUser ? ($isProMax ? 'border border-purple-500/30 bg-linear-to-b from-purple-50/40 via-white to-white dark:from-purple-950/20 dark:via-navy-700 dark:to-navy-700' : 'border border-amber-400/30 bg-linear-to-b from-amber-50/40 via-white to-white dark:from-amber-950/20 dark:via-navy-700 dark:to-navy-700') : '' }}">
+            <div class="card p-4 sm:p-5 {{ $isAdmin ? 'border border-rose-500/30 bg-linear-to-b from-rose-50/40 via-purple-50/20 to-white dark:from-rose-950/20 dark:via-purple-950/10 dark:to-navy-700' : ($isProUser ? ($isProMax ? 'border border-purple-500/30 bg-linear-to-b from-purple-50/40 via-white to-white dark:from-purple-950/20 dark:via-navy-700 dark:to-navy-700' : 'border border-amber-400/30 bg-linear-to-b from-amber-50/40 via-white to-white dark:from-amber-950/20 dark:via-navy-700 dark:to-navy-700') : '') }}">
                 <div class="flex items-center space-x-4">
                     <div class="avatar size-16 shrink-0 relative">
                         @if(auth()->user()->profile_photo_path)
-                            <img class="mask is-squircle object-cover size-full {{ $isProUser ? ($isProMax ? 'ring-2 ring-purple-500' : 'ring-2 ring-amber-400') : '' }}" src="{{ Storage::url(auth()->user()->profile_photo_path) }}" alt="{{ auth()->user()->name }}" />
+                            <img class="mask is-squircle object-cover size-full {{ $isAdmin ? 'ring-2 ring-rose-500 shadow-md shadow-rose-500/20' : ($isProUser ? ($isProMax ? 'ring-2 ring-purple-500' : 'ring-2 ring-amber-400') : '') }}" src="{{ Storage::url(auth()->user()->profile_photo_path) }}" alt="{{ auth()->user()->name }}" />
                         @else
-                            <div class="mask is-squircle flex size-full items-center justify-center {{ $isProUser ? ($isProMax ? 'bg-linear-to-tr from-purple-600 to-indigo-500 text-white' : 'bg-linear-to-tr from-amber-400 to-orange-500 text-white') : 'bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light' }} text-xl font-bold">
+                            <div class="mask is-squircle flex size-full items-center justify-center {{ $isAdmin ? 'bg-gradient-to-tr from-rose-600 via-purple-600 to-indigo-600 text-white shadow-md shadow-rose-500/20' : ($isProUser ? ($isProMax ? 'bg-linear-to-tr from-purple-600 to-indigo-500 text-white' : 'bg-linear-to-tr from-amber-400 to-orange-500 text-white') : 'bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light') }} text-xl font-bold">
                                 {{ substr(auth()->user()->name, 0, 1) }}
                             </div>
                         @endif
 
-                        @if($isProUser)
+                        @if($isAdmin)
+                            <span class="absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full bg-linear-to-r from-rose-500 to-pink-500 text-white shadow-xs ring-2 ring-white dark:ring-navy-700">
+                                <x-lucide-shield-check class="size-3 stroke-[2.5]" />
+                            </span>
+                        @elseif($isProUser)
                             <span class="absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full {{ $isProMax ? 'bg-linear-to-r from-amber-400 to-yellow-300 text-slate-900' : 'bg-amber-400 text-slate-900' }} shadow-xs ring-2 ring-white dark:ring-navy-700">
                                 @if($isProMax)
                                     <x-lucide-crown class="size-3 stroke-[2.5]" />
@@ -58,7 +63,15 @@
                         </h3>
                         <p class="text-xs text-slate-400 dark:text-navy-300 truncate">{{ auth()->user()->email }}</p>
                         <div class="mt-1.5 flex items-center gap-1.5 flex-wrap">
-                            @if($isProUser)
+                            @if($isAdmin)
+                                <span class="badge rounded-full bg-linear-to-r from-rose-600 via-purple-600 to-indigo-600 text-white font-black text-[10px] px-2.5 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
+                                    <x-lucide-shield-check class="size-3 stroke-[2.5]" />
+                                    <span>SUPER ADMIN</span>
+                                </span>
+                                <span class="badge rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 text-[9px] font-bold px-2 py-0.5">
+                                    Full Access
+                                </span>
+                            @elseif($isProUser)
                                 @if($isProMax)
                                     <span class="badge rounded-full bg-linear-to-r from-amber-500 via-purple-600 to-indigo-600 text-white font-black text-[10px] px-2.5 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
                                         <x-lucide-crown class="size-3 stroke-[2.5]" />
@@ -110,6 +123,14 @@
                             <span>Paket & Tagihan</span>
                         </a>
                     </li>
+                    @if($isAdmin)
+                    <li>
+                        <a href="{{ route('admin.overview') }}" wire:navigate class="group flex items-center space-x-2.5 rounded-xl px-4 py-2.5 tracking-wide text-rose-600 outline-hidden transition-all hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-navy-600 font-bold">
+                            <x-lucide-shield-check class="size-4.5 text-rose-500" />
+                            <span>Buka Admin Panel</span>
+                        </a>
+                    </li>
+                    @else
                     <li>
                         <a href="{{ route('pricing') }}" wire:navigate class="group flex items-center space-x-2.5 rounded-xl px-4 py-2.5 tracking-wide text-slate-600 outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 dark:text-navy-200 dark:hover:bg-navy-600 dark:hover:text-navy-100">
                             <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5 text-slate-400 group-hover:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -118,6 +139,7 @@
                             <span>Upgrade ke Pro</span>
                         </a>
                     </li>
+                    @endif
                 </ul>
 
                 <div class="my-5 h-px bg-slate-150 dark:bg-navy-600"></div>

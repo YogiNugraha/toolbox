@@ -193,23 +193,28 @@
 
                 <!-- Profile -->
                 @php
+                    $isAdmin = auth()->check() && auth()->user()->is_admin;
                     $isProUser = auth()->check() && auth()->user()->isSubscribed();
                     $activePlanName = auth()->check() ? auth()->user()->activePlanName() : null;
                     $activePlanSlug = auth()->check() ? auth()->user()->activePlanSlug() : null;
-                    $isProMax = $activePlanSlug === 'pro-max' || strtolower($activePlanName) === 'pro max';
+                    $isProMax = $activePlanSlug === 'pro-max' || strtolower((string)$activePlanName) === 'pro max';
                     $subExpiry = auth()->check() && auth()->user()->activeSubscription() ? auth()->user()->activeSubscription()->expires_at : null;
                 @endphp
                 <div x-data="usePopper({ placement: 'bottom-end', offset: 12 })" @click.outside="if(isShowPopper) isShowPopper = false" class="flex">
-                    <button @click="isShowPopper = !isShowPopper" x-ref="popperRef" class="avatar size-8 cursor-pointer relative rounded-full {{ $isProUser ? ($isProMax ? 'ring-2 ring-purple-500 ring-offset-2 ring-offset-white dark:ring-offset-navy-750' : 'ring-2 ring-amber-400 ring-offset-2 ring-offset-white dark:ring-offset-navy-750') : '' }}">
+                    <button @click="isShowPopper = !isShowPopper" x-ref="popperRef" class="avatar size-8 cursor-pointer relative rounded-full {{ $isAdmin ? 'ring-2 ring-rose-500 ring-offset-2 ring-offset-white dark:ring-offset-navy-750 shadow-sm shadow-rose-500/30' : ($isProUser ? ($isProMax ? 'ring-2 ring-purple-500 ring-offset-2 ring-offset-white dark:ring-offset-navy-750' : 'ring-2 ring-amber-400 ring-offset-2 ring-offset-white dark:ring-offset-navy-750') : '') }}">
                         @if(auth()->check() && auth()->user()->profile_photo_path)
                             <img class="rounded-full object-cover" src="{{ Storage::url(auth()->user()->profile_photo_path) }}" alt="avatar" />
                         @else
-                            <div class="rounded-full {{ $isProUser ? ($isProMax ? 'bg-gradient-to-tr from-purple-600 to-indigo-500 text-white' : 'bg-gradient-to-tr from-amber-400 to-orange-500 text-white') : 'bg-slate-200 text-slate-500 dark:bg-navy-500 dark:text-navy-100' }} w-full h-full flex items-center justify-center font-bold text-xs">
+                            <div class="rounded-full {{ $isAdmin ? 'bg-gradient-to-tr from-rose-600 via-purple-600 to-indigo-600 text-white' : ($isProUser ? ($isProMax ? 'bg-gradient-to-tr from-purple-600 to-indigo-500 text-white' : 'bg-gradient-to-tr from-amber-400 to-orange-500 text-white') : 'bg-slate-200 text-slate-500 dark:bg-navy-500 dark:text-navy-100') }} w-full h-full flex items-center justify-center font-bold text-xs">
                                 {{ auth()->check() ? substr(auth()->user()->name, 0, 1) : 'U' }}
                             </div>
                         @endif
 
-                        @if($isProUser)
+                        @if($isAdmin)
+                            <span class="absolute -top-1 -right-1 flex size-3.5 items-center justify-center rounded-full bg-linear-to-r from-rose-500 to-pink-500 text-white shadow-xs ring-1 ring-white dark:ring-navy-700">
+                                <x-lucide-shield-check class="size-2.5 stroke-[2.5]" />
+                            </span>
+                        @elseif($isProUser)
                             <span class="absolute -top-1 -right-1 flex size-3.5 items-center justify-center rounded-full {{ $isProMax ? 'bg-linear-to-r from-amber-400 to-yellow-300 text-slate-900' : 'bg-amber-400 text-slate-900' }} shadow-xs ring-1 ring-white dark:ring-navy-700">
                                 @if($isProMax)
                                     <x-lucide-crown class="size-2.5 stroke-[2.5]" />
@@ -223,12 +228,12 @@
                     </button>
                     <div :class="isShowPopper && 'show'" class="popper-root fixed" x-ref="popperRoot">
                         <div class="popper-box w-72 rounded-xl border border-slate-150 bg-white shadow-soft dark:border-navy-600 dark:bg-navy-700 overflow-hidden">
-                            <div class="flex items-center space-x-3.5 rounded-t-xl {{ $isProUser ? ($isProMax ? 'bg-gradient-to-r from-purple-50 via-indigo-50 to-amber-50/50 dark:from-purple-950/40 dark:via-navy-800 dark:to-navy-800' : 'bg-gradient-to-r from-amber-50/80 to-orange-50/40 dark:from-amber-950/30 dark:to-navy-800') : 'bg-slate-100 dark:bg-navy-800' }} py-4.5 px-4 border-b border-slate-150 dark:border-navy-600">
-                                <div class="avatar size-12 shrink-0 relative rounded-full {{ $isProUser ? ($isProMax ? 'ring-2 ring-purple-500 ring-offset-2 ring-offset-white dark:ring-offset-navy-800' : 'ring-2 ring-amber-400 ring-offset-2 ring-offset-white dark:ring-offset-navy-800') : '' }}">
+                            <div class="flex items-center space-x-3.5 rounded-t-xl {{ $isAdmin ? 'bg-gradient-to-r from-rose-50 via-purple-50 to-indigo-50 dark:from-rose-950/40 dark:via-purple-950/30 dark:to-navy-800' : ($isProUser ? ($isProMax ? 'bg-gradient-to-r from-purple-50 via-indigo-50 to-amber-50/50 dark:from-purple-950/40 dark:via-navy-800 dark:to-navy-800' : 'bg-gradient-to-r from-amber-50/80 to-orange-50/40 dark:from-amber-950/30 dark:to-navy-800') : 'bg-slate-100 dark:bg-navy-800') }} py-4.5 px-4 border-b border-slate-150 dark:border-navy-600">
+                                <div class="avatar size-12 shrink-0 relative rounded-full {{ $isAdmin ? 'ring-2 ring-rose-500 ring-offset-2 ring-offset-white dark:ring-offset-navy-800' : ($isProUser ? ($isProMax ? 'ring-2 ring-purple-500 ring-offset-2 ring-offset-white dark:ring-offset-navy-800' : 'ring-2 ring-amber-400 ring-offset-2 ring-offset-white dark:ring-offset-navy-800') : '') }}">
                                     @if(auth()->check() && auth()->user()->profile_photo_path)
                                         <img class="rounded-full object-cover" src="{{ Storage::url(auth()->user()->profile_photo_path) }}" alt="avatar" />
                                     @else
-                                        <div class="rounded-full {{ $isProUser ? ($isProMax ? 'bg-gradient-to-tr from-purple-600 to-indigo-500 text-white' : 'bg-gradient-to-tr from-amber-400 to-orange-500 text-white') : 'bg-slate-200 text-slate-500 dark:bg-navy-500 dark:text-navy-100' }} w-full h-full flex items-center justify-center font-bold text-base">
+                                        <div class="rounded-full {{ $isAdmin ? 'bg-gradient-to-tr from-rose-600 via-purple-600 to-indigo-600 text-white' : ($isProUser ? ($isProMax ? 'bg-gradient-to-tr from-purple-600 to-indigo-500 text-white' : 'bg-gradient-to-tr from-amber-400 to-orange-500 text-white') : 'bg-slate-200 text-slate-500 dark:bg-navy-500 dark:text-navy-100') }} w-full h-full flex items-center justify-center font-bold text-base">
                                             {{ auth()->check() ? substr(auth()->user()->name, 0, 1) : 'U' }}
                                         </div>
                                     @endif
@@ -243,7 +248,15 @@
                                         {{ auth()->check() ? auth()->user()->email : '' }}
                                     </p>
                                     <div class="mt-1 flex items-center gap-1.5 flex-wrap">
-                                        @if($isProUser)
+                                        @if($isAdmin)
+                                            <span class="badge rounded-full bg-linear-to-r from-rose-600 via-purple-600 to-indigo-600 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-xs inline-flex items-center gap-1">
+                                                <x-lucide-shield-check class="size-3 stroke-[2.5]" />
+                                                <span>SUPER ADMIN</span>
+                                            </span>
+                                            <span class="badge rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 text-[9px] font-bold px-1.5 py-0.2">
+                                                Full Access
+                                            </span>
+                                        @elseif($isProUser)
                                             @if($isProMax)
                                                 <span class="badge rounded-full bg-linear-to-r from-amber-500 via-purple-600 to-indigo-600 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-xs inline-flex items-center gap-1">
                                                     <x-lucide-crown class="size-3 stroke-[2.5]" />

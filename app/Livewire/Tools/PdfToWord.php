@@ -188,7 +188,7 @@ class PdfToWord extends Component
         
         $remainingQuota = $entitlementService->getRemainingQuota($user, $toolSlug);
         $currentPlan = $entitlementService->getCurrentPlan($user);
-        $dailyLimit = $currentPlan->limits[$toolSlug]['daily_quota'] ?? null;
+        $monthlyLimit = $currentPlan->limits[$toolSlug]['monthly_quota'] ?? $currentPlan->limits[$toolSlug]['daily_quota'] ?? 5;
         $maxMb = $currentPlan->limits[$toolSlug]['max_file_size_mb'] ?? null;
 
         $isPro = $user && $user->isSubscribed();
@@ -196,9 +196,10 @@ class PdfToWord extends Component
         return view('livewire.tools.pdf-to-word', [
             'remainingQuota' => $remainingQuota,
             'isPro' => $isPro,
-            'dailyLimit' => $dailyLimit,
+            'monthlyLimit' => $monthlyLimit,
             'currentPlan' => $currentPlan,
             'maxMb' => $maxMb,
+            'errorMsg' => $this->errorMsg,
         ]);
     }
 }
