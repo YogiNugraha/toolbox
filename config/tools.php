@@ -113,4 +113,13 @@ return [
         'component' => 'tools.pdf-to-jpg',
         'lockable_features' => [],
     ],
+    [
+        'slug' => 'jpg-to-pdf',
+        'name' => 'JPG to PDF',
+        'description' => 'Ubah dan gabungkan gambar JPG, PNG, atau WebP menjadi satu dokumen PDF berkualitas tinggi siap cetak.',
+        'icon' => 'document-arrow-down',
+        'category' => 'Document',
+        'component' => 'tools.jpg-to-pdf',
+        'lockable_features' => [],
+    ],
 ];

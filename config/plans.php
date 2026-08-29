@@ -63,6 +63,11 @@ return [
                 'max_file_size_mb' => 20,
                 'locked_features' => [],
             ],
+            'jpg-to-pdf' => [
+                'monthly_quota' => 5,
+                'max_file_size_mb' => 20,
+                'locked_features' => [],
+            ],
         ],
     ],
     'pro' => [
@@ -125,6 +130,11 @@ return [
                 'locked_features' => [],
             ],
             'pdf-to-jpg' => [
+                'monthly_quota' => null,
+                'max_file_size_mb' => 50,
+                'locked_features' => [],
+            ],
+            'jpg-to-pdf' => [
                 'monthly_quota' => null,
                 'max_file_size_mb' => 50,
                 'locked_features' => [],
