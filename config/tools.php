@@ -104,4 +104,13 @@ return [
         'component' => 'tools.split-pdf',
         'lockable_features' => [],
     ],
+    [
+        'slug' => 'pdf-to-jpg',
+        'name' => 'PDF to JPG',
+        'description' => 'Konversi setiap halaman dokumen PDF menjadi gambar format JPG beresolusi tinggi (HD/Ultra HD) secara instan.',
+        'icon' => 'photo',
+        'category' => 'Document',
+        'component' => 'tools.pdf-to-jpg',
+        'lockable_features' => [],
+    ],
 ];

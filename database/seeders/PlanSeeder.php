@@ -32,6 +32,7 @@ class PlanSeeder extends Seeder
                         'excel-to-pdf' => ['monthly_quota' => 5, 'max_file_size_mb' => 20, 'locked_features' => []],
                         'merge-pdf' => ['monthly_quota' => 5, 'max_file_size_mb' => 20, 'locked_features' => []],
                         'split-pdf' => ['monthly_quota' => 5, 'max_file_size_mb' => 20, 'locked_features' => []],
+                        'pdf-to-jpg' => ['monthly_quota' => 5, 'max_file_size_mb' => 20, 'locked_features' => []],
                     ],
                 ],
                 'pro' => [
@@ -50,6 +51,7 @@ class PlanSeeder extends Seeder
                         'excel-to-pdf' => ['monthly_quota' => null, 'max_file_size_mb' => 50, 'locked_features' => []],
                         'merge-pdf' => ['monthly_quota' => null, 'max_file_size_mb' => 50, 'locked_features' => []],
                         'split-pdf' => ['monthly_quota' => null, 'max_file_size_mb' => 50, 'locked_features' => []],
+                        'pdf-to-jpg' => ['monthly_quota' => null, 'max_file_size_mb' => 50, 'locked_features' => []],
                     ],
                 ]
             ];
