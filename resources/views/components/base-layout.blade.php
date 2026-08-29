@@ -103,6 +103,7 @@
         {{ $script }}
     @endisset
     
+    @stack('scripts')
     @livewireScripts
 </body>
 

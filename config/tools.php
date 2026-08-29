@@ -122,4 +122,13 @@ return [
         'component' => 'tools.jpg-to-pdf',
         'lockable_features' => [],
     ],
+    [
+        'slug' => 'edit-pdf',
+        'name' => 'Edit PDF',
+        'description' => 'Putar halaman, hapus & atur urutan halaman, tambahkan watermark teks stempel, dan beri nomor halaman pada dokumen PDF.',
+        'icon' => 'document-text',
+        'category' => 'Document',
+        'component' => 'tools.edit-pdf',
+        'lockable_features' => [],
+    ],
 ];
