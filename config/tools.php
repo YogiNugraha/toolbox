@@ -131,4 +131,13 @@ return [
         'component' => 'tools.edit-pdf',
         'lockable_features' => [],
     ],
+    [
+        'slug' => 'rotate-pdf',
+        'name' => 'Rotate PDF',
+        'description' => 'Putar dokumen PDF secara permanen dan presisi per halaman atau massal (90°, 180°, 270°) dengan pratinjau instan.',
+        'icon' => 'arrow-path',
+        'category' => 'Document',
+        'component' => 'tools.rotate-pdf',
+        'lockable_features' => [],
+    ],
 ];
