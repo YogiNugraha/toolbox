@@ -27,11 +27,8 @@
         rel="stylesheet" />
 
     <script>
-        /**
-         * THIS SCRIPT REQUIRED FOR PREVENT FLICKERING IN SOME BROWSERS
-         */
-        localStorage.getItem("_x_darkMode_on") === "true" &&
-            document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("dark");
+        try { localStorage.removeItem("_x_darkMode_on"); } catch (e) {}
     </script>
 
     @isset($head)
@@ -89,12 +86,12 @@
                 x-transition:leave-end="opacity-0"
             ></div>
             <div
-                class="relative w-full max-w-lg rounded-lg bg-white px-4 py-10 text-center transition-opacity duration-300 dark:bg-navy-700 sm:px-5"
+                class="relative w-full max-w-lg rounded-lg bg-white px-4 py-10 text-center transition-opacity duration-150 dark:bg-navy-700 sm:px-5"
                 x-show="$store.confirmModal.show"
-                x-transition:enter="ease-out"
-                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                x-transition:enter="ease-out duration-150"
+                x-transition:enter-start="opacity-0 translate-y-2 sm:translate-y-0 sm:scale-98"
                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                x-transition:leave="ease-in duration-200"
+                x-transition:leave="ease-in duration-100"
                 x-transition:leave-start="opacity-100"
                 x-transition:leave-end="opacity-0"
             >

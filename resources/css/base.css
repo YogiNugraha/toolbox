@@ -86,7 +86,7 @@ body.is-monochrome::before {
 }
 
 .sidebar-panel {
-    @apply fixed top-0 left-0 z-30 h-full w-[calc(var(--main-sidebar-width)+var(--sidebar-panel-width))] -translate-x-full transform-gpu shadow-soft transition-transform delay-150 duration-[.25s] ease-in dark:shadow-navy-900/60 md:delay-[unset];
+    @apply fixed top-0 left-0 z-30 h-full w-[calc(var(--main-sidebar-width)+var(--sidebar-panel-width))] -translate-x-full transform-gpu shadow-soft transition-transform duration-150 ease-out dark:shadow-navy-900/60;
 }
 
 .is-sidebar-open .sidebar-panel {
@@ -94,7 +94,7 @@ body.is-monochrome::before {
 }
 
 .sidebar-panel-min {
-    @apply fixed z-40 h-full w-[var(--sidebar-panel-min-width)] shrink-0 -translate-x-full transform-gpu shadow-soft transition-transform duration-[.25s] ease-in dark:shadow-navy-900/60 md:translate-x-[var(--main-sidebar-width)];
+    @apply fixed z-40 h-full w-[var(--sidebar-panel-min-width)] shrink-0 -translate-x-full transform-gpu shadow-soft transition-transform duration-150 ease-out dark:shadow-navy-900/60 md:translate-x-[var(--main-sidebar-width)];
 }
 
 .is-sidebar-open .sidebar-panel-min {

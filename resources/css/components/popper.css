@@ -7,24 +7,24 @@
 }
 
 .popper-root > .popper-box {
-    @apply opacity-0 duration-200 ease-out text-slate-500 dark:text-navy-200;
+    @apply opacity-0 duration-100 ease-out text-slate-500 dark:text-navy-200;
     transition-property: transform, visibility, opacity, translate;
 }
 
 .popper-root[data-popper-placement^="right"] > .popper-box {
-    @apply translate-x-3;
+    @apply translate-x-1;
 }
 
 .popper-root[data-popper-placement^="bottom"] > .popper-box {
-    @apply translate-y-3;
+    @apply translate-y-1;
 }
 
 .popper-root[data-popper-placement^="top"] > .popper-box {
-    @apply -translate-y-3;
+    @apply -translate-y-1;
 }
 
 .popper-root[data-popper-placement^="left"] > .popper-box {
-    @apply -translate-x-3;
+    @apply -translate-x-1;
 }
 
 .popper-root[data-popper-placement^="top"] [data-popper-arrow] {
@@ -64,5 +64,5 @@
 }
 
 .popper-root.show > .popper-box {
-    @apply opacity-100 ease-in translate-x-0 translate-y-0;
+    @apply opacity-100 ease-out translate-x-0 translate-y-0;
 }

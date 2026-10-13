@@ -37,11 +37,8 @@
         rel="stylesheet" />
 
     <script>
-        /**
-         * THIS SCRIPT REQUIRED FOR PREVENT FLICKERING IN SOME BROWSERS
-         */
-        localStorage.getItem("_x_darkMode_on") === "true" &&
-            document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("dark");
+        try { localStorage.removeItem("_x_darkMode_on"); } catch (e) {}
     </script>
 
     @isset($head)

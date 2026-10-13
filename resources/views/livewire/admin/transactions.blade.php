@@ -262,19 +262,30 @@
 
                             {{-- Actions --}}
                             <td class="whitespace-nowrap px-4 py-3 text-right sm:px-5">
-                                <div class="flex items-center justify-end space-x-1.5">
-                                    <button wire:click="openDetailModal({{ $transaction->id }})" title="Rincian Transaksi" class="btn h-7 rounded-lg border border-slate-300 px-2 text-xs font-medium text-slate-700 hover:bg-slate-100 dark:border-navy-500 dark:text-navy-100 flex items-center space-x-1">
-                                        <x-lucide-info class="size-3.5" />
-                                        <span>Detail</span>
+                                <div x-data="usePopper({ placement: 'bottom-end', offset: 4 })" @click.outside="if(isShowPopper) isShowPopper = false" class="inline-flex">
+                                    <button x-ref="popperRef" @click="isShowPopper = !isShowPopper" class="btn size-8 rounded-full p-0 text-slate-500 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:text-navy-200 dark:hover:bg-navy-300/20" title="Menu Aksi">
+                                        <x-lucide-ellipsis-vertical class="size-4.5" />
                                     </button>
-
-                                    @if($transaction->midtrans_order_id)
-                                        <a href="{{ route('dashboard.invoice', ['order_id' => $transaction->midtrans_order_id]) }}"
-                                           class="btn h-7 space-x-1 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white dark:bg-accent-light/10 dark:text-accent-light dark:hover:bg-accent dark:hover:text-white px-2.5 text-xs font-medium transition-colors flex items-center">
-                                            <x-lucide-receipt class="size-3.5" />
-                                            <span>Invoice</span>
-                                        </a>
-                                    @endif
+                                    <div x-ref="popperRoot" class="popper-root fixed" :class="isShowPopper && 'show'">
+                                        <div class="popper-box rounded-md border border-slate-150 bg-white py-1.5 font-inter shadow-lg dark:border-navy-500 dark:bg-navy-700 min-w-[9.5rem] text-left">
+                                            <ul>
+                                                <li>
+                                                    <button @click="isShowPopper = false" wire:click="openDetailModal({{ $transaction->id }})" class="flex h-8 w-full items-center space-x-2 px-3 text-left font-inter text-xs text-slate-700 hover:bg-slate-100 hover:text-slate-800 dark:text-navy-100 dark:hover:bg-navy-600 transition-colors">
+                                                        <x-lucide-info class="size-3.5 text-primary dark:text-accent-light" />
+                                                        <span>Detail Transaksi</span>
+                                                    </button>
+                                                </li>
+                                                @if($transaction->midtrans_order_id)
+                                                    <li>
+                                                        <a @click="isShowPopper = false" href="{{ route('dashboard.invoice', ['order_id' => $transaction->midtrans_order_id]) }}" class="flex h-8 w-full items-center space-x-2 px-3 text-left font-inter text-xs text-slate-700 hover:bg-slate-100 hover:text-slate-800 dark:text-navy-100 dark:hover:bg-navy-600 transition-colors">
+                                                            <x-lucide-receipt class="size-3.5 text-success" />
+                                                            <span>Lihat Invoice</span>
+                                                        </a>
+                                                    </li>
+                                                @endif
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
@@ -309,7 +320,7 @@
             $modalPlanName = $selectedTransaction->plan->name ?? ucfirst($selectedTransaction->plan_slug);
             $modalIsProMax = ($selectedTransaction->plan_slug === 'pro-max' || strtolower((string)$modalPlanName) === 'pro max');
         @endphp
-        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-300"
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-150"
              x-data
              x-on:keydown.escape.window="$wire.closeDetailModal()">
             <div class="relative w-full max-w-lg rounded-2xl bg-white dark:bg-navy-700 shadow-2xl border border-slate-200 dark:border-navy-600 overflow-hidden flex flex-col max-h-[90vh]">

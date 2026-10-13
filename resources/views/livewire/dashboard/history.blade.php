@@ -171,17 +171,31 @@
 
                                 {{-- Actions --}}
                                 <td class="whitespace-nowrap px-4 py-3 text-right sm:px-5">
-                                    <div class="flex items-center justify-end space-x-1.5">
-                                        @if($activity->status === 'completed' && $activity->result_path)
-                                            <a href="{{ route('activity.download', $activity->id) }}" title="Unduh Hasil"
-                                               class="btn size-7 rounded-md bg-primary/10 text-primary hover:bg-primary/20 dark:bg-accent-light/10 dark:text-accent-light dark:hover:bg-accent-light/20 p-0 text-xs font-semibold shadow-xs">
-                                                <x-lucide-download class="size-3.5" />
-                                            </a>
-                                        @endif
-                                        <button wire:click="deleteActivity({{ $activity->id }})" wire:confirm="Yakin ingin menghapus riwayat ini?" title="Hapus Riwayat"
-                                                class="btn size-7 rounded-md bg-error/10 text-error hover:bg-error/20 p-0 text-xs font-semibold shadow-xs">
-                                            <x-lucide-trash-2 class="size-3.5" />
+                                    <div x-data="usePopper({ placement: 'bottom-end', offset: 4 })" @click.outside="if(isShowPopper) isShowPopper = false" class="inline-flex">
+                                        <button x-ref="popperRef" @click="isShowPopper = !isShowPopper" class="btn size-8 rounded-full p-0 text-slate-500 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:text-navy-200 dark:hover:bg-navy-300/20" title="Menu Aksi">
+                                            <x-lucide-ellipsis-vertical class="size-4.5" />
                                         </button>
+                                        <div x-ref="popperRoot" class="popper-root fixed" :class="isShowPopper && 'show'">
+                                            <div class="popper-box rounded-md border border-slate-150 bg-white py-1.5 font-inter shadow-lg dark:border-navy-500 dark:bg-navy-700 min-w-[9.5rem] text-left">
+                                                <ul>
+                                                    @if($activity->status === 'completed' && $activity->result_path)
+                                                        <li>
+                                                            <a @click="isShowPopper = false" href="{{ route('activity.download', $activity->id) }}" class="flex h-8 w-full items-center space-x-2 px-3 text-left font-inter text-xs text-slate-700 hover:bg-slate-100 hover:text-slate-800 dark:text-navy-100 dark:hover:bg-navy-600 transition-colors">
+                                                                <x-lucide-download class="size-3.5 text-primary dark:text-accent-light" />
+                                                                <span>Unduh Berkas</span>
+                                                            </a>
+                                                        </li>
+                                                        <div class="my-1 h-px bg-slate-150 dark:bg-navy-600"></div>
+                                                    @endif
+                                                    <li>
+                                                        <button @click="isShowPopper = false" wire:click="deleteActivity({{ $activity->id }})" wire:confirm="Yakin ingin menghapus riwayat ini?" class="flex h-8 w-full items-center space-x-2 px-3 text-left font-inter text-xs text-error hover:bg-error/10 dark:hover:bg-error/15 transition-colors">
+                                                            <x-lucide-trash-2 class="size-3.5" />
+                                                            <span>Hapus Riwayat</span>
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>

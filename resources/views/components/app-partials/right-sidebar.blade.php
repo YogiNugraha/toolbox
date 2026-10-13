@@ -495,12 +495,6 @@
                     </h2>
                     <div class="mt-2 flex flex-col space-y-2">
                         <label class="inline-flex items-center space-x-2">
-                            <input x-model="$store.global.isDarkModeEnabled"
-                                class="form-switch h-5 w-10 rounded-lg bg-slate-300 before:rounded-md before:bg-slate-50 checked:bg-slate-500 checked:before:bg-white dark:bg-navy-900 dark:before:bg-navy-300 dark:checked:bg-navy-400 dark:checked:before:bg-white"
-                                type="checkbox" />
-                            <span>Dark Mode</span>
-                        </label>
-                        <label class="inline-flex items-center space-x-2">
                             <input x-model="$store.global.isMonochromeModeEnabled"
                                 class="form-switch h-5 w-10 rounded-lg bg-slate-300 before:rounded-md before:bg-slate-50 checked:bg-slate-500 checked:before:bg-white dark:bg-navy-900 dark:before:bg-navy-300 dark:checked:bg-navy-400 dark:checked:before:bg-white"
                                 type="checkbox" />

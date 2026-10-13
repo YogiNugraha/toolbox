@@ -1,5 +1,5 @@
 export default () => ({
-  isDarkModeEnabled: window.Alpine?.$persist ? window.Alpine.$persist(false).as("_x_darkMode_on") : (localStorage.getItem("_x_darkMode_on") === "true"),
+  isDarkModeEnabled: false,
   isMonochromeModeEnabled: false,
   isSearchbarActive: false,
   isSidebarExpanded: false,
@@ -7,6 +7,7 @@ export default () => ({
 
   init() {
     this.removePreloader();
+    document.documentElement.classList.remove("dark");
 
     this.isSidebarExpanded =
       document.querySelector(".sidebar") &&
@@ -14,11 +15,6 @@ export default () => ({
       window.Alpine?.store("breakpoints")?.xlAndUp;
 
     if (window.Alpine?.effect) {
-      window.Alpine.effect(() => {
-        this.isDarkModeEnabled
-          ? document.documentElement.classList.add("dark")
-          : document.documentElement.classList.remove("dark");
-      });
 
       window.Alpine.effect(() => {
         this.isMonochromeModeEnabled

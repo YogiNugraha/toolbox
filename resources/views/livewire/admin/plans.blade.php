@@ -199,15 +199,33 @@
                                     <input class="form-switch h-5 w-10 rounded-full bg-slate-300 before:rounded-full before:bg-slate-50 checked:bg-primary checked:before:bg-white dark:bg-navy-900 dark:before:bg-navy-300 dark:checked:bg-accent dark:checked:before:bg-white" type="checkbox" wire:click="toggleActive({{ $plan->id }})" {{ $plan->is_active ? 'checked' : '' }} />
                                 </label>
                             </td>
-                            <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-right space-x-1.5">
-                                <button wire:click="edit({{ $plan->id }})" class="btn size-7 rounded-md bg-primary/10 text-primary hover:bg-primary/20 dark:bg-accent-light/10 dark:text-accent-light dark:hover:bg-accent-light/20 p-0 text-xs font-semibold shadow-xs" title="Edit Paket">
-                                    <x-lucide-pencil class="size-3.5" />
-                                </button>
-                                @if(!$plan->is_default)
-                                <button wire:click="confirmDelete({{ $plan->id }})" class="btn size-7 rounded-md bg-error/10 text-error hover:bg-error/20 p-0 text-xs font-semibold shadow-xs" title="Hapus Paket">
-                                    <x-lucide-trash-2 class="size-3.5" />
-                                </button>
-                                @endif
+                            <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-right">
+                                <div x-data="usePopper({ placement: 'bottom-end', offset: 4 })" @click.outside="if(isShowPopper) isShowPopper = false" class="inline-flex">
+                                    <button x-ref="popperRef" @click="isShowPopper = !isShowPopper" class="btn size-8 rounded-full p-0 text-slate-500 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:text-navy-200 dark:hover:bg-navy-300/20" title="Menu Aksi">
+                                        <x-lucide-ellipsis-vertical class="size-4.5" />
+                                    </button>
+                                    <div x-ref="popperRoot" class="popper-root fixed" :class="isShowPopper && 'show'">
+                                        <div class="popper-box rounded-md border border-slate-150 bg-white py-1.5 font-inter shadow-lg dark:border-navy-500 dark:bg-navy-700 min-w-[8.5rem] text-left">
+                                            <ul>
+                                                <li>
+                                                    <button @click="isShowPopper = false" wire:click="edit({{ $plan->id }})" class="flex h-8 w-full items-center space-x-2 px-3 text-left font-inter text-xs text-slate-700 hover:bg-slate-100 hover:text-slate-800 dark:text-navy-100 dark:hover:bg-navy-600 transition-colors">
+                                                        <x-lucide-pencil class="size-3.5 text-primary dark:text-accent-light" />
+                                                        <span>Edit Paket</span>
+                                                    </button>
+                                                </li>
+                                                @if(!$plan->is_default)
+                                                    <div class="my-1 h-px bg-slate-150 dark:bg-navy-600"></div>
+                                                    <li>
+                                                        <button @click="isShowPopper = false" wire:click="confirmDelete({{ $plan->id }})" class="flex h-8 w-full items-center space-x-2 px-3 text-left font-inter text-xs text-error hover:bg-error/10 dark:hover:bg-error/15 transition-colors">
+                                                            <x-lucide-trash-2 class="size-3.5" />
+                                                            <span>Hapus Paket</span>
+                                                        </button>
+                                                    </li>
+                                                @endif
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -222,7 +240,7 @@
 
     {{-- Modal Form (Lineone Modal Card) --}}
     @if($isModalOpen)
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-300"
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-150"
          x-data
          x-on:keydown.escape.window="$wire.set('isModalOpen', false)">
         <div class="card w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden rounded-2xl bg-white dark:bg-navy-700 shadow-2xl border border-slate-200 dark:border-navy-600">

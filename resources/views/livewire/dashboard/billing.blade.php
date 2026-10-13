@@ -293,24 +293,39 @@
 
                                     {{-- Aksi --}}
                                     <td class="whitespace-nowrap px-4 py-3 text-right sm:px-5">
-                                        <div class="flex items-center justify-end space-x-1.5">
-                                            @if($trx->status === 'pending')
-                                                <button
-                                                    wire:click="syncPayment('{{ $trx->midtrans_order_id }}')"
-                                                    class="btn h-7 rounded-md border border-slate-300 px-2 text-xs font-medium text-slate-700 hover:bg-slate-100 dark:border-navy-500 dark:text-navy-100"
-                                                    title="Cek Status Pembayaran"
-                                                >
-                                                    Cek
+                                        @if($trx->status === 'pending')
+                                            <div x-data="usePopper({ placement: 'bottom-end', offset: 4 })" @click.outside="if(isShowPopper) isShowPopper = false" class="inline-flex">
+                                                <button x-ref="popperRef" @click="isShowPopper = !isShowPopper" class="btn size-8 rounded-full p-0 text-slate-500 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:text-navy-200 dark:hover:bg-navy-300/20" title="Menu Aksi">
+                                                    <x-lucide-ellipsis-vertical class="size-4.5" />
                                                 </button>
-                                            @endif
+                                                <div x-ref="popperRoot" class="popper-root fixed" :class="isShowPopper && 'show'">
+                                                    <div class="popper-box rounded-md border border-slate-150 bg-white py-1.5 font-inter shadow-lg dark:border-navy-500 dark:bg-navy-700 min-w-[10rem] text-left">
+                                                        <ul>
+                                                            <li>
+                                                                <button @click="isShowPopper = false" wire:click="syncPayment('{{ $trx->midtrans_order_id }}')" class="flex h-8 w-full items-center space-x-2 px-3 text-left font-inter text-xs text-slate-700 hover:bg-slate-100 hover:text-slate-800 dark:text-navy-100 dark:hover:bg-navy-600 transition-colors">
+                                                                    <x-lucide-refresh-cw class="size-3.5 text-warning" />
+                                                                    <span>Cek Pembayaran</span>
+                                                                </button>
+                                                            </li>
+                                                            <li>
+                                                                <a @click="isShowPopper = false" href="{{ route('dashboard.invoice', ['order_id' => $trx->midtrans_order_id]) }}" class="flex h-8 w-full items-center space-x-2 px-3 text-left font-inter text-xs text-slate-700 hover:bg-slate-100 hover:text-slate-800 dark:text-navy-100 dark:hover:bg-navy-600 transition-colors">
+                                                                    <x-lucide-receipt class="size-3.5 text-primary dark:text-accent-light" />
+                                                                    <span>Lihat Invoice</span>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @else
                                             <a
                                                 href="{{ route('dashboard.invoice', ['order_id' => $trx->midtrans_order_id]) }}"
-                                                class="btn h-7 space-x-1 rounded-md bg-primary/10 text-primary hover:bg-primary hover:text-white dark:bg-accent-light/10 dark:text-accent-light dark:hover:bg-accent dark:hover:text-white px-2.5 text-xs font-medium transition-colors flex items-center"
+                                                class="btn h-7 space-x-1 rounded-md bg-primary/10 text-primary hover:bg-primary hover:text-white dark:bg-accent-light/10 dark:text-accent-light dark:hover:bg-accent dark:hover:text-white px-2.5 text-xs font-medium transition-colors inline-flex items-center"
                                             >
                                                 <x-lucide-receipt class="size-3.5" />
                                                 <span>Invoice</span>
                                             </a>
-                                        </div>
+                                        @endif
                                     </td>
                                 </tr>
                             @empty

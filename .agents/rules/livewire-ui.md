@@ -50,13 +50,44 @@ Dokumen ini mendefinisikan standar frontend, komponen Livewire, dan implementasi
        - Error / HOT / Gagal: `badge rounded-full bg-error/15 text-error dark:bg-error/20 dark:text-error-light text-xs font-medium px-2.5 py-0.5`
        - Info / Tag: `badge rounded-full bg-info/10 text-info dark:bg-info/15 text-xs font-medium px-2.5 py-0.5`
    - **Alert**: `<div class="alert flex rounded-lg border border-error px-4 py-3 text-error ...">`
-   - **Anti-AI-Slop**: Dilarang menyisipkan dekorasi blur bola cahaya ambient melayang (`filter blur-3xl opacity-20 bg-linear-to-r`) di belakang kartu/view. Semua tampilan wajib bersih dan modern.
+   - **Anti-AI-Slop & Anti-Redundansi**:
+     - Dilarang menyisipkan dekorasi blur bola cahaya ambient melayang (`filter blur-3xl opacity-20 bg-linear-to-r`).
+     - Dilarang menempelkan icon dekoratif langsung di judul/heading (`<h[1-6]><x-lucide-...> Judul</h[1-6]>`).
+     - Dilarang menempelkan badge dekoratif di samping heading halaman ("Live Analytics", "System Config", "Account Settings").
+     - Dilarang mengulang badge filter periode di dalam kartu metrik bila filter sudah terpampang di atas.
 
 4. **Ikon**:
-   - Gunakan library Lucide Blade Icons: `<x-lucide-{icon-name} class="size-4" />` atau `size-5`.
+   - Gunakan library Lucide Blade Icons: `<x-lucide-{icon-name} class="size-4" />` atau `size-4.5`.
    - Hindari icon emoji mentah untuk kontrol UI inti; gunakan Lucide icon yang presisi dan konsisten.
 
-## 3. Anatomi Halaman Tool
+## 3. Standar Aksi Tabel (Elipsis Titik Tiga `...`)
+Jika sebuah baris tabel memiliki **lebih dari 1 aksi**, DILARANG menjejerkan tombol secara horizontal. Wajib diringkas menjadi tombol **elipsis titik tiga vertikal (`...`)** dengan dropdown mengambang via Lineone Popper:
+```blade
+<div x-data="usePopper({ placement: 'bottom-end', offset: 4 })" @click.outside="if(isShowPopper) isShowPopper = false" class="inline-flex">
+    <button x-ref="popperRef" @click="isShowPopper = !isShowPopper" class="btn size-8 rounded-full p-0 text-slate-500 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 transition-colors" title="Menu Aksi">
+        <x-lucide-ellipsis-vertical class="size-4.5" />
+    </button>
+    <div x-ref="popperRoot" class="popper-root fixed" :class="isShowPopper && 'show'">
+        <div class="popper-box rounded-md border border-slate-150 bg-white py-1.5 font-inter shadow-lg min-w-[9.5rem] text-left">
+            <ul>
+                ...
+            </ul>
+        </div>
+    </div>
+</div>
+```
+*Catatan: Lineone `usePopper` dengan `strategy: 'fixed'` menjamin menu dropdown tidak terpotong oleh `overflow-x: auto` tabel.*
+
+## 4. Standar Animasi & Transisi Fast Snappy
+- **Dropdown / Popper**: `duration-100 ease-out` dengan micro-offset `translate-y-1`.
+- **Modal Panel**: `duration-150 ease-out` enter / `duration-100 ease-in` leave.
+- **Sidebar Panel**: `duration-150 ease-out` tanpa delay.
+
+## 5. Kebijakan Pure Light Mode
+- Platform berjalan murni **Light Mode**. Fitur Dark Mode dinonaktifkan (`isDarkModeEnabled: false`).
+- Dilarang membuat tombol switcher dark mode di header atau navbar.
+
+## 6. Anatomi Halaman Tool
 Setiap view tool harus mengimplementasikan 3 state:
 ```blade
 <div>

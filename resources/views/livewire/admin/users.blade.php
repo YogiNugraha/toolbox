@@ -145,26 +145,44 @@
                                 {{ $user->created_at->translatedFormat('d M Y') }}
                             </td>
                             <td class="whitespace-nowrap px-4 py-3 text-right sm:px-5">
-                                <div class="flex items-center justify-end space-x-1.5">
-                                    <button wire:click="openUserModal({{ $user->id }})" class="btn rounded-lg bg-primary/10 text-primary hover:bg-primary/20 dark:bg-accent-light/10 dark:text-accent-light dark:hover:bg-accent-light/20 px-3 py-1.5 text-xs font-semibold shadow-xs flex items-center space-x-1">
-                                        <x-lucide-user-cog class="size-3.5" />
-                                        <span>Kelola Akun</span>
+                                <div x-data="usePopper({ placement: 'bottom-end', offset: 4 })" @click.outside="if(isShowPopper) isShowPopper = false" class="inline-flex">
+                                    <button x-ref="popperRef" @click="isShowPopper = !isShowPopper" class="btn size-8 rounded-full p-0 text-slate-500 hover:bg-slate-300/20 focus:bg-slate-300/20 active:bg-slate-300/25 dark:text-navy-200 dark:hover:bg-navy-300/20" title="Menu Aksi">
+                                        <x-lucide-ellipsis-vertical class="size-4.5" />
                                     </button>
-
-                                    @if(!$user->is_admin && $user->id !== auth()->id())
-                                        @if($user->banned_at)
-                                            <button wire:click="unbanUser({{ $user->id }})" title="Buka Ban" class="btn size-7 rounded-lg border border-success/30 p-0 text-xs font-semibold text-success hover:bg-success/10 shadow-xs">
-                                                <x-lucide-shield-check class="size-3.5" />
-                                            </button>
-                                        @else
-                                            <button wire:click="confirmBan({{ $user->id }})" title="Ban Pengguna" class="btn size-7 rounded-lg border border-warning/30 p-0 text-xs font-semibold text-warning hover:bg-warning/10 shadow-xs">
-                                                <x-lucide-shield-alert class="size-3.5" />
-                                            </button>
-                                        @endif
-                                        <button wire:click="confirmDeleteUser({{ $user->id }})" title="Hapus Pengguna" class="btn size-7 rounded-lg border border-error/30 p-0 text-xs font-semibold text-error hover:bg-error/10 shadow-xs">
-                                            <x-lucide-trash-2 class="size-3.5" />
-                                        </button>
-                                    @endif
+                                    <div x-ref="popperRoot" class="popper-root fixed" :class="isShowPopper && 'show'">
+                                        <div class="popper-box rounded-md border border-slate-150 bg-white py-1.5 font-inter shadow-lg dark:border-navy-500 dark:bg-navy-700 min-w-[10rem] text-left">
+                                            <ul>
+                                                <li>
+                                                    <button @click="isShowPopper = false" wire:click="openUserModal({{ $user->id }})" class="flex h-8 w-full items-center space-x-2 px-3 text-left font-inter text-xs text-slate-700 hover:bg-slate-100 hover:text-slate-800 dark:text-navy-100 dark:hover:bg-navy-600 transition-colors">
+                                                        <x-lucide-user-cog class="size-3.5 text-primary dark:text-accent-light" />
+                                                        <span>Kelola Akun</span>
+                                                    </button>
+                                                </li>
+                                                @if(!$user->is_admin && $user->id !== auth()->id())
+                                                    <li>
+                                                        @if($user->banned_at)
+                                                            <button @click="isShowPopper = false" wire:click="unbanUser({{ $user->id }})" class="flex h-8 w-full items-center space-x-2 px-3 text-left font-inter text-xs text-success hover:bg-success/10 transition-colors">
+                                                                <x-lucide-shield-check class="size-3.5" />
+                                                                <span>Buka Ban</span>
+                                                            </button>
+                                                        @else
+                                                            <button @click="isShowPopper = false" wire:click="confirmBan({{ $user->id }})" class="flex h-8 w-full items-center space-x-2 px-3 text-left font-inter text-xs text-warning hover:bg-warning/10 transition-colors">
+                                                                <x-lucide-shield-alert class="size-3.5" />
+                                                                <span>Ban Pengguna</span>
+                                                            </button>
+                                                        @endif
+                                                    </li>
+                                                    <div class="my-1 h-px bg-slate-150 dark:bg-navy-600"></div>
+                                                    <li>
+                                                        <button @click="isShowPopper = false" wire:click="confirmDeleteUser({{ $user->id }})" class="flex h-8 w-full items-center space-x-2 px-3 text-left font-inter text-xs text-error hover:bg-error/10 dark:hover:bg-error/15 transition-colors">
+                                                            <x-lucide-trash-2 class="size-3.5" />
+                                                            <span>Hapus Pengguna</span>
+                                                        </button>
+                                                    </li>
+                                                @endif
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
@@ -195,7 +213,7 @@
 
     {{-- Lineone Edit / Manage User Modal --}}
     @if($showUserModal)
-        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-300"
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-150"
              x-data
              x-on:keydown.escape.window="$wire.closeUserModal()">
             <div class="relative w-full max-w-2xl rounded-lg bg-white dark:bg-navy-700 shadow-xl border border-slate-150 dark:border-navy-600 overflow-hidden flex flex-col max-h-[90vh]">

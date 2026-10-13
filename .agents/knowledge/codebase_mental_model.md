@@ -22,6 +22,14 @@ Dokumen ini mencatat keputusan arsitektural penting (*architectural decision rec
 - **Alasan**: Secara default, jika LibreOffice dipanggil bersamaan dari beberapa proses web server dengan direktori pengguna default, LibreOffice akan memunculkan error *document lock* atau crash.
 - **Konsekuensi**: Skrip `word2pdf.py`, `xlsx2pdf.py`, dan `pptx2pdf.py` membuat folder profil unik di direktori temporer dan melewatkannya via parameter `-env:UserInstallation`.
 
+### E. Pure Light Mode & Fast Snappy UI
+- **Alasan**: Dark mode di SPA Livewire rentan terhadap inkonsistensi hydration/state flash, dan tampilan Light Mode Lineone memberikan estetika bersih, profesional, dan tajam tanpa distorsi kontras. Animasi disederhanakan menjadi 100ms–150ms tanpa delay agar interaksi terasa responsif layaknya aplikasi desktop.
+- **Konsekuensi**: Fitur dark mode dinonaktifkan (`isDarkModeEnabled: false`), script membersihkan `.dark` & `_x_darkMode_on`. Jangan menambahkan toggle dark mode.
+
+### F. Aksi Baris Tabel: Elipsis Dropdown (`...`) via Lineone Popper
+- **Alasan**: Menjejerkan banyak tombol aksi di baris tabel membuat tabel melebar secara horizontal dan berantakan. Selain itu, container tabel memiliki `overflow-x: auto` yang memotong dropdown CSS biasa (`absolute`). Lineone `usePopper` memakai strategi `fixed` viewport-relative sehingga menu dropdown mengambang bebas di atas container tanpa terpotong.
+- **Konsekuensi**: Baris tabel dengan > 1 aksi wajib dirangkum ke tombol elipsis vertikal (`...`) menggunakan `usePopper({ placement: 'bottom-end', offset: 4 })`.
+
 ---
 
 ## 2. Perangkap & Hal yang Sering Menjadi Masalah (Gotchas)
@@ -33,13 +41,16 @@ Dokumen ini mencatat keputusan arsitektural penting (*architectural decision rec
 | **URL Virtual Host Laragon** | Fitur download atau asset gagal dimuat di `localhost:8000` | Gunakan URL virtual host Laragon: `http://toolbox.test`. Jangan andalkan `php artisan serve`. |
 | **Worker Queue Belum Aktif** | Status konversi PDF ke Word terus menerus *processing* tanpa selesai | Pastikan terminal worker queue sedang berjalan: `php artisan queue:work`. |
 | **Quota Habis pada Akun Pengguna** | Muncul pesan error "Kuota bulanan Anda sudah habis" | Pengguna perlu dinaikkan paketnya ke Pro atau diberi status `is_admin = 1` di database untuk bypass kuota. |
+| **Menu Dropdown Terpotong Tabel** | Dropdown aksi baris tabel terpotong atau tertutup garis scroll | Gunakan `x-data="usePopper({ placement: 'bottom-end', offset: 4 })"` dengan container `popper-root fixed` (strategi fixed viewport). |
 
 ---
 
 ## 3. Checklist Sebelum Menerapkan Perubahan Baru
 - [ ] Apakah komponen Livewire menggunakan class PHP terpisah di `app/Livewire/`?
 - [ ] Apakah trait `LivewireLineoneAlerts` dan notifikasi `$this->toast()` digunakan untuk respons pengguna?
+- [ ] Apakah baris tabel dengan > 1 aksi menggunakan elipsis titik tiga (`...`) dengan Lineone Popper fixed strategy?
+- [ ] Apakah animasi dan transisi cepat (`duration-100` popper / `duration-150` modal)?
+- [ ] Apakah UI mematuhi **Pure Light Mode** tanpa toggle dark mode dan tanpa AI-slop (tanpa icon dekoratif pada judul, tanpa badge mengambang)?
 - [ ] Apakah pengecekan kuota `EntitlementService` dan pencatatan `Activity` telah diimplementasikan?
 - [ ] Apakah path berkas hasil berada di disk `local` dan aman dari akses publik langsung?
 - [ ] Apakah skrip Python menyertakan blok import `site.addsitedir()` untuk Windows/Laragon?
-- [ ] Apakah desain tampilan mendukung Dark Mode tema Lineone (`dark:bg-navy-900`)?

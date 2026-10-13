@@ -23,4 +23,8 @@ File ini melengkapi [AGENTS.md](file:///c:/laragon/www/toolbox/AGENTS.md) sebaga
 7. **Penyampaian Feedback Interaktif**: Selalu gunakan trait `LivewireLineoneAlerts` (`$this->toast(...)`) untuk notifikasi aksi pengguna.
 8. **Pemisahan Logika Alat**: Livewire menangani interaksi pengguna dan upload; Service di `app/Services/Tools/` menangani proses; skrip Python di `storage/scripts/` melakukan operasi komputasi berkas.
 9. **Perlindungan Kuota & Pro**: Setiap alat wajib memeriksa kuota melalui `EntitlementService` dan mencatat aktivitas di tabel `activities`.
+10. **Aksi Tabel Berganda (Elipsis `...`)**: Jika sebuah baris tabel memiliki lebih dari 1 aksi, WAJIB menggunakan tombol elipsis `<x-lucide-ellipsis-vertical class="size-4.5" />` dengan Lineone `usePopper({ placement: 'bottom-end', offset: 4 })` fixed strategy agar menu tidak terpotong table scroll.
+11. **Animasi Fast & Snappy**: Transisi wajib cepat dan instan. Dropdown popper: `duration-100 ease-out translate-y-1`. Modal form: `duration-150 ease-out`. Sidebar panel: `duration-150 ease-out` tanpa delay.
+12. **Pure Light Mode (Strict)**: Platform berjalan murni Light Mode (`isDarkModeEnabled: false`). Dilarang menambahkan toggle / tombol dark mode.
+13. **Anti-Redundansi Judul & Badge**: Dilarang menempelkan icon dekoratif di judul `<h[1-6]>`, dilarang badge mengambang di samping judul halaman, dan dilarang mengulang teks filter yang sudah aktif di atas.
 

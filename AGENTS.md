@@ -17,6 +17,9 @@ Setiap agen AI yang bekerja di repositori ini **WAJIB** membaca dan mematuhi atu
 | **Ikon UI** | Blade Lucide Icons (`<x-lucide-...>`) | Konsisten menggunakan ikon dari library `mallardduck/blade-lucide-icons` |
 | **Badge & Tag UI** | Murni Lineone UI Kit | Format: `badge rounded-full px-2.5 py-0.5 text-xs font-medium`. **DILARANG KERAS** menyisipkan emoji/icon (`🌟`, `👑`, `🔥`, `✨`, `<x-lucide-...>`) atau gradient buatan pada badge. Wajib teks bersih dengan palet Lineone. |
 | **Anti-AI-Slop** | Clean UI Strict Rule | DILARANG menyisipkan bola gradasi ambient blur melayang (`filter blur-3xl opacity-20 bg-linear-to-r`), shadow raksasa (`shadow-2xl`), atau border rainbow. |
+| **Mode Tampilan** | Pure Light Mode (Strict) | Platform berjalan murni **Light Mode**. Fitur Dark Mode dinonaktifkan (`isDarkModeEnabled: false`). Jangan menambahkan toggle dark mode. |
+| **Aksi Tabel** | Elipsis Dropdown (`...`) | Jika sebuah baris tabel memiliki **lebih dari 1 aksi**, WAJIB menggunakan tombol elipsis `<x-lucide-ellipsis-vertical class="size-4.5" />` dengan Lineone `usePopper({ placement: 'bottom-end', offset: 4 })` fixed strategy agar tidak terpotong table scroll. |
+| **Animasi & Transisi** | Fast & Snappy Micro-animations | Dropdown/popper: `duration-100 ease-out translate-y-1`. Modal: `duration-150 ease-out`. Sidebar panel: `duration-150 ease-out` tanpa delay. |
 | **Notifikasi & Modal** | `App\Traits\LivewireLineoneAlerts` | Gunakan `$this->toast('Pesan', 'success|error|warning|info')` |
 | **Mesin Pemrosesan File** | Python 3.10/3.13 (`PyMuPDF / fitz`, `pdf2docx`, `openpyxl`, `python-pptx`) + LibreOffice Headless | Skrip berada di `storage/scripts/*.py` |
 | **Image Processing** | Intervention Image v4 (GD Driver) | EXIF otomatis di-strip saat encoding |
@@ -58,7 +61,7 @@ Setiap fitur/tool dalam aplikasi ini mengikuti alur **4-Tier Pattern**:
      1. **Upload View**: Dropzone interaktif dengan progress bar upload Alpine.js (`x-on:livewire-upload-progress`).
      2. **Config/Preview View**: Kontrol parameter alat (misal: rotasi, kualitas, halaman).
      3. **Result/Download View**: Tombol unduh berkas hasil, statistik penghematan ukuran, dan opsi proses ulang.
-   - Wajib mendukung tampilan Dark Mode (`dark:bg-navy-900`, `dark:text-navy-100`).
+   - Tampilan difokuskan pada **Pure Light Mode** yang bersih (Lineone Slate palette).
 
 ---
 
