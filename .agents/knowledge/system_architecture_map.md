@@ -63,6 +63,7 @@ graph TD
 | `crop-image` | Image | `Tools\CropImage` | `CropImageService` | Intervention Image v4 (GD Driver) |
 | `qr-generator` | Utility | `Tools\QrGenerator` | `QrGeneratorService` | `chillerlan/php-qrcode` (v6.0) + Intervention Image v4 |
 | `word-counter` | Utility | `Tools\WordCounter` | `WordCounterService` | PHP Multibyte String (`mb_string` + Regex UTF-8) |
+| `page-number-pdf` | Document | `Tools\PageNumberPdf` | `PageNumberPdfService` | `storage/scripts/page_number_pdf.py` (`PyMuPDF`) |
 
 ---
 

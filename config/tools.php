@@ -203,4 +203,13 @@ return [
         'component' => 'tools.word-counter',
         'lockable_features' => [],
     ],
+    [
+        'slug' => 'page-number-pdf',
+        'name' => 'Nomor Halaman PDF',
+        'description' => 'Tambahkan nomor halaman otomatis pada dokumen PDF dengan pilihan format penomoran, posisi margin, dan gaya huruf.',
+        'icon' => 'hash',
+        'category' => 'Document',
+        'component' => 'tools.page-number-pdf',
+        'lockable_features' => [],
+    ],
 ];

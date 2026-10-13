@@ -46,6 +46,10 @@ Dokumen ini mencatat keputusan arsitektural penting (*architectural decision rec
 - **Alasan**: Menghitung kata menggunakan `str_word_count()` standar PHP gagal membaca karakter beraksen atau multibyte/bahasa non-Inggris. Digunakan regex properti Unicode `[\p{L}\p{N}]+/u` dan fungsi `mb_strlen(..., 'UTF-8')` agar perhitungan kata, karakter dengan/tanpa spasi, kalimat, dan paragraf 100% akurat di berbagai bahasa. Transformasi case (UPPERCASE, Title Case, Sentence case, camelCase, snake_case, kebab-case) dipadukan dengan stack undo internal pada Livewire untuk memberikan pengalaman penulisan yang aman dan bebas kesalahan.
 - **Konsekuensi**: Eksekusi instan di memori, responsif di bawah 10ms, dan mendukung impor/ekspor file teks langsung.
 
+### K. PDF Vector Pagination Engine (PyMuPDF Textbox + Dynamic Page Offsets)
+- **Alasan**: Menambahkan nomor halaman pada dokumen resmi/skripsi memerlukan presisi tipografi tinggi tanpa merasterisasi teks asli. Digunakan `page.insert_textbox()` dengan 6 koordinat anchor (top/bottom, left/center/right) dan perataan native PyMuPDF. Mendukung pengabaian halaman sampul (`start_page`), penyesuaian angka awal (`first_number`), dan konversi angka Romawi (i, ii, iii / I, II, III).
+- **Konsekuensi**: Berkas output berukuran sangat kecil (*deflate lossless*), teks nomor halaman dapat disalin/ditelusuri (*searchable*), dan didukung pratinjau thumbnail per halaman.
+
 ---
 
 ## 2. Perangkap & Hal yang Sering Menjadi Masalah (Gotchas)
