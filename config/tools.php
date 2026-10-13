@@ -194,4 +194,13 @@ return [
         'component' => 'tools.qr-generator',
         'lockable_features' => [],
     ],
+    [
+        'slug' => 'word-counter',
+        'name' => 'Word & Character Counter',
+        'description' => 'Hitung jumlah kata, karakter, kalimat, paragraf, dan ubah format teks (UPPERCASE, lowercase, Title Case, camelCase) secara instan.',
+        'icon' => 'type',
+        'category' => 'Utility',
+        'component' => 'tools.word-counter',
+        'lockable_features' => [],
+    ],
 ];

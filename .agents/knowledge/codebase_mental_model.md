@@ -42,6 +42,10 @@ Dokumen ini mencatat keputusan arsitektural penting (*architectural decision rec
 - **Alasan**: `chillerlan/php-qrcode` mendukung output ganda: raster PNG (`QRGdImagePNG`) dan vektor SVG murni (`QRMarkupSVG`) tanpa dependensi sistem C atau eksternal. Untuk fitur logo tengah, Intervention Image v4 menempelkan logo di atas canvas QR dengan badge putih melingkar dan otomatis beralih ke Error Correction Level H (30% redundansi) agar QR tetap mudah dipindai kamera smartphone.
 - **Konsekuensi**: Pratinjau langsung instan (Live Sync data URI) dan ekspor vektor lossless berkualitas tinggi untuk cetak materi fisik maupun digital.
 
+### J. Text & Word Intelligence Suite (Multibyte UTF-8 + Unicode Properties)
+- **Alasan**: Menghitung kata menggunakan `str_word_count()` standar PHP gagal membaca karakter beraksen atau multibyte/bahasa non-Inggris. Digunakan regex properti Unicode `[\p{L}\p{N}]+/u` dan fungsi `mb_strlen(..., 'UTF-8')` agar perhitungan kata, karakter dengan/tanpa spasi, kalimat, dan paragraf 100% akurat di berbagai bahasa. Transformasi case (UPPERCASE, Title Case, Sentence case, camelCase, snake_case, kebab-case) dipadukan dengan stack undo internal pada Livewire untuk memberikan pengalaman penulisan yang aman dan bebas kesalahan.
+- **Konsekuensi**: Eksekusi instan di memori, responsif di bawah 10ms, dan mendukung impor/ekspor file teks langsung.
+
 ---
 
 ## 2. Perangkap & Hal yang Sering Menjadi Masalah (Gotchas)

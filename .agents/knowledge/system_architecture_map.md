@@ -62,6 +62,7 @@ graph TD
 | `resize-image` | Image | `Tools\ResizeImage` | `ResizeImageService` | Intervention Image v4 (GD Driver) |
 | `crop-image` | Image | `Tools\CropImage` | `CropImageService` | Intervention Image v4 (GD Driver) |
 | `qr-generator` | Utility | `Tools\QrGenerator` | `QrGeneratorService` | `chillerlan/php-qrcode` (v6.0) + Intervention Image v4 |
+| `word-counter` | Utility | `Tools\WordCounter` | `WordCounterService` | PHP Multibyte String (`mb_string` + Regex UTF-8) |
 
 ---
 
