@@ -212,4 +212,13 @@ return [
         'component' => 'tools.page-number-pdf',
         'lockable_features' => [],
     ],
+    [
+        'slug' => 'remove-pdf-pages',
+        'name' => 'Hapus Halaman PDF',
+        'description' => 'Hapus satu atau beberapa halaman tertentu dari dokumen PDF secara visual dengan grid thumbnail atau input rentang halaman.',
+        'icon' => 'trash-2',
+        'category' => 'Document',
+        'component' => 'tools.remove-pdf-pages',
+        'lockable_features' => [],
+    ],
 ];

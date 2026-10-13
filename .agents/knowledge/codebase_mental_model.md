@@ -50,6 +50,10 @@ Dokumen ini mencatat keputusan arsitektural penting (*architectural decision rec
 - **Alasan**: Menambahkan nomor halaman pada dokumen resmi/skripsi memerlukan presisi tipografi tinggi tanpa merasterisasi teks asli. Digunakan `page.insert_textbox()` dengan 6 koordinat anchor (top/bottom, left/center/right) dan perataan native PyMuPDF. Mendukung pengabaian halaman sampul (`start_page`), penyesuaian angka awal (`first_number`), dan konversi angka Romawi (i, ii, iii / I, II, III).
 - **Konsekuensi**: Berkas output berukuran sangat kecil (*deflate lossless*), teks nomor halaman dapat disalin/ditelusuri (*searchable*), dan didukung pratinjau thumbnail per halaman.
 
+### L. Visual PDF Page Pruning & Garbage Clean Engine (PyMuPDF doc.select + Garbage Collect)
+- **Alasan**: Menghapus halaman dari PDF sering meninggalkan objek yatim (*orphaned streams/xref tables*) yang membuat ukuran berkas tetap besar. Pendekatan `doc.select([kept_pages])` dikombinasikan dengan `doc.save(garbage=4, deflate=True)` membersihkan seluruh objek yang tidak terpakai, sehingga ukuran berkas hasil pemangkasan mengecil drastis. Thumbnail mini (skala 0.55x) di-render untuk interaktivitas grid visual 2 arah (klik kartu halaman tersinkron dengan teks rentang halaman).
+- **Konsekuensi**: Sangat cepat, hemat kuota data pengguna, dan mencegah dokumen kosong (wajib menyisakan minimal 1 halaman).
+
 ---
 
 ## 2. Perangkap & Hal yang Sering Menjadi Masalah (Gotchas)
@@ -62,6 +66,7 @@ Dokumen ini mencatat keputusan arsitektural penting (*architectural decision rec
 | **Worker Queue Belum Aktif** | Status konversi PDF ke Word terus menerus *processing* tanpa selesai | Pastikan terminal worker queue sedang berjalan: `php artisan queue:work`. |
 | **Quota Habis pada Akun Pengguna** | Muncul pesan error "Kuota bulanan Anda sudah habis" | Pengguna perlu dinaikkan paketnya ke Pro atau diberi status `is_admin = 1` di database untuk bypass kuota. |
 | **Menu Dropdown Terpotong Tabel** | Dropdown aksi baris tabel terpotong atau tertutup garis scroll | Gunakan `x-data="usePopper({ placement: 'bottom-end', offset: 4 })"` dengan container `popper-root fixed` (strategi fixed viewport). |
+| **Livewire Payload Too Large** | `Livewire\Exceptions\PayloadTooLargeException: Livewire request payload is too large` saat klik atau interaksi | DILARANG menyimpan string base64 / data biner di public property Livewire. Simpan thumbnail ke disk publik (`storage/app/public/temp_thumbs/...`) dan render via `asset(...)`. Naikkan juga `payload.max_size` di `config/livewire.php`. |
 
 ---
 
