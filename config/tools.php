@@ -140,4 +140,22 @@ return [
         'component' => 'tools.rotate-pdf',
         'lockable_features' => [],
     ],
+    [
+        'slug' => 'protect-pdf',
+        'name' => 'Protect PDF',
+        'description' => 'Kunci dokumen PDF dengan enkripsi password kuat (AES-256) untuk melindungi data rahasia dari akses ilegal.',
+        'icon' => 'lock',
+        'category' => 'Document',
+        'component' => 'tools.protect-pdf',
+        'lockable_features' => [],
+    ],
+    [
+        'slug' => 'unlock-pdf',
+        'name' => 'Unlock PDF',
+        'description' => 'Hapus proteksi password dan enkripsi pada file PDF secara permanen agar dapat dibuka bebas kapan saja.',
+        'icon' => 'unlock',
+        'category' => 'Document',
+        'component' => 'tools.unlock-pdf',
+        'lockable_features' => [],
+    ],
 ];
