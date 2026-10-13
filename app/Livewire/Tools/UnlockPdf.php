@@ -132,15 +132,16 @@ class UnlockPdf extends Component
 
             $this->toast('Proteksi dokumen PDF berhasil dihapus secara permanen!', 'success');
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (isset($activity)) {
                 $activity->update([
                     'status' => 'failed',
                     'meta' => ['error' => $e->getMessage()]
                 ]);
             }
-            $this->errorMsg = 'Gagal membuka proteksi PDF: ' . $e->getMessage();
-            $this->toast($e->getMessage(), 'error');
+            $cleanMsg = explode("\n", trim($e->getMessage()))[0] ?? 'Terjadi kesalahan sistem.';
+            $this->errorMsg = 'Gagal membuka proteksi PDF: ' . $cleanMsg;
+            $this->toast($cleanMsg, 'error');
         }
     }
 

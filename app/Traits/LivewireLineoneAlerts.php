@@ -12,7 +12,9 @@ trait LivewireLineoneAlerts
      */
     public function toast($text, $variant = 'success')
     {
-        $this->js('$notification({text:"' . addslashes($text) . '",variant:"' . $variant . '"})');
+        $textJson = json_encode((string) $text);
+        $variantJson = json_encode((string) $variant);
+        $this->js('$notification({text:' . $textJson . ',variant:' . $variantJson . '})');
     }
 
     /**
@@ -25,9 +27,10 @@ trait LivewireLineoneAlerts
      */
     public function confirmDialog($title, $text, $action, $data = [])
     {
+        $titleJson = json_encode((string) $title);
+        $textJson = json_encode((string) $text);
+        $actionJson = json_encode((string) $action);
         $dataJson = json_encode($data);
-        $escapedTitle = addslashes($title);
-        $escapedText = addslashes($text);
-        $this->js("Alpine.store('confirmModal').open('{$escapedTitle}','{$escapedText}','{$action}',{$dataJson})");
+        $this->js("Alpine.store('confirmModal').open({$titleJson},{$textJson},{$actionJson},{$dataJson})");
     }
 }

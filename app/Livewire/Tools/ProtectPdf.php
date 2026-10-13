@@ -154,15 +154,16 @@ class ProtectPdf extends Component
 
             $this->toast('Dokumen PDF berhasil diproteksi dengan enkripsi AES-256!', 'success');
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (isset($activity)) {
                 $activity->update([
                     'status' => 'failed',
                     'meta' => ['error' => $e->getMessage()]
                 ]);
             }
-            $this->errorMsg = 'Gagal memproteksi PDF: ' . $e->getMessage();
-            $this->toast('Proses proteksi gagal: ' . $e->getMessage(), 'error');
+            $cleanMsg = explode("\n", trim($e->getMessage()))[0] ?? 'Terjadi kesalahan sistem.';
+            $this->errorMsg = 'Gagal memproteksi PDF: ' . $cleanMsg;
+            $this->toast('Proses proteksi gagal: ' . $cleanMsg, 'error');
         }
     }
 

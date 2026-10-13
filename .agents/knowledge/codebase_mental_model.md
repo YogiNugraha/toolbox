@@ -30,6 +30,14 @@ Dokumen ini mencatat keputusan arsitektural penting (*architectural decision rec
 - **Alasan**: Menjejerkan banyak tombol aksi di baris tabel membuat tabel melebar secara horizontal dan berantakan. Selain itu, container tabel memiliki `overflow-x: auto` yang memotong dropdown CSS biasa (`absolute`). Lineone `usePopper` memakai strategi `fixed` viewport-relative sehingga menu dropdown mengambang bebas di atas container tanpa terpotong.
 - **Konsekuensi**: Baris tabel dengan > 1 aksi wajib dirangkum ke tombol elipsis vertikal (`...`) menggunakan `usePopper({ placement: 'bottom-end', offset: 4 })`.
 
+### G. Watermark & Security PDF Engine (PyMuPDF Morph + Pillow Alpha)
+- **Alasan**: Memberi stempel teks miring pada PDF membutuhkan transformasi matriks affine rotasi (`morph=(center, Matrix(angle))`) dan perhitungan lebar teks eksak (`get_text_length`) agar posisi stempel selalu presisi di tengah atau grid pola berulang (*tiled*). Untuk watermark logo, Pillow menyesuaikan kanal transparansi alpha/RGBA sebelum di-stream ke `insert_image` PyMuPDF.
+- **Konsekuensi**: Operasi berjalan lossless dan in-memory tanpa merusak tata letak maupun resolusi teks asli dokumen.
+
+### H. In-Memory Image Suite (Intervention Image v4 Driver GD)
+- **Alasan**: Operasi resize dan crop gambar tidak memerlukan dependensi eksternal Python atau FFmpeg; Intervention Image v4 dengan driver GD bekerja secara in-memory dalam hitungan milidetik. Menggunakan `scale(width, height)` untuk mempertahankan aspek rasio secara proporsional dan `crop(width, height, x, y)` untuk pemotongan presisi berbagai rasio preset (1:1, 4:3, 16:9, pas foto).
+- **Konsekuensi**: Sangat cepat, hemat sumber daya server, dan tidak memerlukan eksekusi CLI latar belakang.
+
 ---
 
 ## 2. Perangkap & Hal yang Sering Menjadi Masalah (Gotchas)

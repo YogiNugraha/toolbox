@@ -56,6 +56,11 @@ graph TD
 | `jpg-to-pdf` | Document | `Tools\JpgToPdf` | `JpgToPdfService` | `storage/scripts/jpg2pdf.py` (`PyMuPDF` / `Pillow`) |
 | `edit-pdf` | Document | `Tools\EditPdf` | `EditPdfService` | `storage/scripts/edit_pdf.py` (`PyMuPDF`) |
 | `rotate-pdf` | Document | `Tools\RotatePdf` | `RotatePdfService` | `storage/scripts/rotate_pdf.py` (`PyMuPDF`) |
+| `protect-pdf` | Document | `Tools\ProtectPdf` | `ProtectPdfService` | `storage/scripts/protect_pdf.py` (`PyMuPDF` AES-256) |
+| `unlock-pdf` | Document | `Tools\UnlockPdf` | `UnlockPdfService` | `storage/scripts/unlock_pdf.py` (`PyMuPDF`) |
+| `watermark-pdf` | Document | `Tools\WatermarkPdf` | `WatermarkPdfService` | `storage/scripts/watermark_pdf.py` (`PyMuPDF` / `Pillow`) |
+| `resize-image` | Image | `Tools\ResizeImage` | `ResizeImageService` | Intervention Image v4 (GD Driver) |
+| `crop-image` | Image | `Tools\CropImage` | `CropImageService` | Intervention Image v4 (GD Driver) |
 
 ---
 

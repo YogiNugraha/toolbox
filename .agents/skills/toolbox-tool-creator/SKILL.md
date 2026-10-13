@@ -205,3 +205,16 @@ Buat file `resources/views/livewire/tools/{kebab-case}.blade.php`:
 - **Tombol**: Gunakan `btn h-9 rounded-full font-medium text-xs px-5 shadow-xs`. Dilarang efek glow berpendar berwarna (`shadow-primary/*`).
 - **Badges**: Gunakan `badge rounded-full px-2.5 py-0.5 text-xs font-medium` dengan palet soft Lineone (`bg-primary/10 text-primary`, `bg-secondary/15 text-secondary`, `bg-warning/15 text-warning`, `bg-success/15 text-success`, `bg-slate-150 text-slate-700`). DILARANG KERAS menyisipkan emoji (`🌟`, `👑`, `🔥`, `✨`), icon `<x-lucide-...>`, atau gradient buatan di dalam badge.
 - **Anti-AI-Slop**: Dilarang menambahkan bola ambient blur melayang (`filter blur-3xl opacity-20 bg-linear-to-r`) atau border pelangi. Semua tampilan wajib bersih dan modern sesuai Lineone UI Kit.
+
+---
+
+## Langkah 6: Pembaruan Pengetahuan Otak AI (Mental Model & Skill)
+
+Setiap kali menyelesaikan penambahan tool baru, agen **WAJIB** memperbarui dokumentasi pengetahuan proyek:
+1. Tambahkan baris tool baru ke tabel katalog di [`.agents/knowledge/system_architecture_map.md`](file:///c:/laragon/www/toolbox/.agents/knowledge/system_architecture_map.md).
+2. Jika tool memperkenalkan teknik baru (misal: enkripsi AES, manipulasi Pillow opacity, atau morph rotation), catat polanya ke [`.agents/knowledge/codebase_mental_model.md`](file:///c:/laragon/www/toolbox/.agents/knowledge/codebase_mental_model.md).
+3. Bersihkan dan kompilasi template Blade:
+   ```powershell
+   php artisan view:clear; php artisan view:cache
+   npm run build
+   ```
