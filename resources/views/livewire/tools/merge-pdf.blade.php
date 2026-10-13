@@ -215,15 +215,6 @@
                             <div class="is-indeterminate rounded-full bg-primary dark:bg-accent"></div>
                         </div>
                     </div>
-
-                    <div class="mt-5 flex flex-wrap items-center justify-center gap-2">
-                        <span class="badge rounded-full bg-slate-100 text-slate-700 dark:bg-navy-600 dark:text-navy-200 text-xs font-medium px-2.5 py-0.5">
-                            Kualitas Vektor Terjaga
-                        </span>
-                        <span class="badge rounded-full bg-slate-100 text-slate-700 dark:bg-navy-600 dark:text-navy-200 text-xs font-medium px-2.5 py-0.5">
-                            Proses Cepat
-                        </span>
-                    </div>
                 </div>
             </div>
 

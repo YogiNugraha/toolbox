@@ -6,17 +6,12 @@
     {{-- Header & Subtitle --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4 sm:py-5">
         <div>
-            <h2 class="text-xl font-bold text-slate-800 dark:text-navy-50 lg:text-2xl">
+            <h2 class="text-xl font-medium tracking-wide text-slate-800 dark:text-navy-100 lg:text-2xl">
                 Riwayat & Manajemen Transaksi
             </h2>
             <p class="mt-1 text-xs text-slate-400 dark:text-navy-300">
                 Pantau seluruh catatan transaksi gateway Midtrans, rincian nominal pembayaran, status langganan, dan cetak invoice.
             </p>
-        </div>
-        <div class="flex items-center space-x-2">
-            <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-xs font-bold px-3 py-1">
-                Total {{ $transactions->total() }} Transaksi
-            </span>
         </div>
     </div>
 

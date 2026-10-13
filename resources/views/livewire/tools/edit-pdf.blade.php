@@ -35,7 +35,7 @@
             <div class="flex items-center justify-center">
                 @if(auth()->check() && auth()->user()->is_admin)
                     <div class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/15 dark:text-accent-light px-3.5 py-1 text-xs font-medium">
-                        Akses: Unlimited (Admin VIP)
+                        Akses: Tanpa Batas (Administrator)
                     </div>
                 @elseif($remainingQuota !== null)
                     <div class="badge rounded-full space-x-2 bg-slate-150 px-3.5 py-1 text-slate-800 dark:bg-navy-600 dark:text-navy-100 text-xs font-medium">
@@ -369,9 +369,8 @@
         <div x-show="showSignatureModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
             <div @click.away="showSignatureModal = false" class="card p-6 w-full max-w-md bg-white dark:bg-navy-800 shadow-lg border border-slate-150 dark:border-navy-600 rounded-lg space-y-4">
                 <div class="flex items-center justify-between pb-2 border-b border-slate-150 dark:border-navy-600">
-                    <h3 class="text-sm font-semibold text-slate-800 dark:text-navy-100 flex items-center gap-2">
-                        <x-lucide-signature class="size-4.5 text-primary dark:text-accent-light" />
-                        <span>Bubuhkan Tanda Tangan Digital</span>
+                    <h3 class="text-sm font-semibold text-slate-800 dark:text-navy-100">
+                        Bubuhkan Tanda Tangan Digital
                     </h3>
                     <button @click="showSignatureModal = false" class="text-slate-400 hover:text-slate-600 cursor-pointer">
                         <x-lucide-x class="size-4.5" />

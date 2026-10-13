@@ -23,9 +23,8 @@
     <div class="card mb-6 p-4 sm:p-5">
         <div class="mb-4 border-b border-slate-150 pb-3 dark:border-navy-600 flex items-center justify-between">
             <div>
-                <h3 class="text-sm font-bold tracking-wide text-slate-700 dark:text-navy-100 uppercase flex items-center gap-2">
-                    <x-lucide-receipt class="size-4 text-primary dark:text-accent-light" />
-                    <span>Pengaturan Pajak & Biaya Layanan Gateway</span>
+                <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-navy-100">
+                    Pengaturan Pajak & Biaya Layanan Gateway
                 </h3>
                 <p class="mt-0.5 text-xs text-slate-400 dark:text-navy-300">Diterapkan secara otomatis pada checkout pembayaran langganan.</p>
             </div>
@@ -235,7 +234,7 @@
                         <x-lucide-tag class="size-5" />
                     </div>
                     <div>
-                        <h3 class="text-base font-bold text-slate-800 dark:text-navy-100">
+                        <h3 class="text-base font-medium tracking-wide text-slate-800 dark:text-navy-100">
                             {{ $planId ? 'Edit Paket Langganan' : 'Tambah Paket Baru' }}
                         </h3>
                         <p class="text-xs text-slate-400 dark:text-navy-300">

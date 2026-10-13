@@ -38,7 +38,7 @@
             <div class="flex items-center justify-center">
                 @if(auth()->check() && auth()->user()->is_admin)
                     <div class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/15 dark:text-accent-light px-3.5 py-1 text-xs font-medium">
-                        Akses: Unlimited (Admin VIP)
+                        Akses: Tanpa Batas (Administrator)
                     </div>
                 @elseif($remainingQuota !== null)
                     <div class="badge rounded-full space-x-2 bg-slate-150 px-3.5 py-1 text-slate-700 dark:bg-navy-600 dark:text-navy-100 text-xs font-medium">

@@ -6,11 +6,8 @@
     {{-- Top Header & Period Filtering Toolbar --}}
     <div class="flex flex-col justify-between gap-4 py-4 sm:flex-row sm:items-center sm:py-5">
         <div>
-            <h2 class="text-xl font-bold text-slate-800 dark:text-navy-50 lg:text-2xl flex items-center gap-2.5">
-                <span>Dashboard Analitik Platform</span>
-                <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-xs font-bold px-2.5 py-0.5">
-                    Live Analytics
-                </span>
+            <h2 class="text-xl font-semibold tracking-wide text-slate-800 dark:text-navy-50 lg:text-2xl">
+                Dashboard Analitik Platform
             </h2>
             <p class="mt-1 text-xs text-slate-400 dark:text-navy-300">
                 Pantau tren omset, performa penggunaan seluruh tools, dan konversi pelanggan secara real-time.
@@ -22,31 +19,31 @@
             <div class="inline-flex rounded-full bg-slate-100 p-1 dark:bg-navy-700 shadow-inner">
                 <button 
                     wire:click="setPeriod('7_days')"
-                    class="btn h-7.5 rounded-full px-3 text-xs font-semibold transition-all {{ $period === '7_days' ? 'bg-white text-primary shadow-xs dark:bg-navy-600 dark:text-accent-light' : 'text-slate-600 hover:text-slate-900 dark:text-navy-200 dark:hover:text-white' }}"
+                    class="btn h-7.5 rounded-full px-3 text-xs font-medium transition-all {{ $period === '7_days' ? 'bg-white text-primary shadow-xs dark:bg-navy-600 dark:text-accent-light' : 'text-slate-600 hover:text-slate-900 dark:text-navy-200 dark:hover:text-white' }}"
                 >
                     7 Hari
                 </button>
                 <button 
                     wire:click="setPeriod('30_days')"
-                    class="btn h-7.5 rounded-full px-3 text-xs font-semibold transition-all {{ $period === '30_days' ? 'bg-white text-primary shadow-xs dark:bg-navy-600 dark:text-accent-light' : 'text-slate-600 hover:text-slate-900 dark:text-navy-200 dark:hover:text-white' }}"
+                    class="btn h-7.5 rounded-full px-3 text-xs font-medium transition-all {{ $period === '30_days' ? 'bg-white text-primary shadow-xs dark:bg-navy-600 dark:text-accent-light' : 'text-slate-600 hover:text-slate-900 dark:text-navy-200 dark:hover:text-white' }}"
                 >
                     30 Hari
                 </button>
                 <button 
                     wire:click="setPeriod('this_month')"
-                    class="btn h-7.5 rounded-full px-3 text-xs font-semibold transition-all {{ $period === 'this_month' ? 'bg-white text-primary shadow-xs dark:bg-navy-600 dark:text-accent-light' : 'text-slate-600 hover:text-slate-900 dark:text-navy-200 dark:hover:text-white' }}"
+                    class="btn h-7.5 rounded-full px-3 text-xs font-medium transition-all {{ $period === 'this_month' ? 'bg-white text-primary shadow-xs dark:bg-navy-600 dark:text-accent-light' : 'text-slate-600 hover:text-slate-900 dark:text-navy-200 dark:hover:text-white' }}"
                 >
                     Bulan Ini
                 </button>
                 <button 
                     wire:click="setPeriod('6_months')"
-                    class="btn h-7.5 rounded-full px-3 text-xs font-semibold transition-all {{ $period === '6_months' ? 'bg-white text-primary shadow-xs dark:bg-navy-600 dark:text-accent-light' : 'text-slate-600 hover:text-slate-900 dark:text-navy-200 dark:hover:text-white' }}"
+                    class="btn h-7.5 rounded-full px-3 text-xs font-medium transition-all {{ $period === '6_months' ? 'bg-white text-primary shadow-xs dark:bg-navy-600 dark:text-accent-light' : 'text-slate-600 hover:text-slate-900 dark:text-navy-200 dark:hover:text-white' }}"
                 >
                     6 Bulan
                 </button>
                 <button 
                     wire:click="setPeriod('12_months')"
-                    class="btn h-7.5 rounded-full px-3 text-xs font-semibold transition-all {{ $period === '12_months' ? 'bg-white text-primary shadow-xs dark:bg-navy-600 dark:text-accent-light' : 'text-slate-600 hover:text-slate-900 dark:text-navy-200 dark:hover:text-white' }}"
+                    class="btn h-7.5 rounded-full px-3 text-xs font-medium transition-all {{ $period === '12_months' ? 'bg-white text-primary shadow-xs dark:bg-navy-600 dark:text-accent-light' : 'text-slate-600 hover:text-slate-900 dark:text-navy-200 dark:hover:text-white' }}"
                 >
                     1 Tahun
                 </button>
@@ -54,7 +51,7 @@
         </div>
     </div>
 
-    {{-- 4 Stat Metric Cards (Lineone Style with Badges) --}}
+    {{-- 4 Stat Metric Cards (Clean Lineone Metrics Style) --}}
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 sm:gap-5 mb-6">
         {{-- Total Users --}}
         <div class="card p-4 sm:p-5">
@@ -68,12 +65,9 @@
                 <p class="text-2xl sm:text-3xl font-semibold text-slate-800 dark:text-navy-100">
                     {{ number_format($periodUsers) }}
                 </p>
-                <div class="mt-1 flex items-center gap-1.5 text-xs text-slate-400 dark:text-navy-300">
-                    <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-xs font-medium px-2 py-0.5">
-                        {{ $periodLabel }}
-                    </span>
-                    <span>Total {{ number_format($totalAllUsers) }} terdaftar</span>
-                </div>
+                <p class="mt-1 text-xs text-slate-400 dark:text-navy-300">
+                    Total {{ number_format($totalAllUsers) }} akun terdaftar
+                </p>
             </div>
         </div>
 
@@ -89,12 +83,9 @@
                 <p class="text-2xl sm:text-3xl font-semibold text-secondary dark:text-secondary-light">
                     {{ number_format($activeProUsers) }}
                 </p>
-                <div class="mt-1 flex items-center gap-1.5 text-xs text-slate-400 dark:text-navy-300">
-                    <span class="badge rounded-full bg-secondary/15 text-secondary dark:bg-secondary-light/15 dark:text-secondary-light text-xs font-medium px-2 py-0.5">
-                        +{{ $periodProSubs }} di periode ini
-                    </span>
-                    <span>{{ $conversionRate }}% conversion</span>
-                </div>
+                <p class="mt-1 text-xs text-slate-400 dark:text-navy-300">
+                    <span class="font-medium text-secondary dark:text-secondary-light">+{{ $periodProSubs }}</span> periode ini &bull; {{ $conversionRate }}% konversi
+                </p>
             </div>
         </div>
 
@@ -111,12 +102,9 @@
                     <span class="text-xs font-medium text-slate-400 dark:text-navy-300">Rp</span>
                     {{ number_format($periodRevenue, 0, ',', '.') }}
                 </p>
-                <div class="mt-1 flex items-center gap-1.5 text-xs text-slate-400 dark:text-navy-300">
-                    <span class="badge rounded-full bg-success/10 text-success text-xs font-medium px-2 py-0.5">
-                        Total Rp {{ number_format($totalAllRevenue, 0, ',', '.') }}
-                    </span>
-                    <span>akumulasi</span>
-                </div>
+                <p class="mt-1 text-xs text-slate-400 dark:text-navy-300">
+                    Total akumulasi Rp {{ number_format($totalAllRevenue, 0, ',', '.') }}
+                </p>
             </div>
         </div>
 
@@ -132,12 +120,9 @@
                 <p class="text-2xl sm:text-3xl font-semibold text-slate-800 dark:text-navy-100">
                     {{ number_format($periodFiles) }}
                 </p>
-                <div class="mt-1 flex items-center gap-1.5 text-xs text-slate-400 dark:text-navy-300">
-                    <span class="badge rounded-full bg-info/10 text-info text-xs font-medium px-2 py-0.5">
-                        {{ $periodLabel }}
-                    </span>
-                    <span>Total {{ number_format($totalAllFiles) }} file</span>
-                </div>
+                <p class="mt-1 text-xs text-slate-400 dark:text-navy-300">
+                    Total {{ number_format($totalAllFiles) }} file diproses
+                </p>
             </div>
         </div>
     </div>
@@ -149,18 +134,12 @@
         <div class="card lg:col-span-8 p-4 sm:p-5">
             <div class="flex flex-col justify-between gap-2 sm:flex-row sm:items-center pb-4 border-b border-slate-150 dark:border-navy-600">
                 <div>
-                    <h3 class="text-base font-bold text-slate-800 dark:text-navy-100 flex items-center gap-2">
-                        <x-lucide-trending-up class="size-4.5 text-primary dark:text-accent-light" />
-                        <span>Tren Pendapatan & Volume Transaksi</span>
+                    <h3 class="text-base font-medium tracking-wide text-slate-800 dark:text-navy-100">
+                        Tren Pendapatan & Transaksi
                     </h3>
                     <p class="text-xs text-slate-400 dark:text-navy-300 mt-0.5">
                         Statistik pertumbuhan omset dan transaksi pembayaran platform.
                     </p>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-xs font-bold px-3 py-1">
-                        {{ $periodLabel }}
-                    </span>
                 </div>
             </div>
 
@@ -314,9 +293,8 @@
             <div>
                 <div class="flex items-center justify-between pb-4 border-b border-slate-150 dark:border-navy-600">
                     <div>
-                        <h3 class="text-base font-bold text-slate-800 dark:text-navy-100 flex items-center gap-2">
-                            <x-lucide-pie-chart class="size-4.5 text-secondary" />
-                            <span>Distribusi Penggunaan</span>
+                        <h3 class="text-base font-medium tracking-wide text-slate-800 dark:text-navy-100">
+                            Distribusi Penggunaan
                         </h3>
                         <p class="text-xs text-slate-400 dark:text-navy-300 mt-0.5">
                             Proporsi pemrosesan file antar tool.
@@ -418,9 +396,8 @@
         <div class="card lg:col-span-8 p-4 sm:p-5">
             <div class="flex items-center justify-between pb-4 border-b border-slate-150 dark:border-navy-600">
                 <div>
-                    <h3 class="text-base font-bold text-slate-800 dark:text-navy-100 flex items-center gap-2">
-                        <x-lucide-receipt class="size-4.5 text-success" />
-                        <span>Transaksi & Pembayaran Langganan Terkini</span>
+                    <h3 class="text-base font-medium tracking-wide text-slate-800 dark:text-navy-100">
+                        Transaksi Terkini
                     </h3>
                     <p class="text-xs text-slate-400 dark:text-navy-300 mt-0.5">
                         Daftar transaksi pembayaran pengguna yang masuk ke platform.
@@ -544,9 +521,8 @@
             
             {{-- Platform Tools Operational Status --}}
             <div>
-                <h3 class="text-base font-semibold text-slate-800 dark:text-navy-100 flex items-center gap-2 pb-3 border-b border-slate-150 dark:border-navy-600">
-                    <x-lucide-activity class="size-4.5 text-warning" />
-                    <span>Status Operasional Tools</span>
+                <h3 class="text-base font-medium tracking-wide text-slate-800 dark:text-navy-100 pb-3 border-b border-slate-150 dark:border-navy-600">
+                    Status Operasional Tools
                 </h3>
 
                 <div class="mt-3.5 space-y-2.5 text-xs">

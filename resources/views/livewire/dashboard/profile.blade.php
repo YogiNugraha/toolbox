@@ -4,18 +4,13 @@
     @section('page_breadcrumb', 'Profil Akun')
 
     {{-- Breadcrumb / Header --}}
-    <div class="flex items-center justify-between py-4 sm:py-5">
-        <div>
-            <h2 class="text-xl font-medium tracking-wide text-slate-800 dark:text-navy-50 lg:text-2xl">
-                Pengaturan Akun & Profil
-            </h2>
-            <p class="mt-1 text-xs text-slate-500 dark:text-navy-300">
-                Kelola informasi identitas pribadi, kontak, foto profil, dan keamanan password Anda.
-            </p>
-        </div>
-        <div class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/15 dark:text-accent-light text-xs font-medium px-3 py-1">
-            Account Settings
-        </div>
+    <div class="py-4 sm:py-5">
+        <h2 class="text-xl font-medium tracking-wide text-slate-800 dark:text-navy-50 lg:text-2xl">
+            Pengaturan Akun & Profil
+        </h2>
+        <p class="mt-1 text-xs text-slate-500 dark:text-navy-300">
+            Kelola informasi identitas pribadi, kontak, foto profil, dan keamanan password Anda.
+        </p>
     </div>
 
     {{-- 12-Column Layout matching Lineone forms-layout-v5 --}}
@@ -62,9 +57,6 @@
                             @if($isAdmin)
                                 <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/15 dark:text-accent-light font-medium text-xs px-2.5 py-0.5 uppercase tracking-wider">
                                     SUPER ADMIN
-                                </span>
-                                <span class="badge rounded-full bg-slate-150 text-slate-800 dark:bg-navy-500 dark:text-navy-100 text-xs font-medium px-2 py-0.5">
-                                    Full Access
                                 </span>
                             @elseif($isProUser)
                                 <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/15 dark:text-accent-light font-medium text-xs px-2.5 py-0.5 uppercase tracking-wider">

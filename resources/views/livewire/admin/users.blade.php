@@ -6,17 +6,12 @@
     {{-- Header & Subtitle --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4 sm:py-5">
         <div>
-            <h2 class="text-xl font-bold text-slate-800 dark:text-navy-50 lg:text-2xl">
+            <h2 class="text-xl font-medium tracking-wide text-slate-800 dark:text-navy-100 lg:text-2xl">
                 Daftar & Manajemen Pengguna
             </h2>
             <p class="mt-1 text-xs text-slate-400 dark:text-navy-300">
                 Kelola data akun, reset password, atur paket langganan secara instan, verifikasi email, hingga status ban & hapus pengguna.
             </p>
-        </div>
-        <div class="flex items-center space-x-2">
-            <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-xs font-bold px-3 py-1">
-                Total {{ $users->total() }} Pengguna
-            </span>
         </div>
     </div>
 
@@ -236,9 +231,8 @@
                     
                     {{-- 1. IDENTITAS & PROFIL --}}
                     <div>
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-primary dark:text-accent-light mb-3 flex items-center gap-1.5">
-                            <x-lucide-user class="size-4" />
-                            <span>1. Identitas & Informasi Akun</span>
+                        <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-navy-100 mb-3">
+                            1. Identitas & Informasi Akun
                         </h4>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
@@ -293,13 +287,9 @@
                     {{-- 2. PENGATURAN PAKET & LANGGANAN BEBAS --}}
                     <div>
                         <div class="flex items-center justify-between mb-3">
-                            <h4 class="text-xs font-semibold uppercase tracking-wider text-primary dark:text-accent-light flex items-center gap-1.5">
-                                <x-lucide-crown class="size-4" />
-                                <span>2. Pengaturan Paket Langganan (Tanpa Bayar)</span>
+                            <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-navy-100">
+                                2. Pengaturan Paket Langganan (Tanpa Bayar)
                             </h4>
-                            <span class="badge rounded-full bg-info/10 text-info text-xs font-medium px-2.5 py-0.5">
-                                Direct Admin Grant
-                            </span>
                         </div>
 
                         <div class="rounded-xl border border-primary/20 dark:border-accent/20 bg-primary/5 dark:bg-accent/5 p-4 space-y-3.5">
@@ -356,9 +346,8 @@
                     {{-- 3. GANTI / RESET PASSWORD --}}
                     <div>
                         <div class="flex items-center justify-between mb-3">
-                            <h4 class="text-xs font-semibold uppercase tracking-wider text-primary dark:text-accent-light flex items-center gap-1.5">
-                                <x-lucide-key-round class="size-4" />
-                                <span>3. Ganti / Reset Password</span>
+                            <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-navy-100">
+                                3. Ganti / Reset Password
                             </h4>
                             <button wire:click="generateRandomPassword" type="button" class="btn h-7 rounded-lg bg-slate-150 px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-200 dark:bg-navy-600 dark:text-navy-100 dark:hover:bg-navy-500 shadow-xs flex items-center gap-1">
                                 <x-lucide-wand-2 class="size-3" />

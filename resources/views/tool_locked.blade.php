@@ -12,15 +12,8 @@
             <x-lucide-lock class="size-8 stroke-[1.75]" />
         </div>
 
-        {{-- Badge --}}
-        <div>
-            <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/15 dark:text-accent-light px-3 py-1 text-xs font-medium">
-                Fitur Eksklusif Member PRO
-            </span>
-        </div>
-
         {{-- Title & Message --}}
-        <h2 class="mt-4 text-xl sm:text-2xl font-semibold tracking-wide text-slate-800 dark:text-navy-100">
+        <h2 class="text-xl sm:text-2xl font-semibold tracking-wide text-slate-800 dark:text-navy-100">
             Tool {{ $tool->name }} Terkunci
         </h2>
 

@@ -6,15 +6,12 @@
     {{-- Header Toolbar --}}
     <div class="flex items-center justify-between py-4 sm:py-5">
         <div>
-            <h2 class="text-xl font-bold text-slate-800 dark:text-navy-50 lg:text-2xl">
+            <h2 class="text-xl font-medium tracking-wide text-slate-800 dark:text-navy-100 lg:text-2xl">
                 Pengaturan Global Website
             </h2>
             <p class="mt-1 text-xs text-slate-400 dark:text-navy-300">
                 Konfigurasi identitas branding, kontak, logo, banner pengumuman, dan integrasi sistem.
             </p>
-        </div>
-        <div class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-xs font-bold px-3 py-1">
-            System Config
         </div>
     </div>
 

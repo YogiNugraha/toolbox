@@ -6,11 +6,8 @@
     {{-- Top Action Toolbar --}}
     <div class="flex flex-col justify-between gap-4 py-4 sm:flex-row sm:items-center sm:py-5">
         <div>
-            <h2 class="text-xl font-medium tracking-wide text-slate-800 dark:text-navy-100 lg:text-2xl flex items-center gap-2.5">
-                <span>Kelola Tools & Layanan</span>
-                <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-xs font-medium px-2.5 py-0.5">
-                    {{ $totalTools }} Tools
-                </span>
+            <h2 class="text-xl font-medium tracking-wide text-slate-800 dark:text-navy-100 lg:text-2xl">
+                Kelola Tools & Layanan
             </h2>
             <p class="mt-1 text-xs text-slate-500 dark:text-navy-300">
                 Atur status aktif, mode pemeliharaan, label promosi, gambar thumbnail, dan urutan seluruh tools platform.

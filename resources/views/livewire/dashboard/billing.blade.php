@@ -48,22 +48,16 @@
                                 {{ $planName }}
                             </h3>
                             @if($isAdmin)
-                                <span class="badge rounded-full bg-error/10 text-error text-xs font-medium px-2.5 py-0.5">
-                                    Super Admin
+                                <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-xs font-medium px-2.5 py-0.5">
+                                    Administrator
                                 </span>
                             @elseif($isSub)
-                                @if($isProMax)
-                                    <span class="badge rounded-full bg-secondary/15 text-secondary dark:bg-secondary-light/15 dark:text-secondary-light text-xs font-medium px-2.5 py-0.5">
-                                        {{ $planName }}
-                                    </span>
-                                @else
-                                    <span class="badge rounded-full bg-warning/15 text-warning dark:bg-warning/20 dark:text-warning-light text-xs font-medium px-2.5 py-0.5">
-                                        {{ $planName }}
-                                    </span>
-                                @endif
+                                <span class="badge rounded-full bg-success/15 text-success text-xs font-medium px-2.5 py-0.5">
+                                    Aktif
+                                </span>
                             @else
                                 <span class="badge rounded-full bg-slate-150 text-slate-600 dark:bg-navy-600 dark:text-navy-200 text-xs font-medium px-2.5 py-0.5">
-                                    Dasar
+                                    Gratis
                                 </span>
                             @endif
                         </div>

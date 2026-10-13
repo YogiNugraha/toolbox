@@ -11,10 +11,6 @@
             <x-lucide-hammer class="size-8" />
         </div>
 
-        <span class="badge rounded-full bg-warning/10 text-warning text-xs font-medium px-2.5 py-0.5 uppercase tracking-wider mb-2">
-            Sedang Dalam Pemeliharaan
-        </span>
-
         <h3 class="text-xl font-semibold text-slate-800 dark:text-navy-50 mt-2">
             Tool {{ $tool->name }} Sementara Nonaktif
         </h3>

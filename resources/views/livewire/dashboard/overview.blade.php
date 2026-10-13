@@ -149,12 +149,12 @@
                             <x-lucide-boxes class="size-4.5" />
                         @endif
                     </div>
-                    <div class="flex items-center gap-2.5 shrink-0">
+                    <div class="flex items-center gap-2 shrink-0">
                         <h2 class="text-base sm:text-lg font-medium tracking-wide text-slate-800 dark:text-navy-50">
                             {{ $catDisplayName }}
                         </h2>
-                        <span class="badge rounded-full bg-slate-150 text-slate-700 dark:bg-navy-500 dark:text-navy-100 text-xs font-medium px-2.5 py-0.5">
-                            {{ $toolsInCategory->count() }} Tools
+                        <span class="text-xs text-slate-400 dark:text-navy-300 font-normal">
+                            ({{ $toolsInCategory->count() }})
                         </span>
                     </div>
                     <div class="h-px flex-1 bg-slate-200 dark:bg-navy-600"></div>
