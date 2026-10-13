@@ -200,13 +200,13 @@
                         {{-- Top Badge for Recommended or Current Plan --}}
                         @if($isCurrent)
                             <div class="absolute top-0 right-0 p-3">
-                                <div class="badge rounded-full bg-success/10 text-success dark:bg-success/15 font-semibold text-xs px-3 py-1">
+                                <div class="badge rounded-full bg-success/10 text-success dark:bg-success/15 font-medium text-xs px-2.5 py-0.5">
                                     Paket Aktif
                                 </div>
                             </div>
                         @elseif($isRecommended)
                             <div class="absolute top-0 right-0 p-3">
-                                <div class="badge rounded-full bg-info/10 text-info dark:bg-info/15 font-semibold text-xs px-3 py-1">
+                                <div class="badge rounded-full bg-info/10 text-info dark:bg-info/15 font-medium text-xs px-2.5 py-0.5">
                                     Recommended
                                 </div>
                             </div>
@@ -259,16 +259,16 @@
                             <div class="mt-5 min-h-[56px] flex flex-col justify-center">
                                 @if($breakdown['discount'] > 0)
                                     <div class="flex items-center justify-center space-x-1.5 mb-1">
-                                        <span class="line-through text-slate-400 dark:text-navy-300 text-xs font-semibold">
+                                        <span class="line-through text-slate-400 dark:text-navy-300 text-xs font-medium">
                                             Rp {{ number_format($breakdown['basePrice'], 0, ',', '.') }}
                                         </span>
-                                        <span class="badge rounded-full bg-success/15 text-success dark:bg-success/20 font-bold text-[10px] px-2 py-0.5">
+                                        <span class="badge rounded-full bg-success/15 text-success dark:bg-success/20 font-medium text-xs px-2 py-0.5">
                                             Hemat {{ $plan->discount_type === 'percent' ? $plan->discount_value . '%' : 'Rp ' . number_format($breakdown['discount'], 0, ',', '.') }}
                                         </span>
                                     </div>
                                 @endif
                                 <div>
-                                    <span class="text-3xl sm:text-4xl tracking-tight font-bold text-primary dark:text-accent-light">
+                                    <span class="text-3xl sm:text-4xl tracking-tight font-semibold text-primary dark:text-accent-light">
                                         Rp {{ number_format($breakdown['subtotal'], 0, ',', '.') }}
                                     </span>
                                     <span class="text-xs text-slate-500 dark:text-navy-300">

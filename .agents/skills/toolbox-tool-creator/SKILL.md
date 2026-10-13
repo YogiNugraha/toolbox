@@ -197,8 +197,11 @@ Buat file `app/Livewire/Tools/{Name}.php`:
 
 ---
 
-## Langkah 5: Pembuatan Blade View
+## Langkah 5: Pembuatan Blade View (Kepatuhan Penuh Lineone UI Kit)
 
 Buat file `resources/views/livewire/tools/{kebab-case}.blade.php`:
 - Terapkan 3 state tampilan (Upload Dropzone, Pengaturan/Pratinjau, Hasil Download).
-- Gunakan badge kuota, spinner saat proses, dan styling tema Lineone.
+- **Tipografi**: Gunakan `font-semibold` atau `font-medium`. DILARANG menggunakan `font-black`, `font-extrabold`, atau arbitrary font sizes seperti `text-[9px]`, `text-[10px]`, `text-[11px]`. Gunakan token standar `text-xs`, `text-sm`, `text-base`.
+- **Tombol**: Gunakan `btn h-9 rounded-full font-medium text-xs px-5 shadow-xs`. Dilarang efek glow berpendar berwarna (`shadow-primary/*`).
+- **Badges**: Gunakan `badge rounded-full px-2.5 py-0.5 text-xs font-medium` dengan palet soft Lineone (`bg-primary/10 text-primary`, `bg-secondary/15 text-secondary`, `bg-warning/15 text-warning`, `bg-success/15 text-success`, `bg-slate-150 text-slate-700`). DILARANG KERAS menyisipkan emoji (`🌟`, `👑`, `🔥`, `✨`), icon `<x-lucide-...>`, atau gradient buatan di dalam badge.
+- **Anti-AI-Slop**: Dilarang menambahkan bola ambient blur melayang (`filter blur-3xl opacity-20 bg-linear-to-r`) atau border pelangi. Semua tampilan wajib bersih dan modern sesuai Lineone UI Kit.

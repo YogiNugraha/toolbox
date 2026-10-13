@@ -30,10 +30,10 @@
             $planName = $isAdmin ? 'Administrator' : ($isSub ? ($activeSubscription->plan->name ?? ucfirst($activeSubscription->plan_slug)) : 'Free Plan');
             $isProMax = $isSub && ($activeSubscription->plan_slug === 'pro-max' || strtolower((string)$planName) === 'pro max');
         @endphp
-        <div class="card p-5 sm:p-6 border {{ $isAdmin ? 'border-rose-500/50 bg-linear-to-r from-rose-50/40 via-purple-50/20 to-white dark:from-rose-950/20 dark:via-purple-950/10 dark:to-navy-700 shadow-md shadow-rose-500/10' : ($isSub ? ($isProMax ? 'border-purple-500/50 bg-linear-to-r from-purple-50/40 via-white to-white dark:from-purple-950/20 dark:via-navy-700 dark:to-navy-700 shadow-md shadow-purple-500/10' : 'border-amber-400/50 bg-linear-to-r from-amber-50/40 via-white to-white dark:from-amber-950/20 dark:via-navy-700 dark:to-navy-700 shadow-md shadow-amber-400/10') : 'border-slate-200/80 dark:border-navy-600') }}">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4 border-b border-slate-150 dark:border-navy-500">
+        <div class="card p-5 sm:p-6 border border-slate-150 dark:border-navy-600">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4 border-b border-slate-150 dark:border-navy-600">
                 <div class="flex items-center space-x-3">
-                    <div class="mask is-squircle flex size-12 items-center justify-center {{ $isAdmin ? 'bg-gradient-to-tr from-rose-600 via-purple-600 to-indigo-600 text-white shadow-md shadow-rose-500/20' : ($isSub ? ($isProMax ? 'bg-linear-to-tr from-purple-600 to-indigo-500 text-white' : 'bg-linear-to-tr from-amber-400 to-orange-500 text-white') : 'bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light') }} shadow-xs">
+                    <div class="mask is-squircle flex size-12 items-center justify-center bg-primary/10 text-primary dark:bg-accent/10 dark:text-accent-light">
                         @if($isAdmin)
                             <x-lucide-shield-check class="size-6 stroke-[2]" />
                         @else
@@ -44,28 +44,25 @@
                     </div>
                     <div>
                         <div class="flex items-center space-x-2">
-                            <h3 class="text-xl font-bold text-slate-800 dark:text-navy-100">
+                            <h3 class="text-lg font-semibold text-slate-800 dark:text-navy-100">
                                 {{ $planName }}
                             </h3>
                             @if($isAdmin)
-                                <span class="badge rounded-full bg-linear-to-r from-rose-600 via-purple-600 to-indigo-600 text-white text-[10px] font-black px-2.5 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
-                                    <x-lucide-shield-check class="size-3 stroke-[2.5]" />
-                                    <span>SUPER ADMIN (FULL ACCESS)</span>
+                                <span class="badge rounded-full bg-error/10 text-error text-xs font-medium px-2.5 py-0.5">
+                                    Super Admin
                                 </span>
                             @elseif($isSub)
                                 @if($isProMax)
-                                    <span class="badge rounded-full bg-linear-to-r from-amber-500 via-purple-600 to-indigo-600 text-white text-[10px] font-black px-2.5 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
-                                        <x-lucide-crown class="size-3 stroke-[2.5]" />
-                                        <span>{{ $planName }} (Aktif)</span>
+                                    <span class="badge rounded-full bg-secondary/15 text-secondary dark:bg-secondary-light/15 dark:text-secondary-light text-xs font-medium px-2.5 py-0.5">
+                                        {{ $planName }}
                                     </span>
                                 @else
-                                    <span class="badge rounded-full bg-linear-to-r from-amber-500 to-orange-500 text-white text-[10px] font-black px-2.5 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
-                                        <x-lucide-star class="size-3 stroke-[2.5] fill-current" />
-                                        <span>{{ $planName }} (Aktif)</span>
+                                    <span class="badge rounded-full bg-warning/15 text-warning dark:bg-warning/20 dark:text-warning-light text-xs font-medium px-2.5 py-0.5">
+                                        {{ $planName }}
                                     </span>
                                 @endif
                             @else
-                                <span class="badge rounded-full bg-slate-100 text-slate-600 dark:bg-navy-500 dark:text-navy-200 text-xs font-semibold px-2.5 py-0.5">
+                                <span class="badge rounded-full bg-slate-150 text-slate-600 dark:bg-navy-600 dark:text-navy-200 text-xs font-medium px-2.5 py-0.5">
                                     Dasar
                                 </span>
                             @endif
@@ -84,22 +81,22 @@
 
                 <div class="flex flex-wrap items-center gap-3">
                     @if($isAdmin)
-                        <a href="{{ route('admin.plans') }}" class="btn h-9 rounded-lg bg-primary text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs font-semibold px-4 shadow-sm flex items-center gap-1.5">
+                        <a href="{{ route('admin.plans') }}" class="btn h-9 rounded-lg bg-primary text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs font-medium px-4 shadow-xs flex items-center gap-1.5">
                             <x-lucide-settings class="size-3.5" />
                             <span>Kelola Paket di Admin</span>
                         </a>
                     @elseif($activeSubscription)
                         <button
                             wire:click="confirmCancel"
-                            class="btn h-9 rounded-lg border border-error/30 text-error hover:bg-error/10 text-xs font-semibold px-3"
+                            class="btn h-9 rounded-lg border border-error/30 text-error hover:bg-error/10 text-xs font-medium px-3"
                         >
                             Berhenti Berlangganan
                         </button>
-                        <a href="{{ route('pricing') }}" class="btn h-9 rounded-lg bg-primary text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs font-semibold px-4 shadow-sm">
+                        <a href="{{ route('pricing') }}" class="btn h-9 rounded-lg bg-primary text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs font-medium px-4 shadow-xs">
                             Ganti / Perpanjang Paket
                         </a>
                     @else
-                        <a href="{{ route('pricing') }}" class="btn h-9 rounded-lg bg-primary text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs font-semibold px-5 shadow-sm">
+                        <a href="{{ route('pricing') }}" class="btn h-9 rounded-lg bg-primary text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs font-medium px-5 shadow-xs">
                             Upgrade ke Pro
                         </a>
                     @endif
@@ -199,19 +196,19 @@
                     <table class="is-hoverable w-full text-left">
                         <thead>
                             <tr>
-                                <th class="rounded-tl-lg bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs">
+                                <th class="rounded-tl-lg bg-slate-100 px-4 py-3 font-medium uppercase text-slate-700 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs">
                                     ORDER ID & PAKET
                                 </th>
-                                <th class="bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs text-right">
+                                <th class="bg-slate-100 px-4 py-3 font-medium uppercase text-slate-700 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs text-right">
                                     NOMINAL
                                 </th>
-                                <th class="bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs text-center">
+                                <th class="bg-slate-100 px-4 py-3 font-medium uppercase text-slate-700 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs text-center">
                                     STATUS
                                 </th>
-                                <th class="bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs text-right">
+                                <th class="bg-slate-100 px-4 py-3 font-medium uppercase text-slate-700 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs text-right">
                                     TANGGAL
                                 </th>
-                                <th class="rounded-tr-lg bg-slate-200 px-4 py-3 font-semibold uppercase text-slate-800 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs text-right">
+                                <th class="rounded-tr-lg bg-slate-100 px-4 py-3 font-medium uppercase text-slate-700 dark:bg-navy-800 dark:text-navy-100 lg:px-5 text-xs text-right">
                                     AKSI
                                 </th>
                             </tr>
@@ -222,28 +219,26 @@
                                     $planName = $trx->plan->name ?? ucfirst($trx->plan_slug);
                                     $isProMax = ($trx->plan_slug === 'pro-max' || strtolower((string)$planName) === 'pro max');
                                 @endphp
-                                <tr class="border-y border-transparent border-b-slate-200 dark:border-b-navy-500 hover:bg-slate-50/80 dark:hover:bg-navy-700/50 transition-colors">
+                                <tr class="border-y border-transparent border-b-slate-150 dark:border-b-navy-500 hover:bg-slate-50/80 dark:hover:bg-navy-700/50 transition-colors">
                                     {{-- Order ID & Plan --}}
                                     <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-xs">
                                         <a href="{{ route('dashboard.invoice', ['order_id' => $trx->midtrans_order_id]) }}"
-                                           class="font-mono font-bold text-primary transition-colors hover:text-primary-focus dark:text-accent-light dark:hover:text-accent text-sm flex items-center gap-1">
+                                           class="font-mono font-medium text-primary transition-colors hover:text-primary-focus dark:text-accent-light dark:hover:text-accent text-sm flex items-center gap-1">
                                             <span>#{{ $trx->midtrans_order_id ?? '-' }}</span>
                                         </a>
                                         <div class="mt-1 flex items-center gap-1.5">
                                             @if($isProMax)
-                                                <span class="badge rounded-full bg-linear-to-r from-amber-500 via-purple-600 to-indigo-600 text-white font-black text-[9px] px-2 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
-                                                    <x-lucide-crown class="size-2.5 stroke-[2.5]" />
-                                                    <span>{{ $planName }}</span>
+                                                <span class="badge rounded-full bg-secondary/15 text-secondary dark:bg-secondary-light/15 dark:text-secondary-light text-xs font-medium px-2 py-0.5">
+                                                    {{ $planName }}
                                                 </span>
                                             @else
-                                                <span class="badge rounded-full bg-linear-to-r from-amber-500 to-orange-500 text-white font-black text-[9px] px-2 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
-                                                    <x-lucide-star class="size-2.5 stroke-[2.5] fill-current" />
-                                                    <span>{{ $planName }}</span>
+                                                <span class="badge rounded-full bg-warning/15 text-warning dark:bg-warning/20 dark:text-warning-light text-xs font-medium px-2 py-0.5">
+                                                    {{ $planName }}
                                                 </span>
                                             @endif
 
                                             @if($trx->midtrans_transaction_id)
-                                                <span class="text-[10px] text-slate-400 dark:text-navy-300 font-mono" title="Midtrans Transaction ID">
+                                                <span class="text-xs text-slate-400 dark:text-navy-300 font-mono" title="Midtrans Transaction ID">
                                                     {{ Str::limit($trx->midtrans_transaction_id, 12) }}
                                                 </span>
                                             @endif
@@ -252,11 +247,11 @@
 
                                     {{-- Nominal --}}
                                     <td class="whitespace-nowrap px-4 py-3 text-right sm:px-5">
-                                        <div class="font-bold text-slate-700 dark:text-navy-100 text-xs sm:text-sm">
+                                        <div class="font-medium text-slate-700 dark:text-navy-100 text-xs sm:text-sm">
                                             Rp {{ number_format($trx->amount, 0, ',', '.') }}
                                         </div>
                                         <div class="mt-0.5">
-                                            <span class="badge rounded-full bg-slate-100 text-slate-600 dark:bg-navy-600 dark:text-navy-200 text-[10px] uppercase font-semibold px-2 py-0.5">
+                                            <span class="badge rounded-full bg-slate-100 text-slate-600 dark:bg-navy-600 dark:text-navy-200 text-xs uppercase font-medium px-2 py-0.5">
                                                 {{ $trx->payment_type ? str_replace('_', ' ', $trx->payment_type) : 'Midtrans' }}
                                             </span>
                                         </div>
@@ -265,32 +260,32 @@
                                     {{-- Status --}}
                                     <td class="whitespace-nowrap px-4 py-3 text-center sm:px-5">
                                         @if($trx->status === 'active' || $trx->status === 'settlement' || $trx->status === 'capture')
-                                            <span class="badge space-x-1.5 rounded-full bg-success/10 text-success text-[11px] font-bold px-2.5 py-1 inline-flex items-center">
+                                            <span class="badge space-x-1.5 rounded-full bg-success/10 text-success text-xs font-medium px-2.5 py-0.5 inline-flex items-center">
                                                 <span class="size-1.5 rounded-full bg-current"></span>
                                                 <span>Berhasil</span>
                                             </span>
                                         @elseif($trx->status === 'pending')
-                                            <span class="badge space-x-1.5 rounded-full bg-warning/10 text-warning text-[11px] font-bold px-2.5 py-1 inline-flex items-center">
+                                            <span class="badge space-x-1.5 rounded-full bg-warning/10 text-warning text-xs font-medium px-2.5 py-0.5 inline-flex items-center">
                                                 <span class="size-1.5 rounded-full bg-current animate-ping"></span>
                                                 <span>Menunggu</span>
                                             </span>
                                         @elseif($trx->status === 'expired')
-                                            <span class="badge space-x-1.5 rounded-full bg-slate-150 text-slate-600 dark:bg-navy-500 dark:text-navy-200 text-[11px] font-bold px-2.5 py-1 inline-flex items-center">
+                                            <span class="badge space-x-1.5 rounded-full bg-slate-150 text-slate-600 dark:bg-navy-500 dark:text-navy-200 text-xs font-medium px-2.5 py-0.5 inline-flex items-center">
                                                 <span class="size-1.5 rounded-full bg-current"></span>
                                                 <span>Expired</span>
                                             </span>
                                         @elseif($trx->status === 'cancelled')
-                                            <span class="badge space-x-1.5 rounded-full bg-info/10 text-info dark:bg-info/15 text-[11px] font-bold px-2.5 py-1 inline-flex items-center">
+                                            <span class="badge space-x-1.5 rounded-full bg-info/10 text-info dark:bg-info/15 text-xs font-medium px-2.5 py-0.5 inline-flex items-center">
                                                 <span class="size-1.5 rounded-full bg-current"></span>
                                                 <span>Dibatalkan</span>
                                             </span>
                                         @elseif($trx->status === 'failed')
-                                            <span class="badge space-x-1.5 rounded-full bg-error/10 text-error dark:bg-error/15 text-[11px] font-bold px-2.5 py-1 inline-flex items-center">
+                                            <span class="badge space-x-1.5 rounded-full bg-error/10 text-error dark:bg-error/15 text-xs font-medium px-2.5 py-0.5 inline-flex items-center">
                                                 <span class="size-1.5 rounded-full bg-current"></span>
                                                 <span>Gagal</span>
                                             </span>
                                         @else
-                                            <span class="badge rounded-full bg-slate-150 text-slate-600 dark:bg-navy-500 dark:text-navy-200 text-[11px] font-bold px-2.5 py-1">
+                                            <span class="badge rounded-full bg-slate-150 text-slate-600 dark:bg-navy-500 dark:text-navy-200 text-xs font-medium px-2.5 py-0.5">
                                                 {{ ucfirst($trx->status) }}
                                             </span>
                                         @endif
@@ -299,7 +294,7 @@
                                     {{-- Tanggal --}}
                                     <td class="whitespace-nowrap px-4 py-3 text-right text-xs text-slate-500 dark:text-navy-300 sm:px-5">
                                         <div>{{ $trx->created_at->translatedFormat('d M Y') }}</div>
-                                        <div class="text-[10px] text-slate-400 dark:text-navy-400 mt-0.5">{{ $trx->created_at->format('H:i') }} WIB</div>
+                                        <div class="text-xs text-slate-400 dark:text-navy-400 mt-0.5">{{ $trx->created_at->format('H:i') }} WIB</div>
                                     </td>
 
                                     {{-- Aksi --}}
@@ -308,7 +303,7 @@
                                             @if($trx->status === 'pending')
                                                 <button
                                                     wire:click="syncPayment('{{ $trx->midtrans_order_id }}')"
-                                                    class="btn h-7 rounded-md border border-slate-300 px-2 text-[11px] font-semibold text-slate-700 hover:bg-slate-100 dark:border-navy-500 dark:text-navy-100"
+                                                    class="btn h-7 rounded-md border border-slate-300 px-2 text-xs font-medium text-slate-700 hover:bg-slate-100 dark:border-navy-500 dark:text-navy-100"
                                                     title="Cek Status Pembayaran"
                                                 >
                                                     Cek
@@ -316,7 +311,7 @@
                                             @endif
                                             <a
                                                 href="{{ route('dashboard.invoice', ['order_id' => $trx->midtrans_order_id]) }}"
-                                                class="btn h-7 space-x-1 rounded-md bg-primary/10 text-primary hover:bg-primary hover:text-white dark:bg-accent-light/10 dark:text-accent-light dark:hover:bg-accent dark:hover:text-white px-2.5 text-xs font-semibold transition-colors flex items-center"
+                                                class="btn h-7 space-x-1 rounded-md bg-primary/10 text-primary hover:bg-primary hover:text-white dark:bg-accent-light/10 dark:text-accent-light dark:hover:bg-accent dark:hover:text-white px-2.5 text-xs font-medium transition-colors flex items-center"
                                             >
                                                 <x-lucide-receipt class="size-3.5" />
                                                 <span>Invoice</span>

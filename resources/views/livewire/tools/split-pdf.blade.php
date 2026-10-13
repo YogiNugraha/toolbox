@@ -26,9 +26,8 @@
             {{-- Quota Notification Pill --}}
             <div class="flex items-center justify-between">
                 @if(auth()->check() && auth()->user()->is_admin)
-                    <div class="badge rounded-full space-x-1.5 bg-linear-to-r from-rose-500/15 via-purple-500/15 to-indigo-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/20 px-3 py-1 text-xs font-bold shadow-xs flex items-center">
-                        <x-lucide-shield-check class="size-3.5" />
-                        <span>Akses: Unlimited (Admin)</span>
+                    <div class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/15 dark:text-accent-light px-3 py-1 text-xs font-medium">
+                        Akses: Unlimited (Admin)
                     </div>
                 @elseif($remainingQuota !== null)
                     <div class="badge rounded-full space-x-2 bg-slate-150 px-3 py-1 text-slate-800 dark:bg-navy-600 dark:text-navy-100 text-xs font-semibold">
@@ -90,10 +89,10 @@
                             <p class="mt-1 text-xs text-slate-400 dark:text-navy-300">
                                 Ukuran: <span class="font-semibold text-slate-600 dark:text-navy-200">{{ number_format($file->getSize() / 1024, 2) }} KB</span>
                                 @if($detectedPages)
-                                    · <span class="font-bold text-primary dark:text-accent-light">{{ $detectedPages }} Halaman</span>
+                                    · <span class="font-semibold text-primary dark:text-accent-light">{{ $detectedPages }} Halaman</span>
                                 @endif
                             </p>
-                            <span class="mt-3 badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-[11px] font-semibold px-3 py-0.5">
+                            <span class="mt-3 badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-xs font-medium px-3 py-0.5">
                                 File PDF Siap Dipisahkan
                             </span>
                         @else
@@ -130,7 +129,7 @@
                 @if ($file)
                     <div class="card p-4 sm:p-5 space-y-5">
                         <div>
-                            <label class="text-xs font-bold text-slate-700 dark:text-navy-100 uppercase tracking-wider mb-2.5 block">
+                            <label class="text-xs font-medium text-slate-700 dark:text-navy-100 uppercase tracking-wider mb-2.5 block">
                                 Mode Pemisahan Dokumen:
                             </label>
                             
@@ -140,14 +139,14 @@
                                 <button 
                                     wire:click="setMode('all')" 
                                     type="button" 
-                                    class="flex items-start space-x-3 p-3.5 rounded-xl border text-left transition-all cursor-pointer {{ $mode === 'all' ? 'border-primary bg-primary/5 dark:border-accent dark:bg-accent/10 ring-2 ring-primary/20 dark:ring-accent/20' : 'border-slate-200 dark:border-navy-600 hover:bg-slate-50 dark:hover:bg-navy-700/40' }}"
+                                    class="flex items-start space-x-3 p-3.5 rounded-lg border text-left transition-all cursor-pointer {{ $mode === 'all' ? 'border-primary bg-primary/5 dark:border-accent dark:bg-accent/10 ring-1 ring-primary/30 dark:ring-accent/30' : 'border-slate-200 dark:border-navy-600 hover:bg-slate-50 dark:hover:bg-navy-700/40' }}"
                                 >
                                     <div class="mask is-squircle flex size-9 shrink-0 items-center justify-center {{ $mode === 'all' ? 'bg-primary text-white dark:bg-accent' : 'bg-slate-100 text-slate-500 dark:bg-navy-700 dark:text-navy-300' }}">
                                         <x-lucide-archive class="size-4.5" />
                                     </div>
                                     <div>
-                                        <p class="text-xs font-bold text-slate-800 dark:text-navy-100">Ekstrak Semua Halaman</p>
-                                        <p class="text-[10px] text-slate-400 dark:text-navy-300 mt-0.5 leading-relaxed">
+                                        <p class="text-xs font-medium text-slate-800 dark:text-navy-100">Ekstrak Semua Halaman</p>
+                                        <p class="text-xs text-slate-400 dark:text-navy-300 mt-0.5 leading-relaxed">
                                             Memecah setiap halaman menjadi file PDF satuan dan dikemas dalam arsip .ZIP.
                                         </p>
                                     </div>
@@ -157,14 +156,14 @@
                                 <button 
                                     wire:click="setMode('range')" 
                                     type="button" 
-                                    class="flex items-start space-x-3 p-3.5 rounded-xl border text-left transition-all cursor-pointer {{ $mode === 'range' ? 'border-primary bg-primary/5 dark:border-accent dark:bg-accent/10 ring-2 ring-primary/20 dark:ring-accent/20' : 'border-slate-200 dark:border-navy-600 hover:bg-slate-50 dark:hover:bg-navy-700/40' }}"
+                                    class="flex items-start space-x-3 p-3.5 rounded-lg border text-left transition-all cursor-pointer {{ $mode === 'range' ? 'border-primary bg-primary/5 dark:border-accent dark:bg-accent/10 ring-1 ring-primary/30 dark:ring-accent/30' : 'border-slate-200 dark:border-navy-600 hover:bg-slate-50 dark:hover:bg-navy-700/40' }}"
                                 >
                                     <div class="mask is-squircle flex size-9 shrink-0 items-center justify-center {{ $mode === 'range' ? 'bg-primary text-white dark:bg-accent' : 'bg-slate-100 text-slate-500 dark:bg-navy-700 dark:text-navy-300' }}">
                                         <x-lucide-file-text class="size-4.5" />
                                     </div>
                                     <div>
-                                        <p class="text-xs font-bold text-slate-800 dark:text-navy-100">Rentang Halaman Tertentu</p>
-                                        <p class="text-[10px] text-slate-400 dark:text-navy-300 mt-0.5 leading-relaxed">
+                                        <p class="text-xs font-medium text-slate-800 dark:text-navy-100">Rentang Halaman Tertentu</p>
+                                        <p class="text-xs text-slate-400 dark:text-navy-300 mt-0.5 leading-relaxed">
                                             Hanya mengekstrak halaman pilihan Anda menjadi satu file .PDF baru.
                                         </p>
                                     </div>
@@ -174,13 +173,13 @@
 
                         {{-- Page Range Input (Visible when Mode === 'range') --}}
                         @if ($mode === 'range')
-                            <div class="p-4 rounded-xl bg-slate-50 dark:bg-navy-750/50 border border-slate-200/80 dark:border-navy-600 space-y-2">
+                            <div class="p-4 rounded-lg bg-slate-50 dark:bg-navy-750/50 border border-slate-150 dark:border-navy-600 space-y-2">
                                 <div class="flex items-center justify-between">
-                                    <label class="text-xs font-bold text-slate-700 dark:text-navy-100">
+                                    <label class="text-xs font-medium text-slate-700 dark:text-navy-100">
                                         Tentukan Halaman yang Ingin Diekstrak:
                                     </label>
                                     @if($detectedPages)
-                                        <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent/15 dark:text-accent font-bold text-[10px] px-2 py-0.5">
+                                        <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent/15 dark:text-accent font-medium text-xs px-2 py-0.5">
                                             Total: {{ $detectedPages }} Halaman
                                         </span>
                                     @endif
@@ -191,8 +190,8 @@
                                     placeholder="Contoh: 1-3, 5, 8-10" 
                                     class="form-input h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-xs text-slate-800 focus:border-primary focus:ring-primary/20 dark:border-navy-500 dark:bg-navy-700 dark:text-navy-100"
                                 />
-                                <p class="text-[10px] text-slate-400 dark:text-navy-300">
-                                    Gunakan tanda strip (<strong class="text-slate-600 dark:text-navy-200">1-4</strong>) untuk rentang halaman atau koma (<strong class="text-slate-600 dark:text-navy-200">1, 3, 5</strong>) untuk halaman tertentu.
+                                <p class="text-xs text-slate-400 dark:text-navy-300">
+                                    Gunakan tanda strip (<strong class="text-slate-600 dark:text-navy-200 font-medium">1-4</strong>) untuk rentang halaman atau koma (<strong class="text-slate-600 dark:text-navy-200 font-medium">1, 3, 5</strong>) untuk halaman tertentu.
                                 </p>
                             </div>
                         @endif
@@ -200,8 +199,8 @@
                         {{-- Action Split Button --}}
                         <button wire:click="split" 
                                 wire:loading.attr="disabled"
-                                class="btn w-full h-11 rounded-lg bg-primary font-bold text-white shadow-lg shadow-primary/30 hover:bg-primary-focus dark:bg-accent dark:shadow-accent/30 dark:hover:bg-accent-focus text-xs sm:text-sm flex items-center justify-center space-x-2 transition-all disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer">
-                            <div wire:loading wire:target="split" class="spinner size-4.5 border-2 border-white border-r-transparent rounded-full"></div>
+                                class="btn w-full h-10 rounded-lg bg-primary font-medium text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs sm:text-sm flex items-center justify-center space-x-2 transition-all disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer">
+                            <div wire:loading wire:target="split" class="spinner size-4 border-2 border-white border-r-transparent rounded-full"></div>
                             <span wire:loading.remove wire:target="split" class="flex items-center space-x-1.5">
                                 <x-lucide-scissors class="size-4" />
                                 <span>Mulai Pisahkan Dokumen PDF</span>
@@ -236,13 +235,11 @@
                     </div>
 
                     <div class="mt-5 flex flex-wrap items-center justify-center gap-2">
-                        <span class="badge rounded-full bg-white/80 text-slate-700 dark:bg-navy-700 dark:text-navy-200 text-[10px] font-semibold px-2.5 py-0.5 shadow-xs flex items-center gap-1">
-                            <x-lucide-shield-check class="size-3 text-success" />
-                            <span>Kualitas Vektor Terjaga</span>
+                        <span class="badge rounded-full bg-slate-100 text-slate-700 dark:bg-navy-600 dark:text-navy-200 text-xs font-medium px-2.5 py-0.5">
+                            Kualitas Vektor Terjaga
                         </span>
-                        <span class="badge rounded-full bg-white/80 text-slate-700 dark:bg-navy-700 dark:text-navy-200 text-[10px] font-semibold px-2.5 py-0.5 shadow-xs flex items-center gap-1">
-                            <x-lucide-zap class="size-3 text-warning" />
-                            <span>Proses Cepat & Bersih</span>
+                        <span class="badge rounded-full bg-slate-100 text-slate-700 dark:bg-navy-600 dark:text-navy-200 text-xs font-medium px-2.5 py-0.5">
+                            Proses Cepat & Bersih
                         </span>
                     </div>
                 </div>
@@ -251,12 +248,11 @@
             {{-- Result Panel (Hidden during split loading) --}}
             <div wire:loading.remove wire:target="split" class="card p-5 sm:p-6 text-center border border-slate-200/80 dark:border-navy-700 h-full flex flex-col justify-between">
                 <div>
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-navy-100 mb-4 pb-3 border-b border-slate-200 dark:border-navy-700 flex items-center justify-between">
+                    <h3 class="text-sm font-semibold text-slate-800 dark:text-navy-100 mb-4 pb-3 border-b border-slate-200 dark:border-navy-700 flex items-center justify-between">
                         <span>Hasil Pemisahan PDF</span>
                         @if($resultPath)
-                            <span class="badge rounded-full bg-success/15 text-success text-[10px] font-bold px-2 py-0.5 flex items-center gap-1">
-                                <x-lucide-check class="size-3" />
-                                <span>Selesai</span>
+                            <span class="badge rounded-full bg-success/15 text-success text-xs font-medium px-2.5 py-0.5">
+                                Selesai
                             </span>
                         @endif
                     </h3>
@@ -265,15 +261,15 @@
                         {{-- Comparison Cards --}}
                         <div class="space-y-4">
                             {{-- Success Hero Badge --}}
-                            <div class="rounded-2xl bg-linear-to-br from-rose-50 to-orange-50 dark:from-navy-750 dark:to-navy-700 p-5 border border-rose-200/60 dark:border-navy-600">
-                                <div class="mask is-squircle flex size-12 items-center justify-center bg-rose-500 text-white mx-auto mb-2 shadow-md shadow-rose-500/20">
+                            <div class="rounded-lg bg-slate-50 dark:bg-navy-750/60 p-5 border border-slate-150 dark:border-navy-600">
+                                <div class="mask is-squircle flex size-12 items-center justify-center bg-primary text-white mx-auto mb-2">
                                     @if($extension === 'zip')
                                         <x-lucide-archive class="size-6" />
                                     @else
                                         <x-lucide-file-text class="size-6" />
                                     @endif
                                 </div>
-                                <h4 class="text-xl font-black text-slate-800 dark:text-navy-50">
+                                <h4 class="text-xl font-semibold text-slate-800 dark:text-navy-100">
                                     {{ $extension === 'zip' ? 'Arsip ZIP Siap!' : 'File PDF Siap!' }}
                                 </h4>
                                 <p class="text-xs text-slate-500 dark:text-navy-300 mt-0.5">
@@ -283,24 +279,24 @@
 
                             {{-- Size Comparison Grid --}}
                             <div class="grid grid-cols-2 gap-3 text-left">
-                                <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-navy-700/50 border border-slate-200 dark:border-navy-600">
-                                    <p class="text-[10px] font-semibold text-slate-400 dark:text-navy-300 uppercase">File Asli</p>
-                                    <p class="text-sm font-bold text-slate-700 dark:text-navy-100 mt-0.5">
+                                <div class="p-3 rounded-lg bg-white dark:bg-navy-700 border border-slate-150 dark:border-navy-600">
+                                    <p class="text-xs font-medium text-slate-400 dark:text-navy-300 uppercase">File Asli</p>
+                                    <p class="text-sm font-semibold text-slate-700 dark:text-navy-100 mt-0.5">
                                         {{ number_format($originalSize / 1024, 1) }} KB
                                     </p>
                                 </div>
-                                <div class="p-3.5 rounded-xl bg-primary/5 dark:bg-accent-light/5 border border-primary/20 dark:border-accent-light/20">
-                                    <p class="text-[10px] font-semibold text-primary dark:text-accent-light uppercase">Ukuran Hasil</p>
-                                    <p class="text-sm font-bold text-primary dark:text-accent-light mt-0.5">
+                                <div class="p-3 rounded-lg bg-primary/5 dark:bg-accent-light/5 border border-primary/20 dark:border-accent-light/20">
+                                    <p class="text-xs font-medium text-primary dark:text-accent-light uppercase">Ukuran Hasil</p>
+                                    <p class="text-sm font-semibold text-primary dark:text-accent-light mt-0.5">
                                         {{ number_format($newSize / 1024, 1) }} KB
                                     </p>
                                 </div>
                             </div>
 
                             <div class="text-xs text-slate-400 dark:text-navy-300 flex items-center justify-center gap-3 pt-1">
-                                <span>📄 Total Halaman Asli: <strong class="text-slate-700 dark:text-navy-200">{{ $originalPages }} Halaman</strong></span>
+                                <span>📄 Total Halaman Asli: <strong class="text-slate-700 dark:text-navy-200 font-medium">{{ $originalPages }} Halaman</strong></span>
                                 <span>•</span>
-                                <span>✂️ Halaman Diekstrak: <strong class="text-slate-700 dark:text-navy-200">{{ $extractedPages }} Halaman</strong></span>
+                                <span>✂️ Halaman Diekstrak: <strong class="text-slate-700 dark:text-navy-200 font-medium">{{ $extractedPages }} Halaman</strong></span>
                             </div>
                         </div>
                     @else
@@ -309,7 +305,7 @@
                             <div class="mask is-squircle flex size-16 items-center justify-center bg-slate-100 text-slate-400 dark:bg-navy-700 dark:text-navy-300 mb-3">
                                 <x-lucide-scissors class="size-8" />
                             </div>
-                            <p class="text-sm font-bold text-slate-700 dark:text-navy-200">Belum Ada File Diproses</p>
+                            <p class="text-sm font-medium text-slate-700 dark:text-navy-200">Belum Ada File Diproses</p>
                             <p class="text-xs text-slate-400 dark:text-navy-300 mt-1 max-w-xs">
                                 Unggah dokumen PDF di panel sebelah kiri, pilih mode pemisahan yang diinginkan, dan klik tombol pisahkan.
                             </p>
@@ -320,11 +316,11 @@
                 {{-- Download & Reset Buttons --}}
                 @if($resultPath)
                     <div class="pt-6 space-y-2">
-                        <button wire:click="download" class="btn w-full h-11 rounded-lg bg-success font-bold text-white shadow-lg shadow-success/30 hover:bg-success-focus text-xs sm:text-sm flex items-center justify-center space-x-2 cursor-pointer">
-                            <x-lucide-download class="size-4.5" />
+                        <button wire:click="download" class="btn w-full h-10 rounded-lg bg-primary font-medium text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs sm:text-sm flex items-center justify-center space-x-2 cursor-pointer">
+                            <x-lucide-download class="size-4" />
                             <span>Unduh Hasil Pemisahan (.{{ strtoupper($extension) }})</span>
                         </button>
-                        <button wire:click="resetFile" class="btn w-full h-9 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 dark:border-navy-600 dark:text-navy-200 dark:hover:bg-navy-700 text-xs font-semibold cursor-pointer">
+                        <button wire:click="resetFile" class="btn w-full h-9 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 dark:border-navy-450 dark:text-navy-200 dark:hover:bg-navy-700 text-xs font-medium cursor-pointer">
                             Pisahkan Dokumen Lain
                         </button>
                     </div>

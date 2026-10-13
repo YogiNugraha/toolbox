@@ -102,16 +102,16 @@
 
                     <div class="min-w-0">
                         <div class="flex items-center gap-1.5 flex-wrap">
-                            <span class="font-bold text-slate-800 dark:text-navy-100 text-xs truncate" x-text="tool.name"></span>
-                            <span class="badge rounded-full bg-slate-200/80 text-slate-700 dark:bg-navy-700 dark:text-navy-200 text-[9px] font-semibold px-1.5 py-0.2" x-text="tool.category"></span>
+                            <span class="font-medium text-slate-800 dark:text-navy-100 text-xs truncate" x-text="tool.name"></span>
+                            <span class="badge rounded-full bg-slate-150 text-slate-600 dark:bg-navy-800 dark:text-navy-300 text-xs font-medium px-2 py-0.5" x-text="tool.category"></span>
                             <template x-if="tool.badge">
-                                <span class="badge rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 text-[9px] font-black px-1.5 py-0.2" x-text="tool.badge"></span>
+                                <span class="badge rounded-full bg-warning/15 text-warning dark:bg-warning/20 dark:text-warning-light text-xs font-medium px-2 py-0.5" x-text="tool.badge"></span>
                             </template>
                             <template x-if="tool.is_maintenance">
-                                <span class="badge rounded-full bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300 text-[9px] font-bold px-1.5 py-0.2">Maintenance</span>
+                                <span class="badge rounded-full bg-error/15 text-error dark:bg-error/20 dark:text-error-light text-xs font-medium px-2 py-0.5">Maintenance</span>
                             </template>
                         </div>
-                        <p class="text-[11px] text-slate-400 dark:text-navy-300 truncate mt-0.5" x-text="tool.description || ('Buka alat ' + tool.name)"></p>
+                        <p class="text-xs text-slate-400 dark:text-navy-300 truncate mt-0.5" x-text="tool.description || ('Buka alat ' + tool.name)"></p>
                     </div>
                 </div>
 

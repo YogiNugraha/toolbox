@@ -20,19 +20,19 @@
         <div class="flex space-x-2">
             @if(auth()->check() && auth()->user()->is_admin)
                 <a href="{{ route('admin.transactions') }}"
-                    class="btn h-9 rounded-full border border-slate-300 px-4 text-xs font-semibold text-slate-700 hover:bg-slate-150 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500">
+                    class="btn h-9 rounded-full border border-slate-300 px-4 text-xs font-medium text-slate-700 hover:bg-slate-150 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500">
                     <x-lucide-arrow-left class="size-4 mr-1.5" />
                     Kembali ke Transaksi
                 </a>
             @else
                 <a href="{{ route('dashboard.billing') }}"
-                    class="btn h-9 rounded-full border border-slate-300 px-4 text-xs font-semibold text-slate-700 hover:bg-slate-150 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500">
+                    class="btn h-9 rounded-full border border-slate-300 px-4 text-xs font-medium text-slate-700 hover:bg-slate-150 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500">
                     <x-lucide-arrow-left class="size-4 mr-1.5" />
                     Kembali ke Billing
                 </a>
             @endif
             <button @click="window.print()"
-                class="btn size-9 rounded-full bg-primary p-0 text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus shadow-sm"
+                class="btn size-9 rounded-full bg-primary p-0 text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus shadow-xs"
                 title="Cetak / Download PDF">
                 <x-lucide-printer class="size-4.5" />
             </button>
@@ -58,7 +58,7 @@
                                 </svg>
                             </div>
                         @endif
-                        <h2 class="text-2xl font-bold uppercase text-primary dark:text-accent-light tracking-wide">
+                        <h2 class="text-xl sm:text-2xl font-semibold uppercase text-primary dark:text-accent-light tracking-wide">
                             {{ $siteName }}
                         </h2>
                     </div>
@@ -68,36 +68,36 @@
                     </div>
                 </div>
                 <div class="mt-4 text-center sm:m-0 sm:text-right">
-                    <h2 class="text-2xl font-bold uppercase text-slate-800 dark:text-navy-100">
+                    <h2 class="text-xl sm:text-2xl font-semibold uppercase text-slate-800 dark:text-navy-100">
                         INVOICE
                     </h2>
                     <div class="space-y-1 pt-2 text-xs text-slate-500 dark:text-navy-300">
-                        <p>Nomor Invoice: <span class="font-bold text-primary dark:text-accent-light">#{{ $subscription->midtrans_order_id }}</span></p>
+                        <p>Nomor Invoice: <span class="font-semibold text-primary dark:text-accent-light">#{{ $subscription->midtrans_order_id }}</span></p>
                         <p>
-                            Diterbitkan: <span class="font-semibold text-slate-800 dark:text-navy-100">{{ $subscription->created_at->translatedFormat('d F Y, H:i') }}</span>
+                            Diterbitkan: <span class="font-medium text-slate-800 dark:text-navy-100">{{ $subscription->created_at->translatedFormat('d F Y, H:i') }}</span>
                         </p>
                         <p>
-                            Masa Aktif: <span class="font-semibold text-slate-800 dark:text-navy-100">{{ $subscription->expires_at ? $subscription->expires_at->translatedFormat('d F Y') : '-' }}</span>
+                            Masa Aktif: <span class="font-medium text-slate-800 dark:text-navy-100">{{ $subscription->expires_at ? $subscription->expires_at->translatedFormat('d F Y') : '-' }}</span>
                         </p>
                         <p class="pt-1">
                             @if($subscription->status === 'active' || $subscription->status === 'settlement' || $subscription->status === 'capture')
-                                <span class="badge rounded-full bg-success/15 text-success dark:bg-success/20 text-[11px] font-bold px-3 py-0.5">
+                                <span class="badge rounded-full bg-success/15 text-success dark:bg-success/20 text-xs font-medium px-3 py-0.5">
                                     LUNAS
                                 </span>
                             @elseif($subscription->status === 'pending')
-                                <span class="badge rounded-full bg-warning/15 text-warning dark:bg-warning/20 text-[11px] font-bold px-3 py-0.5">
+                                <span class="badge rounded-full bg-warning/15 text-warning dark:bg-warning/20 text-xs font-medium px-3 py-0.5">
                                     MENUNGGU PEMBAYARAN
                                 </span>
                             @elseif($subscription->status === 'expired')
-                                <span class="badge rounded-full bg-slate-200 text-slate-700 dark:bg-navy-500 dark:text-navy-100 text-[11px] font-bold px-3 py-0.5">
+                                <span class="badge rounded-full bg-slate-150 text-slate-700 dark:bg-navy-500 dark:text-navy-100 text-xs font-medium px-3 py-0.5">
                                     EXPIRED
                                 </span>
                             @elseif($subscription->status === 'cancelled')
-                                <span class="badge rounded-full bg-info/15 text-info dark:bg-info/20 text-[11px] font-bold px-3 py-0.5">
+                                <span class="badge rounded-full bg-info/15 text-info dark:bg-info/20 text-xs font-medium px-3 py-0.5">
                                     DIBATALKAN
                                 </span>
                             @else
-                                <span class="badge rounded-full bg-error/15 text-error dark:bg-error/20 text-[11px] font-bold px-3 py-0.5 uppercase">
+                                <span class="badge rounded-full bg-error/15 text-error dark:bg-error/20 text-xs font-medium px-3 py-0.5 uppercase">
                                     {{ $subscription->status }}
                                 </span>
                             @endif
@@ -169,10 +169,10 @@
                             </td>
                             <td class="whitespace-nowrap px-4 py-3 sm:px-5">
                                 <div>
-                                    <p class="font-bold text-slate-700 dark:text-navy-100 text-xs">
+                                    <p class="font-medium text-slate-700 dark:text-navy-100 text-xs">
                                         Paket {{ $subscription->plan->name ?? ucfirst($subscription->plan_slug) }}
                                     </p>
-                                    <p class="text-[11px] text-slate-400 dark:text-navy-300">
+                                    <p class="text-xs text-slate-400 dark:text-navy-300">
                                         {{ $subscription->plan->description ?? 'Akses tanpa batas ke seluruh tools konversi & optimasi dokumen / gambar.' }}
                                     </p>
                                 </div>

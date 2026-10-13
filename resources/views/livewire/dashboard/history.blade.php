@@ -56,7 +56,7 @@
                     </select>
 
                     @if($search || $toolFilter || $statusFilter)
-                        <button wire:click="resetFilters" class="btn h-8 rounded-lg bg-slate-150 px-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-200 dark:bg-navy-500 dark:text-navy-100 dark:hover:bg-navy-450">
+                        <button wire:click="resetFilters" class="btn h-8 rounded-lg bg-slate-150 px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-200 dark:bg-navy-500 dark:text-navy-100 dark:hover:bg-navy-450">
                             Reset
                         </button>
                     @endif
@@ -94,7 +94,7 @@
                                 {{-- Tool & File Name --}}
                                 <td class="whitespace-nowrap px-4 py-3 sm:px-5">
                                     <div class="flex items-center space-x-3">
-                                        <div class="mask is-squircle flex size-9 shrink-0 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light font-bold">
+                                        <div class="mask is-squircle flex size-9 shrink-0 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light">
                                             @if(str_contains($activity->tool_slug, 'compress') || str_contains($activity->tool_slug, 'image') || str_contains($activity->tool_slug, 'convert'))
                                                 <x-lucide-image class="size-4.5" />
                                             @elseif(str_contains($activity->tool_slug, 'pdf') || str_contains($activity->tool_slug, 'word') || str_contains($activity->tool_slug, 'doc'))
@@ -105,11 +105,11 @@
                                         </div>
                                         <div>
                                             <div class="flex items-center gap-2">
-                                                <span class="font-bold text-slate-700 dark:text-navy-100 text-xs sm:text-sm">
+                                                <span class="font-medium text-slate-700 dark:text-navy-100 text-xs sm:text-sm">
                                                     {{ Str::headline($activity->tool_slug) }}
                                                 </span>
                                             </div>
-                                            <div class="text-[11px] text-slate-400 dark:text-navy-300 font-mono mt-0.5 max-w-[240px] truncate" title="{{ $activity->original_filename }}">
+                                            <div class="text-xs text-slate-400 dark:text-navy-300 font-mono mt-0.5 max-w-[240px] truncate" title="{{ $activity->original_filename }}">
                                                 {{ $activity->original_filename }}
                                             </div>
                                         </div>
@@ -121,7 +121,7 @@
                                     @if ($activity->original_size && $activity->result_size)
                                         <span>{{ \Illuminate\Support\Number::fileSize($activity->original_size) }}</span>
                                         <span class="text-slate-400 mx-1.5">&rarr;</span>
-                                        <span class="font-bold text-slate-800 dark:text-navy-100">{{ \Illuminate\Support\Number::fileSize($activity->result_size) }}</span>
+                                        <span class="font-semibold text-slate-800 dark:text-navy-100">{{ \Illuminate\Support\Number::fileSize($activity->result_size) }}</span>
                                     @elseif ($activity->original_size)
                                         <span>{{ \Illuminate\Support\Number::fileSize($activity->original_size) }}</span>
                                     @else
@@ -132,7 +132,7 @@
                                 {{-- Efficiency --}}
                                 <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-center">
                                     @if ($activity->original_size && $activity->result_size && $activity->original_size > $activity->result_size)
-                                        <span class="badge rounded-full bg-success/15 text-success dark:bg-success/20 px-2 py-0.5 text-[10px] font-bold">
+                                        <span class="badge rounded-full bg-success/15 text-success dark:bg-success/20 px-2 py-0.5 text-xs font-medium">
                                             -{{ round((($activity->original_size - $activity->result_size) / $activity->original_size) * 100) }}%
                                         </span>
                                     @else
@@ -143,21 +143,21 @@
                                 {{-- Status --}}
                                 <td class="whitespace-nowrap px-4 py-3 text-center sm:px-5">
                                     @if($activity->status === 'completed')
-                                        <span class="badge space-x-1.5 rounded-full bg-success/10 text-success text-[11px] font-bold px-2.5 py-1 inline-flex items-center">
+                                        <span class="badge space-x-1.5 rounded-full bg-success/10 text-success text-xs font-medium px-2.5 py-0.5 inline-flex items-center">
                                             <span class="size-1.5 rounded-full bg-current"></span>
                                             <span>Selesai</span>
                                         </span>
                                     @elseif($activity->status === 'processing')
-                                        <span class="badge space-x-1.5 rounded-full bg-warning/10 text-warning text-[11px] font-bold px-2.5 py-1 inline-flex items-center">
+                                        <span class="badge space-x-1.5 rounded-full bg-warning/10 text-warning text-xs font-medium px-2.5 py-0.5 inline-flex items-center">
                                             <span class="size-1.5 rounded-full bg-current animate-ping"></span>
                                             <span>Diproses</span>
                                         </span>
                                     @elseif($activity->status === 'expired')
-                                        <span class="badge rounded-full bg-slate-150 text-slate-700 dark:bg-navy-500 dark:text-navy-200 text-[10px] font-bold px-2.5 py-0.5">
+                                        <span class="badge rounded-full bg-slate-150 text-slate-700 dark:bg-navy-500 dark:text-navy-200 text-xs font-medium px-2.5 py-0.5">
                                             Kedaluwarsa
                                         </span>
                                     @else
-                                        <span class="badge space-x-1.5 rounded-full bg-error/10 text-error text-[11px] font-bold px-2.5 py-1 inline-flex items-center">
+                                        <span class="badge space-x-1.5 rounded-full bg-error/10 text-error text-xs font-medium px-2.5 py-0.5 inline-flex items-center">
                                             <span class="size-1.5 rounded-full bg-current"></span>
                                             <span>Gagal</span>
                                         </span>

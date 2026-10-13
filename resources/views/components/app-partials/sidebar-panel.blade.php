@@ -40,7 +40,7 @@
                 <li class="pt-4 pb-1">
                     <div class="flex items-center space-x-2">
                         <div class="h-px flex-1 bg-slate-200 dark:bg-navy-600"></div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300">Kumpulan Tools</span>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-navy-300">Kumpulan Tools</span>
                         <div class="h-px flex-1 bg-slate-200 dark:bg-navy-600"></div>
                     </div>
                 </li>
@@ -65,7 +65,7 @@
                                 <div class="size-1.5 rounded-full border border-current opacity-40"></div>
                                 <span>{{ $displayName }}</span>
                             </div>
-                            <span class="badge rounded-full {{ $isCatActive ? 'bg-primary/10 text-primary dark:bg-accent/20 dark:text-accent-light' : 'bg-slate-150 text-slate-600 dark:bg-navy-600 dark:text-navy-200' }} text-[10px] font-bold px-1.5 py-0.5">
+                            <span class="badge rounded-full {{ $isCatActive ? 'bg-primary/10 text-primary dark:bg-accent/20 dark:text-accent-light' : 'bg-slate-150 text-slate-600 dark:bg-navy-600 dark:text-navy-200' }} text-xs font-medium px-2 py-0.5">
                                 {{ $catTools->count() }}
                             </span>
                         </a>

@@ -6,22 +6,22 @@
     {{-- Top Action Toolbar --}}
     <div class="flex flex-col justify-between gap-4 py-4 sm:flex-row sm:items-center sm:py-5">
         <div>
-            <h2 class="text-xl font-bold text-slate-800 dark:text-navy-50 lg:text-2xl flex items-center gap-2.5">
+            <h2 class="text-xl font-medium tracking-wide text-slate-800 dark:text-navy-100 lg:text-2xl flex items-center gap-2.5">
                 <span>Kelola Tools & Layanan</span>
-                <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-xs font-bold px-2.5 py-0.5">
+                <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-xs font-medium px-2.5 py-0.5">
                     {{ $totalTools }} Tools
                 </span>
             </h2>
-            <p class="mt-1 text-xs text-slate-400 dark:text-navy-300">
+            <p class="mt-1 text-xs text-slate-500 dark:text-navy-300">
                 Atur status aktif, mode pemeliharaan, label promosi, gambar thumbnail, dan urutan seluruh tools platform.
             </p>
         </div>
         <div class="flex items-center space-x-2">
-            <button wire:click="syncFromConfigAction" title="Sinkronkan tool bawaan dari konfigurasi" class="btn h-9 rounded-full border border-slate-300 px-3.5 text-xs font-semibold text-slate-700 hover:bg-slate-150 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 shadow-xs flex items-center space-x-1.5">
+            <button wire:click="syncFromConfigAction" title="Sinkronkan tool bawaan dari konfigurasi" class="btn h-9 rounded-full border border-slate-300 px-4 text-xs font-medium text-slate-700 hover:bg-slate-150 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 flex items-center space-x-1.5">
                 <x-lucide-refresh-cw class="size-3.5" />
                 <span>Sync Config</span>
             </button>
-            <button wire:click="create" class="btn h-9 rounded-full bg-primary px-4 text-xs font-bold text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus shadow-sm flex items-center space-x-1.5">
+            <button wire:click="create" class="btn h-9 rounded-full bg-primary px-4 text-xs font-medium text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus flex items-center space-x-1.5">
                 <x-lucide-plus class="size-4" />
                 <span>Tambah Tool Baru</span>
             </button>
@@ -33,56 +33,56 @@
         {{-- Total Tools --}}
         <div class="card p-4 sm:p-5">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300">Total Tools</span>
-                <div class="mask is-squircle flex size-10 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light font-bold">
+                <span class="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-navy-300">Total Tools</span>
+                <div class="mask is-squircle flex size-10 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light">
                     <x-lucide-wrench class="size-5" />
                 </div>
             </div>
             <div class="mt-3">
-                <p class="text-2xl font-bold text-slate-800 dark:text-navy-100">{{ $totalTools }}</p>
-                <p class="text-[11px] text-slate-400 dark:text-navy-300 mt-0.5">Seluruh tools terdaftar di sistem</p>
+                <p class="text-2xl font-semibold text-slate-800 dark:text-navy-100">{{ $totalTools }}</p>
+                <p class="text-xs text-slate-400 dark:text-navy-300 mt-0.5">Seluruh tools terdaftar di sistem</p>
             </div>
         </div>
 
         {{-- Active Tools --}}
         <div class="card p-4 sm:p-5">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300">Tools Aktif</span>
-                <div class="mask is-squircle flex size-10 items-center justify-center bg-success/10 text-success font-bold">
+                <span class="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-navy-300">Tools Aktif</span>
+                <div class="mask is-squircle flex size-10 items-center justify-center bg-success/10 text-success">
                     <x-lucide-check-circle-2 class="size-5" />
                 </div>
             </div>
             <div class="mt-3">
-                <p class="text-2xl font-bold text-success">{{ $activeToolsCount }}</p>
-                <p class="text-[11px] text-slate-400 dark:text-navy-300 mt-0.5">Dapat digunakan pengguna</p>
+                <p class="text-2xl font-semibold text-success">{{ $activeToolsCount }}</p>
+                <p class="text-xs text-slate-400 dark:text-navy-300 mt-0.5">Dapat digunakan pengguna</p>
             </div>
         </div>
 
         {{-- Maintenance Tools --}}
         <div class="card p-4 sm:p-5">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300">Mode Maintenance</span>
-                <div class="mask is-squircle flex size-10 items-center justify-center bg-warning/10 text-warning font-bold">
+                <span class="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-navy-300">Mode Maintenance</span>
+                <div class="mask is-squircle flex size-10 items-center justify-center bg-warning/10 text-warning">
                     <x-lucide-hammer class="size-5" />
                 </div>
             </div>
             <div class="mt-3">
-                <p class="text-2xl font-bold text-warning">{{ $maintenanceToolsCount }}</p>
-                <p class="text-[11px] text-slate-400 dark:text-navy-300 mt-0.5">Sedang dalam perbaikan</p>
+                <p class="text-2xl font-semibold text-warning">{{ $maintenanceToolsCount }}</p>
+                <p class="text-xs text-slate-400 dark:text-navy-300 mt-0.5">Sedang dalam perbaikan</p>
             </div>
         </div>
 
         {{-- PRO Only Tools --}}
         <div class="card p-4 sm:p-5">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300">Khusus PRO</span>
-                <div class="mask is-squircle flex size-10 items-center justify-center bg-purple-500/10 text-purple-600 dark:text-purple-400 font-bold">
+                <span class="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-navy-300">Khusus PRO</span>
+                <div class="mask is-squircle flex size-10 items-center justify-center bg-purple-500/10 text-purple-600 dark:text-purple-400">
                     <x-lucide-crown class="size-5" />
                 </div>
             </div>
             <div class="mt-3">
-                <p class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ $proToolsCount }}</p>
-                <p class="text-[11px] text-slate-400 dark:text-navy-300 mt-0.5">Terkunci untuk member PRO</p>
+                <p class="text-2xl font-semibold text-purple-600 dark:text-purple-400">{{ $proToolsCount }}</p>
+                <p class="text-xs text-slate-400 dark:text-navy-300 mt-0.5">Terkunci untuk member PRO</p>
             </div>
         </div>
     </div>
@@ -114,14 +114,14 @@
                 <select wire:model.live="statusFilter" class="form-select rounded-lg border border-slate-300 bg-transparent px-3 py-1.5 text-xs hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent">
                     <option value="">Semua Status</option>
                     <option value="active">Aktif & Normal</option>
-                    <option value="pro_only">👑 Khusus Member PRO</option>
-                    <option value="highlighted">🌟 Highlight di Beranda</option>
+                    <option value="pro_only">Khusus Member PRO</option>
+                    <option value="highlighted">Highlight di Beranda</option>
                     <option value="maintenance">Maintenance</option>
                     <option value="inactive">Non-Aktif (Hidden)</option>
                 </select>
 
                 @if($search || $selectedCategory || $statusFilter)
-                    <button wire:click="resetFilters" class="btn h-8 rounded-lg bg-slate-150 px-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-200 dark:bg-navy-500 dark:text-navy-100 dark:hover:bg-navy-450">
+                    <button wire:click="resetFilters" class="btn h-8 rounded-lg bg-slate-150 px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-200 dark:bg-navy-500 dark:text-navy-100 dark:hover:bg-navy-450">
                         Reset
                     </button>
                 @endif
@@ -170,7 +170,7 @@
                                             <img src="{{ $tool->image_url }}" alt="{{ $tool->name }}" class="size-full object-contain" />
                                         </div>
                                     @else
-                                        <div class="mask is-squircle flex size-10 shrink-0 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light font-bold">
+                                        <div class="mask is-squircle flex size-10 shrink-0 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light">
                                             @if($tool->category === 'Image')
                                                 <x-lucide-image class="size-5" />
                                             @elseif($tool->category === 'PDF' || $tool->category === 'Document')
@@ -182,24 +182,23 @@
                                     @endif
                                     <div>
                                         <div class="flex items-center gap-2">
-                                            <span class="font-bold text-slate-700 dark:text-navy-100 text-xs sm:text-sm">
+                                            <span class="font-medium text-slate-700 dark:text-navy-100 text-xs sm:text-sm">
                                                 {{ $tool->name }}
                                             </span>
-                                            <span class="badge rounded-full bg-slate-100 text-slate-600 dark:bg-navy-600 dark:text-navy-200 text-[10px] font-semibold px-2 py-0.5">
+                                            <span class="badge rounded-full bg-slate-100 text-slate-600 dark:bg-navy-600 dark:text-navy-200 text-xs font-medium px-2 py-0.5">
                                                 {{ $tool->category }}
                                             </span>
                                             @if($tool->is_pro_only)
-                                                <span class="badge rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 text-[9px] font-extrabold px-2 py-0.5 uppercase flex items-center gap-0.5">
-                                                    <x-lucide-crown class="size-2.5" />
-                                                    <span>PRO ONLY</span>
+                                                <span class="badge rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 text-xs font-medium px-2 py-0.5 uppercase">
+                                                    PRO ONLY
                                                 </span>
                                             @endif
                                         </div>
-                                        <div class="text-[11px] text-slate-400 dark:text-navy-300 font-mono mt-0.5 flex items-center gap-1.5">
+                                        <div class="text-xs text-slate-400 dark:text-navy-300 font-mono mt-0.5 flex items-center gap-1.5">
                                             <span>/tool/{{ $tool->slug }}</span>
                                             @if($tool->component)
                                                 <span class="text-slate-300 dark:text-navy-500">•</span>
-                                                <span class="text-[10px] text-slate-400">{{ $tool->component }}</span>
+                                                <span class="text-xs text-slate-400">{{ $tool->component }}</span>
                                             @endif
                                         </div>
                                     </div>
@@ -209,23 +208,23 @@
                             {{-- Badge Label --}}
                             <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-center">
                                 @if($tool->badge === 'HOT')
-                                    <span class="badge rounded-full bg-linear-to-r from-red-500 to-orange-500 text-white text-[10px] font-black px-2.5 py-0.5 uppercase shadow-xs">
-                                        🔥 HOT
+                                    <span class="badge rounded-full bg-error/10 text-error dark:bg-error/15 text-xs font-medium px-2.5 py-0.5 uppercase">
+                                        HOT
                                     </span>
                                 @elseif($tool->badge === 'NEW')
-                                    <span class="badge rounded-full bg-linear-to-r from-emerald-500 to-teal-500 text-white text-[10px] font-black px-2.5 py-0.5 uppercase shadow-xs">
-                                        ✨ NEW
+                                    <span class="badge rounded-full bg-success/10 text-success dark:bg-success/15 text-xs font-medium px-2.5 py-0.5 uppercase">
+                                        NEW
                                     </span>
                                 @elseif($tool->badge === 'PRO')
-                                    <span class="badge rounded-full bg-linear-to-r from-amber-500 to-purple-600 text-white text-[10px] font-black px-2.5 py-0.5 uppercase shadow-xs">
-                                        👑 PRO
+                                    <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/15 dark:text-accent-light text-xs font-medium px-2.5 py-0.5 uppercase">
+                                        PRO
                                     </span>
                                 @elseif($tool->badge === 'BETA')
-                                    <span class="badge rounded-full bg-info/15 text-info text-[10px] font-bold px-2.5 py-0.5 uppercase">
-                                        🧪 BETA
+                                    <span class="badge rounded-full bg-info/10 text-info dark:bg-info/15 text-xs font-medium px-2.5 py-0.5 uppercase">
+                                        BETA
                                     </span>
                                 @elseif($tool->badge)
-                                    <span class="badge rounded-full bg-slate-150 text-slate-700 dark:bg-navy-500 dark:text-navy-200 text-[10px] font-bold px-2.5 py-0.5 uppercase">
+                                    <span class="badge rounded-full bg-slate-150 text-slate-700 dark:bg-navy-500 dark:text-navy-200 text-xs font-medium px-2.5 py-0.5 uppercase">
                                         {{ $tool->badge }}
                                     </span>
                                 @else
@@ -253,14 +252,14 @@
 
                             {{-- Total Usage Count --}}
                             <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-center">
-                                <span class="font-bold text-slate-700 dark:text-navy-100 text-xs">
+                                <span class="font-medium text-slate-700 dark:text-navy-100 text-xs">
                                     {{ number_format($tool->total_usage_count) }}
                                 </span>
-                                <span class="text-[10px] text-slate-400 dark:text-navy-300 block">kali</span>
+                                <span class="text-xs text-slate-400 dark:text-navy-300 block">kali</span>
                             </td>
 
                             {{-- Sort Order --}}
-                            <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-center font-bold text-slate-600 dark:text-navy-200 text-xs">
+                            <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-center font-medium text-slate-600 dark:text-navy-200 text-xs">
                                 {{ $tool->sort_order }}
                             </td>
 
@@ -272,7 +271,7 @@
                                         <label class="inline-flex cursor-pointer items-center">
                                             <input class="form-switch h-4.5 w-8 rounded-full bg-slate-300 before:rounded-full before:bg-slate-50 checked:bg-primary checked:before:bg-white dark:bg-navy-900 dark:before:bg-navy-300 dark:checked:bg-accent dark:checked:before:bg-white" type="checkbox" wire:click="toggleActive({{ $tool->id }})" {{ $tool->is_active ? 'checked' : '' }} />
                                         </label>
-                                        <span class="text-[11px] font-semibold {{ $tool->is_active ? 'text-success' : 'text-slate-400 dark:text-navy-400' }}">
+                                        <span class="text-xs font-medium {{ $tool->is_active ? 'text-success' : 'text-slate-400 dark:text-navy-400' }}">
                                             {{ $tool->is_active ? 'Aktif' : 'Off' }}
                                         </span>
                                     </div>
@@ -284,7 +283,7 @@
                                         <label class="inline-flex cursor-pointer items-center">
                                             <input class="form-switch h-4.5 w-8 rounded-full bg-slate-300 before:rounded-full before:bg-slate-50 checked:bg-warning checked:before:bg-white dark:bg-navy-900 dark:before:bg-navy-300 dark:checked:bg-warning dark:checked:before:bg-white" type="checkbox" wire:click="toggleMaintenance({{ $tool->id }})" {{ $tool->is_maintenance ? 'checked' : '' }} />
                                         </label>
-                                        <span class="text-[11px] font-semibold {{ $tool->is_maintenance ? 'text-warning' : 'text-slate-400 dark:text-navy-400' }}">
+                                        <span class="text-xs font-medium {{ $tool->is_maintenance ? 'text-warning' : 'text-slate-400 dark:text-navy-400' }}">
                                             {{ $tool->is_maintenance ? 'Maint' : 'Normal' }}
                                         </span>
                                     </div>
@@ -294,10 +293,10 @@
                             {{-- Actions --}}
                             <td class="whitespace-nowrap px-4 py-3 text-right sm:px-5">
                                 <div class="flex items-center justify-end space-x-1.5">
-                                    <button wire:click="edit({{ $tool->id }})" title="Edit Detail Tool" class="btn size-7 rounded-md bg-primary/10 text-primary hover:bg-primary/20 dark:bg-accent-light/10 dark:text-accent-light dark:hover:bg-accent-light/20 p-0 text-xs font-semibold shadow-xs">
+                                    <button wire:click="edit({{ $tool->id }})" title="Edit Detail Tool" class="btn size-7 rounded-md bg-primary/10 text-primary hover:bg-primary/20 dark:bg-accent-light/10 dark:text-accent-light dark:hover:bg-accent-light/20 p-0 text-xs font-medium">
                                         <x-lucide-pencil class="size-3.5" />
                                     </button>
-                                    <button wire:click="confirmDelete({{ $tool->id }})" title="Hapus Tool" class="btn size-7 rounded-md bg-error/10 text-error hover:bg-error/20 p-0 text-xs font-semibold shadow-xs">
+                                    <button wire:click="confirmDelete({{ $tool->id }})" title="Hapus Tool" class="btn size-7 rounded-md bg-error/10 text-error hover:bg-error/20 p-0 text-xs font-medium">
                                         <x-lucide-trash-2 class="size-3.5" />
                                     </button>
                                 </div>
@@ -318,7 +317,7 @@
         {{-- Pagination --}}
         @if($tools->hasPages())
             <div class="flex flex-col justify-between gap-4 p-4 sm:flex-row sm:items-center sm:px-5 border-t border-slate-150 dark:border-navy-600">
-                <div class="text-xs text-slate-400 dark:text-navy-300">
+                <div class="text-xs text-slate-500 dark:text-navy-300">
                     Menampilkan <strong>{{ $tools->firstItem() }}</strong> sampai <strong>{{ $tools->lastItem() }}</strong> dari <strong>{{ $tools->total() }}</strong> tools
                 </div>
                 <div>
@@ -333,19 +332,19 @@
     <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-300"
          x-data
          x-on:keydown.escape.window="$wire.set('isModalOpen', false)">
-        <div class="relative w-full max-w-2xl rounded-2xl bg-white dark:bg-navy-700 shadow-2xl border border-slate-200 dark:border-navy-600 overflow-hidden flex flex-col max-h-[90vh]">
+        <div class="relative w-full max-w-2xl rounded-lg bg-white dark:bg-navy-700 shadow-soft border border-slate-150 dark:border-navy-600 overflow-hidden flex flex-col max-h-[90vh]">
             
             {{-- Modal Header --}}
             <div class="flex items-center justify-between px-5 py-4 border-b border-slate-150 dark:border-navy-600 bg-slate-50 dark:bg-navy-800">
                 <div class="flex items-center space-x-3">
-                    <div class="mask is-squircle flex size-10 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light font-bold">
+                    <div class="mask is-squircle flex size-10 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light">
                         <x-lucide-wrench class="size-5" />
                     </div>
                     <div>
-                        <h3 class="text-base font-bold text-slate-800 dark:text-navy-100">
+                        <h3 class="text-base font-medium tracking-wide text-slate-800 dark:text-navy-100">
                             {{ $toolId ? 'Edit Konfigurasi Tool' : 'Tambah Tool Baru' }}
                         </h3>
-                        <p class="text-xs text-slate-400 dark:text-navy-300">
+                        <p class="text-xs text-slate-500 dark:text-navy-300">
                             {{ $toolId ? 'Perbarui informasi publik, gambar thumbnail, dan status operasional tool.' : 'Daftarkan tool baru ke dalam katalog sistem.' }}
                         </p>
                     </div>
@@ -362,17 +361,17 @@
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                         <label class="block">
-                            <span class="font-semibold text-slate-700 dark:text-navy-100 mb-1 block">Nama Tool <span class="text-error">*</span></span>
+                            <span class="font-medium text-slate-700 dark:text-navy-100 mb-1 block">Nama Tool <span class="text-error">*</span></span>
                             <input wire:model.live="name" type="text" placeholder="Contoh: PDF ke Word" class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent" />
                         </label>
-                        @error('name') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                        @error('name') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label class="block">
-                            <span class="font-semibold text-slate-700 dark:text-navy-100 mb-1 block">Slug Rute <span class="text-error">*</span></span>
+                            <span class="font-medium text-slate-700 dark:text-navy-100 mb-1 block">Slug Rute <span class="text-error">*</span></span>
                             <input wire:model="slug" type="text" placeholder="pdf-to-word" class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 font-mono text-primary dark:text-accent-light placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent" />
                         </label>
-                        @error('slug') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                        @error('slug') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                     </div>
                 </div>
 
@@ -380,7 +379,7 @@
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                         <label class="block">
-                            <span class="font-semibold text-slate-700 dark:text-navy-100 mb-1 block">Kategori <span class="text-error">*</span></span>
+                            <span class="font-medium text-slate-700 dark:text-navy-100 mb-1 block">Kategori <span class="text-error">*</span></span>
                             <input wire:model="category" list="categoryOptions" type="text" placeholder="Image, PDF, Document, Text, dll." class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent" />
                             <datalist id="categoryOptions">
                                 <option value="Image">
@@ -391,23 +390,23 @@
                                 <option value="Utility">
                             </datalist>
                         </label>
-                        @error('category') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                        @error('category') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label class="block">
-                            <span class="font-semibold text-slate-700 dark:text-navy-100 mb-1 block">Nama Komponen Livewire</span>
+                            <span class="font-medium text-slate-700 dark:text-navy-100 mb-1 block">Nama Komponen Livewire</span>
                             <input wire:model="component" type="text" placeholder="tools.pdf-to-word" class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 font-mono text-slate-600 dark:text-navy-200 placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent" />
                         </label>
-                        @error('component') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                        @error('component') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                     </div>
                 </div>
 
                 {{-- Row 3: Image Upload & Thumbnail --}}
-                <div class="rounded-xl border border-slate-200 dark:border-navy-600 p-3.5 bg-slate-50/50 dark:bg-navy-800/40">
-                    <span class="font-semibold text-slate-700 dark:text-navy-100 mb-1.5 block">Gambar Thumbnail / Ilustrasi Tool (Opsional)</span>
+                <div class="rounded-lg border border-slate-200 dark:border-navy-600 p-3.5 bg-slate-50/50 dark:bg-navy-800/40">
+                    <span class="font-medium text-slate-700 dark:text-navy-100 mb-1.5 block">Gambar Thumbnail / Ilustrasi Tool (Opsional)</span>
                     <div class="flex items-center space-x-4">
                         {{-- Preview Box --}}
-                        <div class="size-16 rounded-xl border border-dashed border-slate-300 dark:border-navy-500 bg-white dark:bg-navy-700 p-1 flex items-center justify-center shrink-0 overflow-hidden">
+                        <div class="size-16 rounded-lg border border-dashed border-slate-300 dark:border-navy-500 bg-white dark:bg-navy-700 p-1 flex items-center justify-center shrink-0 overflow-hidden">
                             @if($imageFile)
                                 <img src="{{ $imageFile->temporaryUrl() }}" alt="Preview" class="size-full object-contain" />
                             @elseif($image)
@@ -418,52 +417,52 @@
                         </div>
 
                         <div class="flex-1 space-y-1.5">
-                            <input wire:model="imageFile" type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" class="block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 dark:file:bg-accent-light/10 dark:file:text-accent-light cursor-pointer" />
-                            <div class="flex items-center justify-between text-[10px] text-slate-400">
+                            <input wire:model="imageFile" type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" class="block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 dark:file:bg-accent-light/10 dark:file:text-accent-light cursor-pointer" />
+                            <div class="flex items-center justify-between text-xs text-slate-400">
                                 <span>PNG, JPG, SVG, WebP (Maks 2MB)</span>
                                 @if($image || $imageFile)
-                                    <button wire:click="removeImage" type="button" class="text-error font-semibold hover:underline">Hapus Gambar</button>
+                                    <button wire:click="removeImage" type="button" class="text-error font-medium hover:underline">Hapus Gambar</button>
                                 @endif
                             </div>
                         </div>
                     </div>
-                    @error('imageFile') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                    @error('imageFile') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
                 {{-- Row 4: Description --}}
                 <div>
                     <label class="block">
-                        <span class="font-semibold text-slate-700 dark:text-navy-100 mb-1 block">Deskripsi Layanan</span>
+                        <span class="font-medium text-slate-700 dark:text-navy-100 mb-1 block">Deskripsi Layanan</span>
                         <textarea wire:model="description" rows="2" placeholder="Jelaskan kegunaan tool ini kepada pengguna..." class="form-textarea w-full rounded-lg border border-slate-300 bg-transparent p-2.5 placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"></textarea>
                     </label>
-                    @error('description') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                    @error('description') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
                 {{-- Row 5: Badge & Sort Order --}}
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                         <label class="block">
-                            <span class="font-semibold text-slate-700 dark:text-navy-100 mb-1 block">Label Badge Khusus</span>
+                            <span class="font-medium text-slate-700 dark:text-navy-100 mb-1 block">Label Badge Khusus</span>
                             <select wire:model="badge" class="form-select w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent">
                                 <option value="">Tanpa Badge (Normal)</option>
-                                <option value="HOT">🔥 HOT / Populer</option>
-                                <option value="NEW">✨ NEW / Baru</option>
-                                <option value="PRO">👑 PRO Only</option>
-                                <option value="BETA">🧪 BETA</option>
+                                <option value="HOT">HOT / Populer</option>
+                                <option value="NEW">NEW / Baru</option>
+                                <option value="PRO">PRO Only</option>
+                                <option value="BETA">BETA</option>
                             </select>
                         </label>
                     </div>
                     <div>
                         <label class="block">
-                            <span class="font-semibold text-slate-700 dark:text-navy-100 mb-1 block">Urutan Tampilan</span>
+                            <span class="font-medium text-slate-700 dark:text-navy-100 mb-1 block">Urutan Tampilan</span>
                             <input wire:model="sort_order" type="number" class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent" />
                         </label>
                     </div>
                 </div>
 
                 {{-- Operational Settings Box --}}
-                <div class="rounded-xl border border-slate-150 dark:border-navy-600 p-4 bg-slate-50/50 dark:bg-navy-800/40 space-y-3">
-                    <h4 class="font-bold text-slate-700 dark:text-navy-100 uppercase tracking-wider text-[11px]">
+                <div class="rounded-lg border border-slate-150 dark:border-navy-600 p-4 bg-slate-50/50 dark:bg-navy-800/40 space-y-3">
+                    <h4 class="font-medium text-slate-700 dark:text-navy-100 uppercase tracking-wider text-xs">
                         Kontrol Operasional & Visibilitas
                     </h4>
 
@@ -471,8 +470,8 @@
                         {{-- Active Switch --}}
                         <div class="flex items-center justify-between rounded-lg border border-slate-200 dark:border-navy-600 p-3 bg-white dark:bg-navy-700">
                             <div>
-                                <p class="font-bold text-slate-700 dark:text-navy-100">Status Aktif</p>
-                                <p class="text-[10px] text-slate-400">Tampilkan di sistem</p>
+                                <p class="font-medium text-slate-700 dark:text-navy-100">Status Aktif</p>
+                                <p class="text-xs text-slate-400">Tampilkan di sistem</p>
                             </div>
                             <label class="inline-flex cursor-pointer items-center">
                                 <input class="form-switch h-5 w-10 rounded-full bg-slate-300 before:rounded-full before:bg-slate-50 checked:bg-primary checked:before:bg-white dark:bg-navy-900 dark:before:bg-navy-300 dark:checked:bg-accent dark:checked:before:bg-white" type="checkbox" wire:model="is_active" />
@@ -482,11 +481,11 @@
                         {{-- PRO Only Switch --}}
                         <div class="flex items-center justify-between rounded-lg border border-slate-200 dark:border-navy-600 p-3 bg-white dark:bg-navy-700">
                             <div>
-                                <p class="font-bold text-slate-700 dark:text-navy-100 flex items-center gap-1">
+                                <p class="font-medium text-slate-700 dark:text-navy-100 flex items-center gap-1">
                                     <x-lucide-crown class="size-3.5 text-purple-600 dark:text-purple-400" />
                                     <span>Khusus PRO</span>
                                 </p>
-                                <p class="text-[10px] text-slate-400">Kunci untuk Free tier</p>
+                                <p class="text-xs text-slate-400">Kunci untuk Free tier</p>
                             </div>
                             <label class="inline-flex cursor-pointer items-center">
                                 <input class="form-switch h-5 w-10 rounded-full bg-slate-300 before:rounded-full before:bg-slate-50 checked:bg-purple-600 checked:before:bg-white dark:bg-navy-900 dark:before:bg-navy-300 dark:checked:bg-purple-600 dark:checked:before:bg-white" type="checkbox" wire:model="is_pro_only" />
@@ -496,8 +495,8 @@
                         {{-- Highlighted on Landing Page Switch --}}
                         <div class="flex items-center justify-between rounded-lg border border-slate-200 dark:border-navy-600 p-3 bg-white dark:bg-navy-700">
                             <div>
-                                <p class="font-bold text-slate-700 dark:text-navy-100">Highlight</p>
-                                <p class="text-[10px] text-slate-400">Welcome Page</p>
+                                <p class="font-medium text-slate-700 dark:text-navy-100">Highlight</p>
+                                <p class="text-xs text-slate-400">Welcome Page</p>
                             </div>
                             <label class="inline-flex cursor-pointer items-center">
                                 <input class="form-switch h-5 w-10 rounded-full bg-slate-300 before:rounded-full before:bg-slate-50 checked:bg-amber-500 checked:before:bg-white dark:bg-navy-900 dark:before:bg-navy-300 dark:checked:bg-amber-500 dark:checked:before:bg-white" type="checkbox" wire:model="is_highlighted" />
@@ -507,8 +506,8 @@
                         {{-- Maintenance Switch --}}
                         <div class="flex items-center justify-between rounded-lg border border-slate-200 dark:border-navy-600 p-3 bg-white dark:bg-navy-700">
                             <div>
-                                <p class="font-bold text-slate-700 dark:text-navy-100">Mode Maint</p>
-                                <p class="text-[10px] text-slate-400">Kunci pemeliharaan</p>
+                                <p class="font-medium text-slate-700 dark:text-navy-100">Mode Maint</p>
+                                <p class="text-xs text-slate-400">Kunci pemeliharaan</p>
                             </div>
                             <label class="inline-flex cursor-pointer items-center">
                                 <input class="form-switch h-5 w-10 rounded-full bg-slate-300 before:rounded-full before:bg-slate-50 checked:bg-warning checked:before:bg-white dark:bg-navy-900 dark:before:bg-navy-300 dark:checked:bg-warning dark:checked:before:bg-white" type="checkbox" wire:model="is_maintenance" />
@@ -519,7 +518,7 @@
                     @if($is_maintenance)
                     <div class="pt-2">
                         <label class="block">
-                            <span class="font-semibold text-slate-700 dark:text-navy-100 mb-1 block">Pesan Maintenance Khusus (Opsional)</span>
+                            <span class="font-medium text-slate-700 dark:text-navy-100 mb-1 block">Pesan Maintenance Khusus (Opsional)</span>
                             <input wire:model="maintenance_message" type="text" placeholder="Layanan ini sedang ditingkatkan performanya. Silakan coba beberapa saat lagi." class="form-input w-full rounded-lg border border-warning/50 bg-white dark:bg-navy-700 px-3 py-2 text-xs" />
                         </label>
                     </div>
@@ -530,10 +529,10 @@
 
             {{-- Modal Footer --}}
             <div class="flex items-center justify-end space-x-2 border-t border-slate-150 bg-slate-50 px-5 py-3.5 dark:border-navy-600 dark:bg-navy-800">
-                <button wire:click="$set('isModalOpen', false)" class="btn rounded-full border border-slate-300 font-semibold text-slate-700 hover:bg-slate-150 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 text-xs px-4 py-2">
+                <button wire:click="$set('isModalOpen', false)" class="btn rounded-full border border-slate-300 font-medium text-slate-700 hover:bg-slate-150 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 text-xs px-4 py-2">
                     Batal
                 </button>
-                <button wire:click="save" class="btn rounded-full bg-primary font-bold text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs px-5 py-2 shadow-sm flex items-center space-x-1.5">
+                <button wire:click="save" class="btn rounded-full bg-primary font-medium text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs px-5 py-2 shadow-sm flex items-center space-x-1.5">
                     <span wire:loading.remove wire:target="save,imageFile">Simpan Tool</span>
                     <span wire:loading wire:target="save,imageFile" class="flex items-center space-x-1">
                         <x-lucide-loader-2 class="size-3.5 animate-spin" />

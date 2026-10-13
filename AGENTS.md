@@ -11,8 +11,12 @@ Setiap agen AI yang bekerja di repositori ini **WAJIB** membaca dan mematuhi atu
 |---|---|---|
 | **Backend Framework** | Laravel 13.8+ (PHP 8.3/8.4) | SQLite default (`database/database.sqlite`), Laragon virtual host |
 | **Frontend Reactive** | Livewire 4.3 (Strictly Class-Based) | **DILARANG** menggunakan Single-File Component (SFC) atau Volt. Wajib ikuti konvensi class-based di `config/livewire.php` (`'type' => 'class'`) |
-| **CSS & Design System** | Tailwind CSS v4 + Lineone UI Kit | Menggunakan palet Slate / Navy (`dark:bg-navy-800`), font Inter/Outfit, token Lineone |
+| **CSS & Design System** | Tailwind CSS v4 + Lineone UI Kit | Palet Slate / Navy (`dark:bg-navy-800`), font Inter/Outfit, token Lineone murni (`C:\laragon\www\lineone-laravel`) |
+| **Tipografi & Font** | Lineone Standard Tokens | **Headings**: `font-semibold` / `font-medium`. **ZERO TOLERANCE** untuk `font-black` dan `font-extrabold`. DILARANG menggunakan arbitrary font sizes (`text-[9px]`, `text-[10px]`, `text-[11px]`). Wajib token standar Tailwind (`text-xs`, `text-sm`, `text-base`). |
+| **Tombol (Buttons)** | Lineone Pill/Rounded (`h-9`/`h-10`) | `btn h-9 rounded-full bg-primary font-medium text-white shadow-xs text-xs px-5`. DILARANG efek colored glow shadow (`shadow-primary/*`). |
 | **Ikon UI** | Blade Lucide Icons (`<x-lucide-...>`) | Konsisten menggunakan ikon dari library `mallardduck/blade-lucide-icons` |
+| **Badge & Tag UI** | Murni Lineone UI Kit | Format: `badge rounded-full px-2.5 py-0.5 text-xs font-medium`. **DILARANG KERAS** menyisipkan emoji/icon (`🌟`, `👑`, `🔥`, `✨`, `<x-lucide-...>`) atau gradient buatan pada badge. Wajib teks bersih dengan palet Lineone. |
+| **Anti-AI-Slop** | Clean UI Strict Rule | DILARANG menyisipkan bola gradasi ambient blur melayang (`filter blur-3xl opacity-20 bg-linear-to-r`), shadow raksasa (`shadow-2xl`), atau border rainbow. |
 | **Notifikasi & Modal** | `App\Traits\LivewireLineoneAlerts` | Gunakan `$this->toast('Pesan', 'success|error|warning|info')` |
 | **Mesin Pemrosesan File** | Python 3.10/3.13 (`PyMuPDF / fitz`, `pdf2docx`, `openpyxl`, `python-pptx`) + LibreOffice Headless | Skrip berada di `storage/scripts/*.py` |
 | **Image Processing** | Intervention Image v4 (GD Driver) | EXIF otomatis di-strip saat encoding |

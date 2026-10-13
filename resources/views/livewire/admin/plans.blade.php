@@ -51,7 +51,7 @@
                             <span class="font-semibold text-slate-600 dark:text-navy-200 text-xs mb-1 block">Persentase Pajak (%)</span>
                             <input wire:model="tax_percent" type="number" min="0" max="100" class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-1.5 text-xs placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent" />
                         </label>
-                        @error('tax_percent') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                        @error('tax_percent') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                     </div>
                     @endif
                 </div>
@@ -61,7 +61,7 @@
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
                             <x-lucide-credit-card class="size-4 text-primary dark:text-accent-light" />
-                            <span class="font-bold text-slate-700 dark:text-navy-100 text-xs">Biaya Penanganan / Layanan Gateway</span>
+                            <span class="font-semibold text-slate-700 dark:text-navy-100 text-xs">Biaya Penanganan / Layanan Gateway</span>
                         </div>
                         <label class="inline-flex cursor-pointer items-center">
                             <input class="form-switch h-5 w-10 rounded-full bg-slate-300 before:rounded-full before:bg-slate-50 checked:bg-primary checked:before:bg-white dark:bg-navy-900 dark:before:bg-navy-300 dark:checked:bg-accent dark:checked:before:bg-white" type="checkbox" wire:model="is_service_fee_enabled" />
@@ -79,14 +79,14 @@
                                         <option value="percent">Persentase (%)</option>
                                     </select>
                                 </label>
-                                @error('service_fee_type') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                                @error('service_fee_type') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                             </div>
                             <div>
                                 <label class="block">
                                     <span class="font-semibold text-slate-600 dark:text-navy-200 text-xs mb-1 block">Nilai Biaya</span>
                                     <input wire:model="service_fee_value" type="number" min="0" class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-1.5 text-xs placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent" />
                                 </label>
-                                @error('service_fee_value') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                                @error('service_fee_value') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                             </div>
                         </div>
                     </div>
@@ -144,47 +144,45 @@
                             <td class="whitespace-nowrap px-4 py-3 sm:px-5">
                                 <div class="flex items-center gap-2">
                                     @if($isProMax)
-                                        <span class="badge rounded-full bg-linear-to-r from-amber-500 via-purple-600 to-indigo-600 text-white font-black text-[10px] px-2.5 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
-                                            <x-lucide-crown class="size-3 stroke-[2.5]" />
-                                            <span>{{ $plan->name }}</span>
+                                        <span class="badge rounded-full bg-secondary/15 text-secondary dark:bg-secondary-light/15 dark:text-secondary-light text-xs font-medium px-2.5 py-0.5">
+                                            {{ $plan->name }}
                                         </span>
                                     @elseif(!$plan->is_default)
-                                        <span class="badge rounded-full bg-linear-to-r from-amber-500 to-orange-500 text-white font-black text-[10px] px-2.5 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
-                                            <x-lucide-star class="size-3 stroke-[2.5] fill-current" />
-                                            <span>{{ $plan->name }}</span>
+                                        <span class="badge rounded-full bg-warning/15 text-warning dark:bg-warning/20 dark:text-warning-light text-xs font-medium px-2.5 py-0.5">
+                                            {{ $plan->name }}
                                         </span>
                                     @else
-                                        <span class="font-bold text-slate-700 dark:text-navy-100 text-xs sm:text-sm">{{ $plan->name }}</span>
+                                        <span class="font-medium text-slate-700 dark:text-navy-100 text-xs sm:text-sm">{{ $plan->name }}</span>
                                     @endif
 
                                     @if($plan->is_default)
-                                        <span class="badge rounded-full bg-success/10 text-success text-[10px] font-bold px-2 py-0.5">
+                                        <span class="badge rounded-full bg-success/10 text-success text-xs font-medium px-2.5 py-0.5">
                                             Default Free
                                         </span>
                                     @endif
                                 </div>
-                                <div class="text-[11px] text-slate-400 dark:text-navy-300 font-mono mt-0.5">{{ $plan->slug }}</div>
+                                <div class="text-xs text-slate-400 dark:text-navy-300 font-mono mt-0.5">{{ $plan->slug }}</div>
                             </td>
                             <td class="whitespace-nowrap px-4 py-3 sm:px-5">
                                 @php
                                     $breakdown = app(\App\Services\PriceCalculator::class)->breakdown($plan);
                                 @endphp
                                 @if($breakdown['discount'] > 0)
-                                    <div class="text-[11px] line-through text-slate-400 dark:text-navy-300">
+                                    <div class="text-xs line-through text-slate-400 dark:text-navy-300">
                                         Rp {{ number_format($breakdown['basePrice'], 0, ',', '.') }}
                                     </div>
                                 @endif
-                                <span class="font-bold text-slate-700 dark:text-navy-100 text-xs sm:text-sm">
+                                <span class="font-semibold text-slate-700 dark:text-navy-100 text-xs sm:text-sm">
                                     Rp {{ number_format($breakdown['subtotal'], 0, ',', '.') }}
                                 </span>
                             </td>
-                            <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-xs font-bold text-success">
+                            <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-xs font-medium text-success">
                                 @if($plan->discount_type === 'percent')
-                                    <span class="badge rounded-full bg-success/10 text-success text-xs px-2 py-0.5 font-bold">
+                                    <span class="badge rounded-full bg-success/10 text-success text-xs px-2.5 py-0.5 font-medium">
                                         {{ $plan->discount_value }}% OFF
                                     </span>
                                 @elseif($plan->discount_type === 'fixed')
-                                    <span class="badge rounded-full bg-success/10 text-success text-xs px-2 py-0.5 font-bold">
+                                    <span class="badge rounded-full bg-success/10 text-success text-xs px-2.5 py-0.5 font-medium">
                                         -Rp {{ number_format($plan->discount_value, 0, ',', '.') }}
                                     </span>
                                 @else
@@ -258,14 +256,14 @@
                             <span class="font-semibold text-slate-700 dark:text-navy-100 mb-1 block">Nama Paket <span class="text-error">*</span></span>
                             <input wire:model.live="name" class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent" type="text" placeholder="Contoh: Pro Max Bulanan" />
                         </label>
-                        @error('name') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                        @error('name') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label class="block">
                             <span class="font-semibold text-slate-700 dark:text-navy-100 mb-1 block">Slug (Identifier) <span class="text-error">*</span></span>
                             <input wire:model="slug" {{ $planId ? 'readonly' : '' }} class="form-input w-full rounded-lg border border-slate-300 {{ $planId ? 'bg-slate-100 text-slate-500 dark:bg-navy-600 dark:text-navy-300' : 'bg-transparent text-slate-700 dark:text-navy-100' }} px-3 py-2 font-mono text-primary dark:text-accent-light placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent" type="text" placeholder="pro-max" />
                         </label>
-                        @error('slug') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                        @error('slug') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                     </div>
                     
                     <div>
@@ -273,14 +271,14 @@
                             <span class="font-semibold text-slate-700 dark:text-navy-100 mb-1 block">Harga Normal (Rp) <span class="text-error">*</span></span>
                             <input wire:model="price" class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent" type="number" />
                         </label>
-                        @error('price') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                        @error('price') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                     </div>
                     <div>
                         <label class="block">
                             <span class="font-semibold text-slate-700 dark:text-navy-100 mb-1 block">Durasi (Hari)</span>
                             <input wire:model="duration_days" placeholder="Kosongkan jika selamanya" class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent" type="number" />
                         </label>
-                        @error('duration_days') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                        @error('duration_days') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                     </div>
                 </div>
 
@@ -294,7 +292,7 @@
                                 <option value="fixed">Nominal Tetap (Rp)</option>
                             </select>
                         </label>
-                        @error('discount_type') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                        @error('discount_type') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                     </div>
                     @if($discount_type !== 'none')
                     <div>
@@ -302,7 +300,7 @@
                             <span class="font-semibold text-slate-700 dark:text-navy-100 mb-1 block">Nilai Diskon</span>
                             <input wire:model="discount_value" class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent" type="number" />
                         </label>
-                        @error('discount_value') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                        @error('discount_value') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                     </div>
                     @endif
                 </div>
@@ -340,8 +338,8 @@
                 {{-- Features List Form --}}
                 <div>
                     <div class="flex items-center justify-between mb-3">
-                        <h4 class="font-bold text-slate-700 dark:text-navy-100 uppercase">Fitur Tambahan (Checklist)</h4>
-                        <button wire:click.prevent="addFeature" type="button" class="btn h-7 rounded-full bg-primary/10 px-3 text-[11px] font-bold text-primary hover:bg-primary/20 dark:bg-accent-light/10 dark:text-accent-light flex items-center space-x-1">
+                        <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-navy-100">Fitur Tambahan (Checklist)</h4>
+                        <button wire:click.prevent="addFeature" type="button" class="btn h-7 rounded-full bg-primary/10 px-3 text-xs font-medium text-primary hover:bg-primary/20 dark:bg-accent-light/10 dark:text-accent-light flex items-center space-x-1">
                             <x-lucide-plus class="size-3" />
                             <span>Tambah Fitur</span>
                         </button>
@@ -370,15 +368,15 @@
                 
                 {{-- Tool Limits Configuration --}}
                 <div>
-                    <h4 class="font-bold text-slate-700 dark:text-navy-100 uppercase mb-3">Batasan Kuota Tools</h4>
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-navy-100 mb-3">Batasan Kuota Tools</h4>
 
                     <div class="space-y-3">
                         @foreach($toolsConfig as $tool)
                             <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-3.5 dark:border-navy-600 dark:bg-navy-700/40">
-                                <div class="flex items-center space-x-2 font-bold text-primary dark:text-accent-light mb-2.5">
+                                <div class="flex items-center space-x-2 font-semibold text-primary dark:text-accent-light mb-2.5">
                                     <span class="size-2 rounded-full bg-primary dark:bg-accent"></span>
                                     <span>{{ $tool['name'] }}</span>
-                                    <span class="badge rounded-full bg-slate-100 text-slate-600 dark:bg-navy-600 dark:text-navy-200 text-[9px] px-1.5 py-0.5">{{ $tool['category'] ?? 'General' }}</span>
+                                    <span class="badge rounded-full bg-slate-150 text-slate-600 dark:bg-navy-600 dark:text-navy-200 text-xs px-2 py-0.5">{{ $tool['category'] ?? 'General' }}</span>
                                 </div>
                                 
                                 <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -416,10 +414,10 @@
             
             {{-- Modal Footer --}}
             <div class="flex items-center justify-end space-x-2 border-t border-slate-150 bg-slate-50 px-5 py-3.5 dark:border-navy-600 dark:bg-navy-800">
-                <button wire:click="$set('isModalOpen', false)" class="btn rounded-full border border-slate-300 font-semibold text-slate-700 hover:bg-slate-150 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 text-xs px-4 py-2">
+                <button wire:click="$set('isModalOpen', false)" class="btn h-9 rounded-full border border-slate-300 font-medium text-slate-700 hover:bg-slate-150 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500 text-xs px-4">
                     Batal
                 </button>
-                <button wire:click="save" class="btn rounded-full bg-primary font-bold text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs px-5 py-2 shadow-sm flex items-center space-x-1.5">
+                <button wire:click="save" class="btn h-9 rounded-full bg-primary font-medium text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs px-5 shadow-xs flex items-center space-x-1.5">
                     <span wire:loading.remove wire:target="save">Simpan Paket</span>
                     <span wire:loading wire:target="save" class="flex items-center space-x-1">
                         <x-lucide-loader-2 class="size-3.5 animate-spin" />

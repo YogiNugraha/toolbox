@@ -11,11 +11,11 @@
             <x-lucide-hammer class="size-8" />
         </div>
 
-        <span class="badge rounded-full bg-warning/10 text-warning text-xs font-bold px-3 py-1 uppercase tracking-wider mb-2">
+        <span class="badge rounded-full bg-warning/10 text-warning text-xs font-medium px-2.5 py-0.5 uppercase tracking-wider mb-2">
             Sedang Dalam Pemeliharaan
         </span>
 
-        <h3 class="text-xl font-bold text-slate-800 dark:text-navy-50 mt-2">
+        <h3 class="text-xl font-semibold text-slate-800 dark:text-navy-50 mt-2">
             Tool {{ $tool->name }} Sementara Nonaktif
         </h3>
 
@@ -24,11 +24,11 @@
         </p>
 
         <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <a href="{{ route('dashboard') }}" class="btn h-9 rounded-full bg-primary px-5 text-xs font-bold text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus shadow-sm flex items-center space-x-1.5">
+            <a href="{{ route('dashboard') }}" class="btn h-9 rounded-full bg-primary px-5 text-xs font-medium text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus shadow-xs flex items-center space-x-1.5">
                 <x-lucide-arrow-left class="size-4" />
                 <span>Kembali ke Dashboard</span>
             </a>
-            <a href="{{ route('history') }}" class="btn h-9 rounded-full border border-slate-300 px-4 text-xs font-semibold text-slate-700 hover:bg-slate-150 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500">
+            <a href="{{ route('history') }}" class="btn h-9 rounded-full border border-slate-300 px-4 text-xs font-medium text-slate-700 hover:bg-slate-150 dark:border-navy-450 dark:text-navy-100 dark:hover:bg-navy-500">
                 <span>Lihat Riwayat File</span>
             </a>
         </div>

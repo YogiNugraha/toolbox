@@ -26,9 +26,8 @@
             {{-- Quota Notification Pill --}}
             <div class="flex items-center justify-between">
                 @if(auth()->check() && auth()->user()->is_admin)
-                    <div class="badge rounded-full space-x-1.5 bg-linear-to-r from-rose-500/15 via-purple-500/15 to-indigo-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/20 px-3 py-1 text-xs font-bold shadow-xs flex items-center">
-                        <x-lucide-shield-check class="size-3.5" />
-                        <span>Akses: Unlimited (Admin)</span>
+                    <div class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/15 dark:text-accent-light px-3 py-1 text-xs font-medium">
+                        Akses: Unlimited (Admin)
                     </div>
                 @elseif($remainingQuota !== null)
                     <div class="badge rounded-full space-x-2 bg-slate-150 px-3 py-1 text-slate-800 dark:bg-navy-600 dark:text-navy-100 text-xs font-semibold">
@@ -86,13 +85,13 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
                             </div>
-                            <p class="text-sm font-bold text-slate-700 dark:text-navy-100 truncate px-4 max-w-md">
+                            <p class="text-sm font-medium text-slate-700 dark:text-navy-100 truncate px-4 max-w-md">
                                 {{ $file->getClientOriginalName() }}
                             </p>
                             <p class="mt-1 text-xs text-slate-400 dark:text-navy-300">
-                                Ukuran Asli: <span class="font-semibold text-slate-600 dark:text-navy-200">{{ number_format($file->getSize() / 1024, 2) }} KB</span>
+                                Ukuran Asli: <span class="font-medium text-slate-600 dark:text-navy-200">{{ number_format($file->getSize() / 1024, 2) }} KB</span>
                             </p>
-                            <span class="mt-3 badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-[11px] font-semibold px-3 py-0.5">
+                            <span class="mt-3 badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-xs font-medium px-3 py-0.5">
                                 Siap Dikonfigurasi
                             </span>
                         @else
@@ -101,7 +100,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                                 </svg>
                             </div>
-                            <p class="text-sm font-semibold text-slate-700 dark:text-navy-100">
+                            <p class="text-sm font-medium text-slate-700 dark:text-navy-100">
                                 Klik untuk unggah dokumen PDF <span class="font-normal text-slate-400 dark:text-navy-300">atau tarik file ke sini</span>
                             </p>
                             <p class="mt-1 text-xs text-slate-400 dark:text-navy-300 uppercase tracking-wider">
@@ -113,13 +112,13 @@
                     </label>
 
                     {{-- Lineone Upload Real-time Progress Bar --}}
-                    <div x-show="isUploading" x-transition class="w-full mt-3.5 rounded-xl bg-slate-100 p-3.5 dark:bg-navy-700/60 border border-slate-200 dark:border-navy-600 space-y-2">
-                        <div class="flex items-center justify-between text-xs font-semibold text-slate-700 dark:text-navy-100">
+                    <div x-show="isUploading" x-transition class="w-full mt-3.5 rounded-lg bg-slate-100 p-3.5 dark:bg-navy-700/60 border border-slate-200 dark:border-navy-600 space-y-2">
+                        <div class="flex items-center justify-between text-xs font-medium text-slate-700 dark:text-navy-100">
                             <span class="flex items-center space-x-2">
                                 <div class="spinner size-3.5 border-2 border-primary border-r-transparent rounded-full dark:border-accent-light"></div>
                                 <span>Mengunggah dokumen PDF ke server...</span>
                             </span>
-                            <span class="text-primary dark:text-accent-light font-bold" x-text="progress + '%'"></span>
+                            <span class="text-primary dark:text-accent-light font-semibold" x-text="progress + '%'"></span>
                         </div>
                         <div class="progress h-2 bg-slate-200 dark:bg-navy-600 rounded-full overflow-hidden">
                             <div class="is-active rounded-full bg-primary dark:bg-accent transition-all duration-150" :style="`width: ${progress}%`"></div>
@@ -130,26 +129,26 @@
                 {{-- Preset Selection Cards --}}
                 @if ($file)
                     <div class="card p-4 sm:p-5 space-y-4">
-                        <h3 class="text-sm font-bold text-slate-800 dark:text-navy-100 flex items-center justify-between">
+                        <h3 class="text-sm font-medium text-slate-700 dark:text-navy-100 flex items-center justify-between">
                             <span>Tingkat Kompresi Dokumen</span>
-                            <span class="text-[11px] font-normal text-slate-400 dark:text-navy-300">Pilih kualitas yang diinginkan</span>
+                            <span class="text-xs text-slate-400 dark:text-navy-300">Pilih kualitas yang diinginkan</span>
                         </h3>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {{-- Option 1: Extreme --}}
                             <label class="cursor-pointer">
                                 <input type="radio" wire:model.live="preset" value="extreme" class="hidden peer" />
-                                <div class="p-3.5 rounded-xl border-2 transition-all peer-checked:border-primary peer-checked:bg-primary/5 dark:peer-checked:border-accent-light dark:peer-checked:bg-accent-light/5 border-slate-200 dark:border-navy-600 hover:border-slate-300 dark:hover:border-navy-500 h-full flex flex-col justify-between">
+                                <div class="p-3.5 rounded-lg border-2 transition-all peer-checked:border-primary peer-checked:bg-primary/5 dark:peer-checked:border-accent-light dark:peer-checked:bg-accent-light/5 border-slate-200 dark:border-navy-600 hover:border-slate-300 dark:hover:border-navy-500 h-full flex flex-col justify-between">
                                     <div>
                                         <div class="flex items-center justify-between">
-                                            <span class="font-bold text-xs text-slate-800 dark:text-navy-100">Kompresi Ekstrim</span>
-                                            <span class="badge rounded-full bg-linear-to-r from-red-500 to-orange-500 text-white text-[9px] font-bold px-1.5 py-0.5">Terkecil</span>
+                                            <span class="font-medium text-xs text-slate-800 dark:text-navy-100">Kompresi Ekstrim</span>
+                                            <span class="badge rounded-full bg-error/10 text-error dark:bg-error/15 text-xs font-medium px-2 py-0.5">Terkecil</span>
                                         </div>
-                                        <p class="text-[11px] text-slate-500 dark:text-navy-300 mt-1 leading-snug">
+                                        <p class="text-xs text-slate-500 dark:text-navy-300 mt-1 leading-snug">
                                             Ukuran file paling kecil, cocok untuk lampiran email atau batas upload ketat.
                                         </p>
                                     </div>
-                                    <div class="mt-2 text-[10px] text-slate-400 dark:text-navy-400 font-medium">
+                                    <div class="mt-2 text-xs text-slate-400 dark:text-navy-400 font-medium">
                                         Resolusi 72 DPI · Kompresi Maksimal
                                     </div>
                                 </div>
@@ -158,17 +157,17 @@
                             {{-- Option 2: Recommended --}}
                             <label class="cursor-pointer">
                                 <input type="radio" wire:model.live="preset" value="recommended" class="hidden peer" />
-                                <div class="p-3.5 rounded-xl border-2 transition-all peer-checked:border-primary peer-checked:bg-primary/5 dark:peer-checked:border-accent-light dark:peer-checked:bg-accent-light/5 border-slate-200 dark:border-navy-600 hover:border-slate-300 dark:hover:border-navy-500 h-full flex flex-col justify-between">
+                                <div class="p-3.5 rounded-lg border-2 transition-all peer-checked:border-primary peer-checked:bg-primary/5 dark:peer-checked:border-accent-light dark:peer-checked:bg-accent-light/5 border-slate-200 dark:border-navy-600 hover:border-slate-300 dark:hover:border-navy-500 h-full flex flex-col justify-between">
                                     <div>
                                         <div class="flex items-center justify-between">
-                                            <span class="font-bold text-xs text-slate-800 dark:text-navy-100">Direkomendasikan</span>
-                                            <span class="badge rounded-full bg-linear-to-r from-emerald-500 to-teal-500 text-white text-[9px] font-bold px-1.5 py-0.5">Seimbang</span>
+                                            <span class="font-medium text-xs text-slate-800 dark:text-navy-100">Direkomendasikan</span>
+                                            <span class="badge rounded-full bg-success/10 text-success dark:bg-success/15 text-xs font-medium px-2 py-0.5">Seimbang</span>
                                         </div>
-                                        <p class="text-[11px] text-slate-500 dark:text-navy-300 mt-1 leading-snug">
+                                        <p class="text-xs text-slate-500 dark:text-navy-300 mt-1 leading-snug">
                                             Keseimbangan optimal antara pengurangan ukuran dan ketajaman teks/gambar.
                                         </p>
                                     </div>
-                                    <div class="mt-2 text-[10px] text-slate-400 dark:text-navy-400 font-medium">
+                                    <div class="mt-2 text-xs text-slate-400 dark:text-navy-400 font-medium">
                                         Resolusi 150 DPI · Kualitas 75%
                                     </div>
                                 </div>
@@ -177,17 +176,17 @@
                             {{-- Option 3: Low Compression --}}
                             <label class="cursor-pointer">
                                 <input type="radio" wire:model.live="preset" value="low" class="hidden peer" />
-                                <div class="p-3.5 rounded-xl border-2 transition-all peer-checked:border-primary peer-checked:bg-primary/5 dark:peer-checked:border-accent-light dark:peer-checked:bg-accent-light/5 border-slate-200 dark:border-navy-600 hover:border-slate-300 dark:hover:border-navy-500 h-full flex flex-col justify-between">
+                                <div class="p-3.5 rounded-lg border-2 transition-all peer-checked:border-primary peer-checked:bg-primary/5 dark:peer-checked:border-accent-light dark:peer-checked:bg-accent-light/5 border-slate-200 dark:border-navy-600 hover:border-slate-300 dark:hover:border-navy-500 h-full flex flex-col justify-between">
                                     <div>
                                         <div class="flex items-center justify-between">
-                                            <span class="font-bold text-xs text-slate-800 dark:text-navy-100">Kompresi Ringan</span>
-                                            <span class="badge rounded-full bg-slate-150 text-slate-700 dark:bg-navy-500 dark:text-navy-200 text-[9px] font-bold px-1.5 py-0.5">Visual Tinggi</span>
+                                            <span class="font-medium text-xs text-slate-800 dark:text-navy-100">Kompresi Ringan</span>
+                                            <span class="badge rounded-full bg-slate-150 text-slate-700 dark:bg-navy-500 dark:text-navy-100 text-xs font-medium px-2 py-0.5">Visual Tinggi</span>
                                         </div>
-                                        <p class="text-[11px] text-slate-500 dark:text-navy-300 mt-1 leading-snug">
+                                        <p class="text-xs text-slate-500 dark:text-navy-300 mt-1 leading-snug">
                                             Kompresi halus menjaga kualitas gambar tetap sangat tajam untuk dicetak.
                                         </p>
                                     </div>
-                                    <div class="mt-2 text-[10px] text-slate-400 dark:text-navy-400 font-medium">
+                                    <div class="mt-2 text-xs text-slate-400 dark:text-navy-400 font-medium">
                                         Resolusi 200 DPI · Kualitas 85%
                                     </div>
                                 </div>
@@ -196,24 +195,23 @@
                             {{-- Option 4: Custom Preset --}}
                             <label class="cursor-pointer">
                                 <input type="radio" wire:model.live="preset" value="custom" class="hidden peer" />
-                                <div class="p-3.5 rounded-xl border-2 transition-all peer-checked:border-primary peer-checked:bg-primary/5 dark:peer-checked:border-accent-light dark:peer-checked:bg-accent-light/5 border-slate-200 dark:border-navy-600 hover:border-slate-300 dark:hover:border-navy-500 h-full flex flex-col justify-between">
+                                <div class="p-3.5 rounded-lg border-2 transition-all peer-checked:border-primary peer-checked:bg-primary/5 dark:peer-checked:border-accent-light dark:peer-checked:bg-accent-light/5 border-slate-200 dark:border-navy-600 hover:border-slate-300 dark:hover:border-navy-500 h-full flex flex-col justify-between">
                                     <div>
                                         <div class="flex items-center justify-between">
-                                            <span class="font-bold text-xs text-slate-800 dark:text-navy-100">Kustom Parameter</span>
+                                            <span class="font-medium text-xs text-slate-800 dark:text-navy-100">Kustom Parameter</span>
                                             @if($isCustomLocked && !$isPro)
-                                                <span class="badge rounded-full bg-linear-to-r from-amber-500 to-purple-600 text-white text-[9px] font-bold px-1.5 py-0.5 flex items-center gap-0.5">
-                                                    <x-lucide-crown class="size-2.5" />
-                                                    <span>PRO</span>
+                                                <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/15 dark:text-accent-light text-xs font-medium px-2 py-0.5 uppercase">
+                                                    PRO
                                                 </span>
                                             @else
-                                                <span class="badge rounded-full bg-slate-150 text-slate-700 dark:bg-navy-500 dark:text-navy-200 text-[9px] font-bold px-1.5 py-0.5">Manual</span>
+                                                <span class="badge rounded-full bg-slate-150 text-slate-700 dark:bg-navy-500 dark:text-navy-100 text-xs font-medium px-2 py-0.5">Manual</span>
                                             @endif
                                         </div>
-                                        <p class="text-[11px] text-slate-500 dark:text-navy-300 mt-1 leading-snug">
+                                        <p class="text-xs text-slate-500 dark:text-navy-300 mt-1 leading-snug">
                                             Atur resolusi DPI dan persentase kualitas JPEG secara manual sesuai kebutuhan.
                                         </p>
                                     </div>
-                                    <div class="mt-2 text-[10px] text-slate-400 dark:text-navy-400 font-medium">
+                                    <div class="mt-2 text-xs text-slate-400 dark:text-navy-400 font-medium">
                                         Slider DPI & Opsi Metadata
                                     </div>
                                 </div>
@@ -225,9 +223,9 @@
                             @if($isCustomLocked && !$isPro)
                                 <div class="rounded-xl border border-warning/30 bg-warning/5 p-4 text-center">
                                     <x-lucide-lock class="size-6 text-warning mx-auto mb-1.5" />
-                                    <h4 class="text-xs font-bold text-slate-800 dark:text-navy-100">Fitur Kustom Khusus Pengguna PRO</h4>
-                                    <p class="text-[11px] text-slate-500 dark:text-navy-300 mt-1">Upgrade akun Anda untuk membuka kontrol penuh resolusi DPI dan parameter kompresi.</p>
-                                    <a href="{{ route('pricing') }}" class="btn h-7 rounded-full bg-warning text-white font-bold text-[10px] px-4 mt-2.5">
+                                    <h4 class="text-xs font-semibold text-slate-800 dark:text-navy-100">Fitur Kustom Khusus Pengguna PRO</h4>
+                                    <p class="text-xs text-slate-500 dark:text-navy-300 mt-1">Upgrade akun Anda untuk membuka kontrol penuh resolusi DPI dan parameter kompresi.</p>
+                                    <a href="{{ route('pricing') }}" class="btn h-7 rounded-full bg-warning text-white font-medium text-xs px-3.5 mt-2.5 shadow-xs">
                                         Upgrade ke Pro
                                     </a>
                                 </div>
@@ -236,7 +234,7 @@
                                     {{-- DPI Selection --}}
                                     <div>
                                         <label class="block text-xs font-semibold text-slate-700 dark:text-navy-200 mb-1">
-                                            Target Resolusi Gambar (DPI): <span class="text-primary dark:text-accent-light font-bold">{{ $customDpi }} DPI</span>
+                                            Target Resolusi Gambar (DPI): <span class="text-primary dark:text-accent-light font-semibold">{{ $customDpi }} DPI</span>
                                         </label>
                                         <select wire:model.live="customDpi" class="form-select h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-xs dark:border-navy-500 dark:bg-navy-700 dark:text-navy-100">
                                             <option value="72">72 DPI (Kualitas Layar / Web Rendah)</option>
@@ -251,10 +249,10 @@
                                     <div>
                                         <div class="flex justify-between text-xs font-semibold text-slate-700 dark:text-navy-200 mb-1">
                                             <span>Kualitas Gambar Raster:</span>
-                                            <span class="text-primary dark:text-accent-light font-bold">{{ $customQuality }}%</span>
+                                            <span class="text-primary dark:text-accent-light font-semibold">{{ $customQuality }}%</span>
                                         </div>
                                         <input type="range" wire:model.live="customQuality" min="30" max="95" step="5" class="w-full accent-primary" />
-                                        <div class="flex justify-between text-[10px] text-slate-400 dark:text-navy-400 mt-0.5">
+                                        <div class="flex justify-between text-xs text-slate-400 dark:text-navy-400 mt-0.5">
                                             <span>30% (Kecil)</span>
                                             <span>60%</span>
                                             <span>95% (Maksimal)</span>
@@ -273,15 +271,14 @@
                         {{-- Compress Action Button --}}
                         <div class="pt-2">
                             @if($preset === 'custom' && $isCustomLocked && !$isPro)
-                                <a href="{{ route('pricing') }}" class="btn w-full h-11 rounded-lg bg-warning font-bold text-white shadow-lg shadow-warning/30 hover:bg-warning-focus text-xs sm:text-sm flex items-center justify-center space-x-2">
-                                    <x-lucide-crown class="size-4" />
+                                <a href="{{ route('pricing') }}" class="btn w-full h-10 rounded-lg bg-warning font-medium text-white hover:bg-warning-focus text-xs sm:text-sm flex items-center justify-center space-x-2">
                                     <span>Upgrade ke PRO untuk Kompres Kustom</span>
                                 </a>
                             @else
                                 <button wire:click="compress" 
                                         wire:loading.attr="disabled"
-                                        class="btn w-full h-11 rounded-lg bg-primary font-bold text-white shadow-lg shadow-primary/30 hover:bg-primary-focus dark:bg-accent dark:shadow-accent/30 dark:hover:bg-accent-focus text-xs sm:text-sm flex items-center justify-center space-x-2 transition-all disabled:opacity-75 disabled:cursor-not-allowed">
-                                    <div wire:loading wire:target="compress" class="spinner size-4.5 border-2 border-white border-r-transparent rounded-full"></div>
+                                        class="btn w-full h-10 rounded-lg bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus text-xs sm:text-sm flex items-center justify-center space-x-2 transition-all disabled:opacity-75 disabled:cursor-not-allowed">
+                                    <div wire:loading wire:target="compress" class="spinner size-4 border-2 border-white border-r-transparent rounded-full"></div>
                                     <span wire:loading.remove wire:target="compress" class="flex items-center space-x-1.5">
                                         <x-lucide-file-archive class="size-4" />
                                         <span>Mulai Kompres PDF Sekarang</span>
@@ -318,13 +315,11 @@
                     </div>
 
                     <div class="mt-5 flex flex-wrap items-center justify-center gap-2">
-                        <span class="badge rounded-full bg-white/80 text-slate-700 dark:bg-navy-700 dark:text-navy-200 text-[10px] font-semibold px-2.5 py-0.5 shadow-xs flex items-center gap-1">
-                            <x-lucide-shield-check class="size-3 text-success" />
-                            <span>Privasi Dokumen Terjamin</span>
+                        <span class="badge rounded-full bg-slate-100 text-slate-700 dark:bg-navy-600 dark:text-navy-200 text-xs font-medium px-2.5 py-0.5">
+                            Privasi Dokumen Terjamin
                         </span>
-                        <span class="badge rounded-full bg-white/80 text-slate-700 dark:bg-navy-700 dark:text-navy-200 text-[10px] font-semibold px-2.5 py-0.5 shadow-xs flex items-center gap-1">
-                            <x-lucide-zap class="size-3 text-warning" />
-                            <span>Stream Deflation</span>
+                        <span class="badge rounded-full bg-slate-100 text-slate-700 dark:bg-navy-600 dark:text-navy-200 text-xs font-medium px-2.5 py-0.5">
+                            Stream Deflation
                         </span>
                     </div>
                 </div>
@@ -333,12 +328,11 @@
             {{-- Result Panel (Hidden during compress loading) --}}
             <div wire:loading.remove wire:target="compress" class="card p-5 sm:p-6 text-center border border-slate-200/80 dark:border-navy-700 h-full flex flex-col justify-between">
                 <div>
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-navy-100 mb-4 pb-3 border-b border-slate-200 dark:border-navy-700 flex items-center justify-between">
+                    <h3 class="text-sm font-semibold text-slate-800 dark:text-navy-100 mb-4 pb-3 border-b border-slate-200 dark:border-navy-700 flex items-center justify-between">
                         <span>Hasil Kompresi PDF</span>
                         @if($resultPath)
-                            <span class="badge rounded-full bg-success/15 text-success text-[10px] font-bold px-2 py-0.5 flex items-center gap-1">
-                                <x-lucide-check class="size-3" />
-                                <span>Selesai</span>
+                            <span class="badge rounded-full bg-success/15 text-success text-xs font-medium px-2.5 py-0.5">
+                                Selesai
                             </span>
                         @endif
                     </h3>
@@ -347,11 +341,11 @@
                         {{-- Comparison Cards --}}
                         <div class="space-y-4">
                             {{-- Savings Hero Badge --}}
-                            <div class="rounded-2xl bg-linear-to-br from-emerald-50 to-teal-50 dark:from-navy-750 dark:to-navy-700 p-5 border border-emerald-200/60 dark:border-navy-600">
-                                <div class="mask is-squircle flex size-12 items-center justify-center bg-success text-white mx-auto mb-2 shadow-md shadow-success/20">
+                            <div class="rounded-lg bg-slate-50 dark:bg-navy-750/60 p-5 border border-slate-150 dark:border-navy-600">
+                                <div class="mask is-squircle flex size-12 items-center justify-center bg-success text-white mx-auto mb-2">
                                     <x-lucide-file-check class="size-6" />
                                 </div>
-                                <h4 class="text-2xl font-black text-slate-800 dark:text-navy-50">
+                                <h4 class="text-xl font-semibold text-slate-800 dark:text-navy-100">
                                     Hemat {{ $savingsPercentage }}%
                                 </h4>
                                 <p class="text-xs text-slate-500 dark:text-navy-300 mt-0.5">
@@ -361,22 +355,22 @@
 
                             {{-- Size Comparison Grid --}}
                             <div class="grid grid-cols-2 gap-3 text-left">
-                                <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-navy-700/50 border border-slate-200 dark:border-navy-600">
-                                    <p class="text-[10px] font-semibold text-slate-400 dark:text-navy-300 uppercase">Ukuran Awal</p>
-                                    <p class="text-sm font-bold text-slate-700 dark:text-navy-100 mt-0.5">
+                                <div class="p-3 rounded-lg bg-white dark:bg-navy-700 border border-slate-150 dark:border-navy-600">
+                                    <p class="text-xs font-medium text-slate-400 dark:text-navy-300 uppercase">Ukuran Awal</p>
+                                    <p class="text-sm font-semibold text-slate-700 dark:text-navy-100 mt-0.5">
                                         {{ number_format($originalSize / 1024, 1) }} KB
                                     </p>
                                 </div>
-                                <div class="p-3.5 rounded-xl bg-primary/5 dark:bg-accent-light/5 border border-primary/20 dark:border-accent-light/20">
-                                    <p class="text-[10px] font-semibold text-primary dark:text-accent-light uppercase">Ukuran Baru</p>
-                                    <p class="text-sm font-bold text-primary dark:text-accent-light mt-0.5">
+                                <div class="p-3 rounded-lg bg-primary/5 dark:bg-accent-light/5 border border-primary/20 dark:border-accent-light/20">
+                                    <p class="text-xs font-medium text-primary dark:text-accent-light uppercase">Ukuran Baru</p>
+                                    <p class="text-sm font-semibold text-primary dark:text-accent-light mt-0.5">
                                         {{ number_format($newSize / 1024, 1) }} KB
                                     </p>
                                 </div>
                             </div>
 
                             <div class="text-xs text-slate-400 dark:text-navy-300 flex items-center justify-center gap-2 pt-1">
-                                <span>📄 Total Halaman: <strong class="text-slate-700 dark:text-navy-200">{{ $pageCount }}</strong></span>
+                                <span>📄 Total Halaman: <strong class="text-slate-700 dark:text-navy-200 font-medium">{{ $pageCount }}</strong></span>
                             </div>
                         </div>
                     @else
@@ -385,7 +379,7 @@
                             <div class="mask is-squircle flex size-16 items-center justify-center bg-slate-100 text-slate-400 dark:bg-navy-700 dark:text-navy-300 mb-3">
                                 <x-lucide-file-archive class="size-8" />
                             </div>
-                            <p class="text-sm font-bold text-slate-700 dark:text-navy-200">Belum Ada File Diproses</p>
+                            <p class="text-sm font-medium text-slate-700 dark:text-navy-200">Belum Ada File Diproses</p>
                             <p class="text-xs text-slate-400 dark:text-navy-300 mt-1 max-w-xs">
                                 Unggah dokumen PDF di panel sebelah kiri dan klik tombol kompres untuk melihat hasil dan mengunduh file.
                             </p>
@@ -396,11 +390,11 @@
                 {{-- Download & Reset Buttons --}}
                 @if($resultPath)
                     <div class="pt-6 space-y-2">
-                        <button wire:click="download" class="btn w-full h-11 rounded-lg bg-success font-bold text-white shadow-lg shadow-success/30 hover:bg-success-focus text-xs sm:text-sm flex items-center justify-center space-x-2">
-                            <x-lucide-download class="size-4.5" />
+                        <button wire:click="download" class="btn w-full h-10 rounded-lg bg-primary font-medium text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs sm:text-sm flex items-center justify-center space-x-2">
+                            <x-lucide-download class="size-4" />
                             <span>Unduh File PDF Terkompres</span>
                         </button>
-                        <button wire:click="resetFile" class="btn w-full h-9 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 dark:border-navy-600 dark:text-navy-200 dark:hover:bg-navy-700 text-xs font-semibold">
+                        <button wire:click="resetFile" class="btn w-full h-9 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 dark:border-navy-450 dark:text-navy-200 dark:hover:bg-navy-700 text-xs font-medium">
                             Kompres File PDF Lain
                         </button>
                     </div>

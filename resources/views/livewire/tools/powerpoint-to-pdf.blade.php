@@ -26,27 +26,24 @@
             {{-- Quota Notification Pill --}}
             <div class="flex items-center justify-between">
                 @if(auth()->check() && auth()->user()->is_admin)
-                    <div class="badge rounded-full space-x-1.5 bg-linear-to-r from-rose-500/15 via-purple-500/15 to-indigo-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/20 px-3 py-1 text-xs font-bold shadow-xs flex items-center">
-                        <x-lucide-shield-check class="size-3.5" />
-                        <span>Akses: Unlimited (Admin)</span>
+                    <div class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/15 dark:text-accent-light px-3 py-1 text-xs font-medium">
+                        Akses: Unlimited (Admin)
                     </div>
                 @elseif($remainingQuota !== null)
-                    <div class="badge rounded-full space-x-2 bg-slate-150 px-3 py-1 text-slate-800 dark:bg-navy-600 dark:text-navy-100 text-xs font-semibold">
+                    <div class="badge rounded-full space-x-2 bg-slate-150 px-3 py-1 text-slate-800 dark:bg-navy-600 dark:text-navy-100 text-xs font-medium">
                         <span>Sisa Kuota Bulan Ini:</span>
-                        <span class="text-primary dark:text-accent-light">{{ $remainingQuota }} / {{ $monthlyLimit ?? $dailyLimit }}</span>
+                        <span class="text-primary dark:text-accent-light font-semibold">{{ $remainingQuota }} / {{ $monthlyLimit ?? $dailyLimit }}</span>
                     </div>
                 @else
-                    <div class="badge rounded-full space-x-2 bg-success/10 px-3 py-1 text-success text-xs font-semibold">
+                    <div class="badge rounded-full space-x-2 bg-success/10 px-3 py-1 text-success text-xs font-medium">
                         <span>Kuota:</span>
                         <span>{{ $isPro ? 'Unlimited (Pro)' : 'Tanpa Batas' }}</span>
                     </div>
                 @endif
 
                 @if($file)
-                    <button wire:click="resetFile" class="text-xs text-error hover:underline flex items-center space-x-1 font-medium">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
+                    <button wire:click="resetFile" class="text-xs text-error hover:underline flex items-center space-x-1 font-medium cursor-pointer">
+                        <x-lucide-trash-2 class="size-3.5" />
                         <span>Ganti File PowerPoint</span>
                     </button>
                 @endif
@@ -54,12 +51,10 @@
 
             @if($remainingQuota !== null && $remainingQuota <= 0)
                 <div class="card p-6 text-center">
-                    <div class="mx-auto flex size-16 items-center justify-center rounded-full bg-warning/10 text-warning">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="size-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
+                    <div class="mx-auto flex size-14 items-center justify-center rounded-full bg-warning/10 text-warning">
+                        <x-lucide-alert-triangle class="size-7" />
                     </div>
-                    <h3 class="mt-4 text-lg font-bold text-slate-700 dark:text-navy-100">Kuota Bulanan Anda Telah Habis</h3>
+                    <h3 class="mt-4 text-base font-semibold text-slate-800 dark:text-navy-100">Kuota Bulanan Anda Telah Habis</h3>
                     <p class="mt-1 text-xs text-slate-400 dark:text-navy-300 max-w-sm mx-auto">Tingkatkan akun Anda ke Pro untuk menikmati konversi dokumen tanpa batas kuota bulanan.</p>
                     <a href="{{ route('pricing') }}" class="btn rounded-full mt-5 bg-warning font-medium text-white hover:bg-warning-focus shadow-sm text-xs px-6 py-2">
                         Upgrade ke Pro Sekarang
@@ -82,26 +77,22 @@
                         
                         @if ($file)
                             <div class="mask is-squircle flex size-14 items-center justify-center bg-success/10 text-success mb-3">
-                                <svg class="size-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
+                                <x-lucide-presentation class="size-7" />
                             </div>
-                            <p class="text-sm font-bold text-slate-700 dark:text-navy-100 truncate px-4 max-w-md">
+                            <p class="text-sm font-semibold text-slate-700 dark:text-navy-100 truncate px-4 max-w-md">
                                 {{ $file->getClientOriginalName() }}
                             </p>
                             <p class="mt-1 text-xs text-slate-400 dark:text-navy-300">
-                                Ukuran File: <span class="font-semibold text-slate-600 dark:text-navy-200">{{ number_format($file->getSize() / 1024, 2) }} KB</span>
+                                Ukuran File: <span class="font-medium text-slate-600 dark:text-navy-200">{{ number_format($file->getSize() / 1024, 2) }} KB</span>
                             </p>
-                            <span class="mt-3 badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-[11px] font-semibold px-3 py-0.5">
+                            <span class="mt-3 badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-xs font-medium px-3 py-0.5">
                                 Presentasi Siap Dikonversi ke PDF
                             </span>
                         @else
                             <div class="mask is-squircle flex size-14 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light mb-3">
-                                <svg class="size-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                                </svg>
+                                <x-lucide-presentation class="size-7" />
                             </div>
-                            <p class="text-sm font-semibold text-slate-700 dark:text-navy-100">
+                            <p class="text-sm font-medium text-slate-700 dark:text-navy-100">
                                 Klik untuk unggah PowerPoint <span class="font-normal text-slate-400 dark:text-navy-300">atau tarik file ke sini</span>
                             </p>
                             <p class="mt-1 text-xs text-slate-400 dark:text-navy-300 uppercase tracking-wider">
@@ -114,12 +105,12 @@
 
                     {{-- Lineone Upload Real-time Progress Bar --}}
                     <div x-show="isUploading" x-transition class="w-full mt-3.5 rounded-xl bg-slate-100 p-3.5 dark:bg-navy-700/60 border border-slate-200 dark:border-navy-600 space-y-2">
-                        <div class="flex items-center justify-between text-xs font-semibold text-slate-700 dark:text-navy-100">
+                        <div class="flex items-center justify-between text-xs font-medium text-slate-700 dark:text-navy-100">
                             <span class="flex items-center space-x-2">
                                 <div class="spinner size-3.5 border-2 border-primary border-r-transparent rounded-full dark:border-accent-light"></div>
                                 <span>Mengunggah file PowerPoint ke server...</span>
                             </span>
-                            <span class="text-primary dark:text-accent-light font-bold" x-text="progress + '%'"></span>
+                            <span class="text-primary dark:text-accent-light font-semibold" x-text="progress + '%'"></span>
                         </div>
                         <div class="progress h-2 bg-slate-200 dark:bg-navy-600 rounded-full overflow-hidden">
                             <div class="is-active rounded-full bg-primary dark:bg-accent transition-all duration-150" :style="`width: ${progress}%`"></div>
@@ -132,7 +123,7 @@
                     <div class="card p-4 sm:p-5">
                         <button wire:click="convert" 
                                 wire:loading.attr="disabled"
-                                class="btn w-full h-11 rounded-lg bg-primary font-bold text-white shadow-lg shadow-primary/30 hover:bg-primary-focus dark:bg-accent dark:shadow-accent/30 dark:hover:bg-accent-focus text-xs sm:text-sm flex items-center justify-center space-x-2 transition-all disabled:opacity-75 disabled:cursor-not-allowed">
+                                class="btn w-full h-10 rounded-lg bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus text-xs sm:text-sm flex items-center justify-center space-x-2 transition-all disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer">
                             <div wire:loading wire:target="convert" class="spinner size-4.5 border-2 border-white border-r-transparent rounded-full"></div>
                             <span wire:loading.remove wire:target="convert" class="flex items-center space-x-1.5">
                                 <x-lucide-file-text class="size-4" />
@@ -149,11 +140,11 @@
         <div class="col-span-12 lg:col-span-5 space-y-4 sm:space-y-5">
             {{-- Processing State Card (Lineone Indeterminate Progress) --}}
             <div wire:loading wire:target="convert" class="w-full">
-                <div class="card flex min-h-[380px] h-full flex-col items-center justify-center p-6 text-center border border-primary/30 dark:border-accent/30 bg-primary/5 dark:bg-accent/5">
-                    <div class="mask is-squircle flex size-16 items-center justify-center bg-primary/10 text-primary dark:bg-accent/10 dark:text-accent-light mb-4 shadow-sm">
-                        <x-lucide-file-cog class="size-8 animate-pulse" />
+                <div class="card flex min-h-[380px] h-full flex-col items-center justify-center p-6 text-center border border-primary/20 dark:border-accent/20 bg-primary/5 dark:bg-accent/5">
+                    <div class="mask is-squircle flex size-14 items-center justify-center bg-primary/10 text-primary dark:bg-accent/10 dark:text-accent-light mb-4">
+                        <x-lucide-file-cog class="size-7 animate-pulse" />
                     </div>
-                    <h3 class="text-base font-bold text-slate-800 dark:text-navy-100">
+                    <h3 class="text-base font-semibold text-slate-800 dark:text-navy-100">
                         Sedang Mengonversi ke PDF...
                     </h3>
                     <p class="mt-1 text-xs text-slate-500 dark:text-navy-300 max-w-xs leading-relaxed">
@@ -168,27 +159,24 @@
                     </div>
 
                     <div class="mt-5 flex flex-wrap items-center justify-center gap-2">
-                        <span class="badge rounded-full bg-white/80 text-slate-700 dark:bg-navy-700 dark:text-navy-200 text-[10px] font-semibold px-2.5 py-0.5 shadow-xs flex items-center gap-1">
-                            <x-lucide-shield-check class="size-3 text-success" />
-                            <span>Privasi Dokumen Terjamin</span>
+                        <span class="badge rounded-full bg-slate-100 text-slate-700 dark:bg-navy-600 dark:text-navy-200 text-xs font-medium px-2.5 py-0.5">
+                            Privasi Dokumen Terjamin
                         </span>
-                        <span class="badge rounded-full bg-white/80 text-slate-700 dark:bg-navy-700 dark:text-navy-200 text-[10px] font-semibold px-2.5 py-0.5 shadow-xs flex items-center gap-1">
-                            <x-lucide-zap class="size-3 text-warning" />
-                            <span>Presisi Layout 100%</span>
+                        <span class="badge rounded-full bg-slate-100 text-slate-700 dark:bg-navy-600 dark:text-navy-200 text-xs font-medium px-2.5 py-0.5">
+                            Presisi Layout 100%
                         </span>
                     </div>
                 </div>
             </div>
 
             {{-- Result Panel (Hidden during convert loading) --}}
-            <div wire:loading.remove wire:target="convert" class="card p-5 sm:p-6 text-center border border-slate-200/80 dark:border-navy-700 h-full flex flex-col justify-between">
+            <div wire:loading.remove wire:target="convert" class="card p-5 sm:p-6 text-center border border-slate-150 dark:border-navy-600 h-full flex flex-col justify-between">
                 <div>
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-navy-100 mb-4 pb-3 border-b border-slate-200 dark:border-navy-700 flex items-center justify-between">
+                    <h3 class="text-sm font-semibold text-slate-800 dark:text-navy-100 mb-4 pb-3 border-b border-slate-150 dark:border-navy-600 flex items-center justify-between">
                         <span>Hasil Konversi PDF</span>
                         @if($resultPath)
-                            <span class="badge rounded-full bg-success/15 text-success text-[10px] font-bold px-2 py-0.5 flex items-center gap-1">
-                                <x-lucide-check class="size-3" />
-                                <span>Selesai</span>
+                            <span class="badge rounded-full bg-success/15 text-success text-xs font-medium px-2.5 py-0.5">
+                                Selesai
                             </span>
                         @endif
                     </h3>
@@ -197,11 +185,11 @@
                         {{-- Comparison Cards --}}
                         <div class="space-y-4">
                             {{-- Success Hero Badge --}}
-                            <div class="rounded-2xl bg-linear-to-br from-emerald-50 to-teal-50 dark:from-navy-750 dark:to-navy-700 p-5 border border-emerald-200/60 dark:border-navy-600">
-                                <div class="mask is-squircle flex size-12 items-center justify-center bg-success text-white mx-auto mb-2 shadow-md shadow-success/20">
+                            <div class="rounded-lg bg-slate-50 dark:bg-navy-750/60 p-5 border border-slate-150 dark:border-navy-600">
+                                <div class="mask is-squircle flex size-12 items-center justify-center bg-success/10 text-success mx-auto mb-2">
                                     <x-lucide-file-check class="size-6" />
                                 </div>
-                                <h4 class="text-xl font-black text-slate-800 dark:text-navy-50">
+                                <h4 class="text-lg font-semibold text-slate-800 dark:text-navy-50">
                                     Dokumen PDF Berhasil Dibuat!
                                 </h4>
                                 <p class="text-xs text-slate-500 dark:text-navy-300 mt-0.5">
@@ -211,31 +199,31 @@
 
                             {{-- Size Comparison Grid --}}
                             <div class="grid grid-cols-2 gap-3 text-left">
-                                <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-navy-700/50 border border-slate-200 dark:border-navy-600">
-                                    <p class="text-[10px] font-semibold text-slate-400 dark:text-navy-300 uppercase">PowerPoint Asli</p>
-                                    <p class="text-sm font-bold text-slate-700 dark:text-navy-100 mt-0.5">
+                                <div class="p-3.5 rounded-lg bg-slate-50 dark:bg-navy-700/50 border border-slate-150 dark:border-navy-600">
+                                    <p class="text-xs font-medium text-slate-400 dark:text-navy-300 uppercase">PowerPoint Asli</p>
+                                    <p class="text-sm font-semibold text-slate-700 dark:text-navy-100 mt-0.5">
                                         {{ number_format($originalSize / 1024, 1) }} KB
                                     </p>
                                 </div>
-                                <div class="p-3.5 rounded-xl bg-primary/5 dark:bg-accent-light/5 border border-primary/20 dark:border-accent-light/20">
-                                    <p class="text-[10px] font-semibold text-primary dark:text-accent-light uppercase">Ukuran PDF</p>
-                                    <p class="text-sm font-bold text-primary dark:text-accent-light mt-0.5">
+                                <div class="p-3.5 rounded-lg bg-primary/5 dark:bg-accent-light/5 border border-primary/20 dark:border-accent-light/20">
+                                    <p class="text-xs font-medium text-primary dark:text-accent-light uppercase">Ukuran PDF</p>
+                                    <p class="text-sm font-semibold text-primary dark:text-accent-light mt-0.5">
                                         {{ number_format($newSize / 1024, 1) }} KB
                                     </p>
                                 </div>
                             </div>
 
                             <div class="text-xs text-slate-400 dark:text-navy-300 flex items-center justify-center gap-2 pt-1">
-                                <span>📄 Total Halaman PDF: <strong class="text-slate-700 dark:text-navy-200">{{ $pageCount }} Halaman</strong></span>
+                                <span>📄 Total Halaman PDF: <strong class="text-slate-700 dark:text-navy-200 font-medium">{{ $pageCount }} Halaman</strong></span>
                             </div>
                         </div>
                     @else
                         {{-- Empty Placeholder State --}}
                         <div class="py-12 px-4 flex flex-col items-center justify-center">
-                            <div class="mask is-squircle flex size-16 items-center justify-center bg-slate-100 text-slate-400 dark:bg-navy-700 dark:text-navy-300 mb-3">
-                                <x-lucide-file-text class="size-8" />
+                            <div class="mask is-squircle flex size-14 items-center justify-center bg-slate-100 text-slate-400 dark:bg-navy-700 dark:text-navy-300 mb-3">
+                                <x-lucide-file-text class="size-7" />
                             </div>
-                            <p class="text-sm font-bold text-slate-700 dark:text-navy-200">Belum Ada File Diproses</p>
+                            <p class="text-sm font-semibold text-slate-700 dark:text-navy-200">Belum Ada File Diproses</p>
                             <p class="text-xs text-slate-400 dark:text-navy-300 mt-1 max-w-xs">
                                 Unggah dokumen PowerPoint di panel sebelah kiri dan klik tombol konversi untuk menghasilkan dokumen PDF.
                             </p>
@@ -246,11 +234,11 @@
                 {{-- Download & Reset Buttons --}}
                 @if($resultPath)
                     <div class="pt-6 space-y-2">
-                        <button wire:click="download" class="btn w-full h-11 rounded-lg bg-success font-bold text-white shadow-lg shadow-success/30 hover:bg-success-focus text-xs sm:text-sm flex items-center justify-center space-x-2">
+                        <button wire:click="download" class="btn w-full h-10 rounded-lg bg-success font-medium text-white hover:bg-success-focus focus:bg-success-focus text-xs sm:text-sm flex items-center justify-center space-x-2 cursor-pointer">
                             <x-lucide-download class="size-4.5" />
                             <span>Unduh File PDF (.pdf)</span>
                         </button>
-                        <button wire:click="resetFile" class="btn w-full h-9 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 dark:border-navy-600 dark:text-navy-200 dark:hover:bg-navy-700 text-xs font-semibold">
+                        <button wire:click="resetFile" class="btn w-full h-9 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 dark:border-navy-600 dark:text-navy-200 dark:hover:bg-navy-700 text-xs font-medium cursor-pointer">
                             Konversi Presentasi Lain
                         </button>
                     </div>

@@ -134,16 +134,16 @@
 
                                                 <div class="min-w-0">
                                                     <div class="flex items-center gap-1.5 flex-wrap">
-                                                        <span class="font-bold text-slate-800 dark:text-navy-100 text-xs truncate group-hover:text-primary dark:group-hover:text-accent-light transition-colors" x-text="tool.name"></span>
-                                                        <span class="badge rounded-full bg-slate-150 text-slate-600 dark:bg-navy-800 dark:text-navy-300 text-[9px] font-semibold px-1.5 py-0.2" x-text="tool.category"></span>
+                                                        <span class="font-medium text-slate-800 dark:text-navy-100 text-xs truncate group-hover:text-primary dark:group-hover:text-accent-light transition-colors" x-text="tool.name"></span>
+                                                        <span class="badge rounded-full bg-slate-150 text-slate-600 dark:bg-navy-800 dark:text-navy-300 text-xs font-medium px-2 py-0.5" x-text="tool.category"></span>
                                                         <template x-if="tool.badge">
-                                                            <span class="badge rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 text-[9px] font-black px-1.5 py-0.2" x-text="tool.badge"></span>
+                                                            <span class="badge rounded-full bg-warning/15 text-warning dark:bg-warning/20 dark:text-warning-light text-xs font-medium px-2 py-0.5" x-text="tool.badge"></span>
                                                         </template>
                                                         <template x-if="tool.is_maintenance">
-                                                            <span class="badge rounded-full bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300 text-[9px] font-bold px-1.5 py-0.2">Maintenance</span>
+                                                            <span class="badge rounded-full bg-error/15 text-error dark:bg-error/20 dark:text-error-light text-xs font-medium px-2 py-0.5">Maintenance</span>
                                                         </template>
                                                     </div>
-                                                    <p class="text-[11px] text-slate-400 dark:text-navy-300 truncate mt-0.5" x-text="tool.description || ('Buka alat ' + tool.name)"></p>
+                                                    <p class="text-xs text-slate-400 dark:text-navy-300 truncate mt-0.5" x-text="tool.description || ('Buka alat ' + tool.name)"></p>
                                                 </div>
                                             </div>
 
@@ -157,14 +157,14 @@
                                     <div x-show="filteredTools.length === 0" class="py-8 text-center text-xs text-slate-400 dark:text-navy-300">
                                         <x-lucide-search class="size-8 mx-auto text-slate-300 dark:text-navy-400 mb-2 opacity-60" />
                                         <p class="font-semibold text-slate-700 dark:text-navy-100">Tool Tidak Ditemukan</p>
-                                        <p class="text-[11px] mt-0.5">Tidak ada tool yang cocok dengan "<span class="font-bold text-slate-600 dark:text-navy-200" x-text="searchQuery"></span>".</p>
+                                        <p class="text-xs text-slate-400 dark:text-navy-300 mt-0.5">Tidak ada tool yang cocok dengan "<span class="font-medium text-slate-600 dark:text-navy-200" x-text="searchQuery"></span>".</p>
                                     </div>
                                 </div>
 
                                 {{-- Popper Footer --}}
-                                <div class="flex items-center justify-between border-t border-slate-150 bg-slate-50 px-3 py-2 text-[10px] text-slate-400 dark:border-navy-600 dark:bg-navy-800 dark:text-navy-300">
-                                    <span>Ditemukan <strong class="text-slate-700 dark:text-navy-100" x-text="filteredTools.length"></strong> tools</span>
-                                    <span class="text-slate-400">Tekan <kbd class="rounded bg-slate-200 dark:bg-navy-600 px-1 py-0.5 font-mono text-[9px]">ESC</kbd> untuk menutup</span>
+                                <div class="flex items-center justify-between border-t border-slate-150 bg-slate-50 px-3 py-2 text-xs text-slate-400 dark:border-navy-600 dark:bg-navy-800 dark:text-navy-300">
+                                    <span>Ditemukan <strong class="text-slate-700 dark:text-navy-100 font-semibold" x-text="filteredTools.length"></strong> tools</span>
+                                    <span class="text-slate-400">Tekan <kbd class="rounded bg-slate-200 dark:bg-navy-600 px-1 py-0.5 font-mono text-xs">ESC</kbd> untuk menutup</span>
                                 </div>
                             </div>
                         </div>
@@ -201,83 +201,63 @@
                     $subExpiry = auth()->check() && auth()->user()->activeSubscription() ? auth()->user()->activeSubscription()->expires_at : null;
                 @endphp
                 <div x-data="usePopper({ placement: 'bottom-end', offset: 12 })" @click.outside="if(isShowPopper) isShowPopper = false" class="flex">
-                    <button @click="isShowPopper = !isShowPopper" x-ref="popperRef" class="avatar size-8 cursor-pointer relative rounded-full {{ $isAdmin ? 'ring-2 ring-rose-500 ring-offset-2 ring-offset-white dark:ring-offset-navy-750 shadow-sm shadow-rose-500/30' : ($isProUser ? ($isProMax ? 'ring-2 ring-purple-500 ring-offset-2 ring-offset-white dark:ring-offset-navy-750' : 'ring-2 ring-amber-400 ring-offset-2 ring-offset-white dark:ring-offset-navy-750') : '') }}">
+                    <button @click="isShowPopper = !isShowPopper" x-ref="popperRef" class="avatar size-8 cursor-pointer relative rounded-full {{ $isAdmin ? 'ring-2 ring-error/50 ring-offset-2 ring-offset-white dark:ring-offset-navy-750' : ($isProUser ? ($isProMax ? 'ring-2 ring-secondary/50 ring-offset-2 ring-offset-white dark:ring-offset-navy-750' : 'ring-2 ring-warning/50 ring-offset-2 ring-offset-white dark:ring-offset-navy-750') : '') }}">
                         @if(auth()->check() && auth()->user()->profile_photo_path)
                             <img class="rounded-full object-cover" src="{{ Storage::url(auth()->user()->profile_photo_path) }}" alt="avatar" />
                         @else
-                            <div class="rounded-full {{ $isAdmin ? 'bg-gradient-to-tr from-rose-600 via-purple-600 to-indigo-600 text-white' : ($isProUser ? ($isProMax ? 'bg-gradient-to-tr from-purple-600 to-indigo-500 text-white' : 'bg-gradient-to-tr from-amber-400 to-orange-500 text-white') : 'bg-slate-200 text-slate-500 dark:bg-navy-500 dark:text-navy-100') }} w-full h-full flex items-center justify-center font-bold text-xs">
+                            <div class="rounded-full bg-primary/10 text-primary dark:bg-accent/15 dark:text-accent-light w-full h-full flex items-center justify-center font-medium text-xs">
                                 {{ auth()->check() ? substr(auth()->user()->name, 0, 1) : 'U' }}
                             </div>
                         @endif
 
                         @if($isAdmin)
-                            <span class="absolute -top-1 -right-1 flex size-3.5 items-center justify-center rounded-full bg-linear-to-r from-rose-500 to-pink-500 text-white shadow-xs ring-1 ring-white dark:ring-navy-700">
-                                <x-lucide-shield-check class="size-2.5 stroke-[2.5]" />
-                            </span>
+                            <span class="absolute -top-0.5 -right-0.5 size-2.5 rounded-full bg-error ring-1 ring-white dark:ring-navy-700"></span>
                         @elseif($isProUser)
-                            <span class="absolute -top-1 -right-1 flex size-3.5 items-center justify-center rounded-full {{ $isProMax ? 'bg-linear-to-r from-amber-400 to-yellow-300 text-slate-900' : 'bg-amber-400 text-slate-900' }} shadow-xs ring-1 ring-white dark:ring-navy-700">
-                                @if($isProMax)
-                                    <x-lucide-crown class="size-2.5 stroke-[2.5]" />
-                                @else
-                                    <x-lucide-star class="size-2.5 stroke-[2.5] fill-current" />
-                                @endif
-                            </span>
+                            <span class="absolute -top-0.5 -right-0.5 size-2.5 rounded-full bg-warning ring-1 ring-white dark:ring-navy-700"></span>
                         @else
                             <span class="absolute right-0 size-2.5 rounded-full border-2 border-white bg-success dark:border-navy-700"></span>
                         @endif
                     </button>
                     <div :class="isShowPopper && 'show'" class="popper-root fixed" x-ref="popperRoot">
                         <div class="popper-box w-72 rounded-xl border border-slate-150 bg-white shadow-soft dark:border-navy-600 dark:bg-navy-700 overflow-hidden">
-                            <div class="flex items-center space-x-3.5 rounded-t-xl {{ $isAdmin ? 'bg-gradient-to-r from-rose-50 via-purple-50 to-indigo-50 dark:from-rose-950/40 dark:via-purple-950/30 dark:to-navy-800' : ($isProUser ? ($isProMax ? 'bg-gradient-to-r from-purple-50 via-indigo-50 to-amber-50/50 dark:from-purple-950/40 dark:via-navy-800 dark:to-navy-800' : 'bg-gradient-to-r from-amber-50/80 to-orange-50/40 dark:from-amber-950/30 dark:to-navy-800') : 'bg-slate-100 dark:bg-navy-800') }} py-4.5 px-4 border-b border-slate-150 dark:border-navy-600">
-                                <div class="avatar size-12 shrink-0 relative rounded-full {{ $isAdmin ? 'ring-2 ring-rose-500 ring-offset-2 ring-offset-white dark:ring-offset-navy-800' : ($isProUser ? ($isProMax ? 'ring-2 ring-purple-500 ring-offset-2 ring-offset-white dark:ring-offset-navy-800' : 'ring-2 ring-amber-400 ring-offset-2 ring-offset-white dark:ring-offset-navy-800') : '') }}">
+                            <div class="flex items-center space-x-3.5 rounded-t-xl bg-slate-50 dark:bg-navy-800 py-4 px-4 border-b border-slate-150 dark:border-navy-600">
+                                <div class="avatar size-11 shrink-0 relative rounded-full">
                                     @if(auth()->check() && auth()->user()->profile_photo_path)
                                         <img class="rounded-full object-cover" src="{{ Storage::url(auth()->user()->profile_photo_path) }}" alt="avatar" />
                                     @else
-                                        <div class="rounded-full {{ $isAdmin ? 'bg-gradient-to-tr from-rose-600 via-purple-600 to-indigo-600 text-white' : ($isProUser ? ($isProMax ? 'bg-gradient-to-tr from-purple-600 to-indigo-500 text-white' : 'bg-gradient-to-tr from-amber-400 to-orange-500 text-white') : 'bg-slate-200 text-slate-500 dark:bg-navy-500 dark:text-navy-100') }} w-full h-full flex items-center justify-center font-bold text-base">
+                                        <div class="rounded-full bg-primary/10 text-primary dark:bg-accent/15 dark:text-accent-light w-full h-full flex items-center justify-center font-medium text-base">
                                             {{ auth()->check() ? substr(auth()->user()->name, 0, 1) : 'U' }}
                                         </div>
                                     @endif
                                 </div>
                                 <div class="overflow-hidden flex-1">
                                     <div class="flex items-center gap-1.5">
-                                        <a href="{{ route('profile') }}" class="text-sm font-bold text-slate-700 hover:text-primary focus:text-primary dark:text-navy-100 dark:hover:text-accent-light dark:focus:text-accent-light truncate" wire:navigate>
+                                        <a href="{{ route('profile') }}" class="text-sm font-semibold text-slate-800 hover:text-primary focus:text-primary dark:text-navy-100 dark:hover:text-accent-light dark:focus:text-accent-light truncate" wire:navigate>
                                             {{ auth()->check() ? auth()->user()->name : 'User' }}
                                         </a>
                                     </div>
                                     <p class="text-xs text-slate-400 dark:text-navy-300 truncate">
                                         {{ auth()->check() ? auth()->user()->email : '' }}
                                     </p>
-                                    <div class="mt-1 flex items-center gap-1.5 flex-wrap">
+                                    <div class="mt-1.5 flex items-center gap-1.5 flex-wrap">
                                         @if($isAdmin)
-                                            <span class="badge rounded-full bg-linear-to-r from-rose-600 via-purple-600 to-indigo-600 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-xs inline-flex items-center gap-1">
-                                                <x-lucide-shield-check class="size-3 stroke-[2.5]" />
-                                                <span>SUPER ADMIN</span>
-                                            </span>
-                                            <span class="badge rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 text-[9px] font-bold px-1.5 py-0.2">
-                                                Full Access
+                                            <span class="badge rounded-full bg-error/10 text-error px-2 py-0.5 text-xs font-medium">
+                                                Super Admin
                                             </span>
                                         @elseif($isProUser)
-                                            @if($isProMax)
-                                                <span class="badge rounded-full bg-linear-to-r from-amber-500 via-purple-600 to-indigo-600 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-xs inline-flex items-center gap-1">
-                                                    <x-lucide-crown class="size-3 stroke-[2.5]" />
-                                                    <span>{{ $activePlanName }}</span>
-                                                </span>
-                                            @else
-                                                <span class="badge rounded-full bg-linear-to-r from-amber-500 to-orange-500 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-white shadow-xs inline-flex items-center gap-1">
-                                                    <x-lucide-star class="size-3 stroke-[2.5] fill-current" />
-                                                    <span>{{ $activePlanName }}</span>
-                                                </span>
-                                            @endif
+                                            <span class="badge rounded-full bg-warning/15 text-warning dark:bg-warning/20 dark:text-warning-light px-2 py-0.5 text-xs font-medium">
+                                                {{ $activePlanName }}
+                                            </span>
                                             @if($subExpiry)
-                                                <span class="text-[10px] text-slate-400 dark:text-navy-300 font-medium">
+                                                <span class="text-xs text-slate-400 dark:text-navy-300 font-medium">
                                                     s/d {{ $subExpiry->translatedFormat('d M Y') }}
                                                 </span>
                                             @endif
                                         @else
-                                            <span class="badge rounded-full bg-slate-200 dark:bg-navy-600 px-2 py-0.5 text-[9px] font-bold text-slate-600 dark:text-navy-200">
-                                                FREE PLAN
+                                            <span class="badge rounded-full bg-slate-150 text-slate-600 dark:bg-navy-600 dark:text-navy-200 px-2 py-0.5 text-xs font-medium">
+                                                Free Plan
                                             </span>
-                                            <a href="{{ route('pricing') }}" wire:navigate class="text-[10px] text-primary hover:underline dark:text-accent-light font-bold">
+                                            <a href="{{ route('pricing') }}" wire:navigate class="text-xs text-primary hover:underline dark:text-accent-light font-medium">
                                                 Upgrade &rarr;
                                             </a>
                                         @endif

@@ -93,13 +93,13 @@
                                         @endif
                                     </div>
                                     <div>
-                                        <div class="font-bold text-slate-700 hover:text-primary dark:text-navy-100 dark:hover:text-accent-light text-xs sm:text-sm flex items-center transition-colors">
+                                        <div class="font-medium text-slate-700 hover:text-primary dark:text-navy-100 dark:hover:text-accent-light text-xs sm:text-sm flex items-center transition-colors">
                                             <span>{{ $user->name }}</span>
                                             @if($user->is_admin) 
-                                                <span class="badge rounded-full ml-1.5 bg-slate-800 text-white dark:bg-navy-500 text-[10px] font-bold px-2 py-0.5">Admin</span> 
+                                                <span class="badge rounded-full ml-1.5 bg-error/10 text-error text-xs font-medium px-2 py-0.5">Admin</span> 
                                             @endif
                                         </div>
-                                        <div class="text-[11px] text-slate-400 dark:text-navy-300 mt-0.5">{{ $user->email }}</div>
+                                        <div class="text-xs text-slate-400 dark:text-navy-300 mt-0.5">{{ $user->email }}</div>
                                     </div>
                                 </div>
                             </td>
@@ -112,37 +112,35 @@
                                 @if($activeSub)
                                     <div>
                                         @if($isProMax)
-                                            <span class="badge rounded-full bg-linear-to-r from-amber-500 via-purple-600 to-indigo-600 text-white font-black text-[10px] px-2.5 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
-                                                <x-lucide-crown class="size-3 stroke-[2.5]" />
-                                                <span>{{ $planName }}</span>
+                                            <span class="badge rounded-full bg-secondary/15 text-secondary dark:bg-secondary-light/15 dark:text-secondary-light text-xs font-medium px-2.5 py-0.5">
+                                                {{ $planName }}
                                             </span>
                                         @else
-                                            <span class="badge rounded-full bg-linear-to-r from-amber-500 to-orange-500 text-white font-black text-[10px] px-2.5 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
-                                                <x-lucide-star class="size-3 stroke-[2.5] fill-current" />
-                                                <span>{{ $planName }}</span>
+                                            <span class="badge rounded-full bg-warning/15 text-warning dark:bg-warning/20 dark:text-warning-light text-xs font-medium px-2.5 py-0.5">
+                                                {{ $planName }}
                                             </span>
                                         @endif
-                                        <p class="text-[10px] text-slate-400 dark:text-navy-300 mt-0.5">
+                                        <p class="text-xs text-slate-400 dark:text-navy-300 mt-0.5">
                                             s/d {{ \Carbon\Carbon::parse($activeSub->expires_at)->translatedFormat('d M Y') }}
                                         </p>
                                     </div>
                                 @else
-                                    <span class="badge rounded-full bg-slate-150 text-slate-600 dark:bg-navy-500 dark:text-navy-200 text-[11px] font-semibold px-2.5 py-0.5">
+                                    <span class="badge rounded-full bg-slate-150 text-slate-600 dark:bg-navy-500 dark:text-navy-200 text-xs font-medium px-2.5 py-0.5">
                                         Free Plan
                                     </span>
                                 @endif
                             </td>
-                            <td class="whitespace-nowrap px-4 py-3 font-bold text-slate-700 dark:text-navy-100 sm:px-5 text-xs">
+                            <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-700 dark:text-navy-100 sm:px-5 text-xs">
                                 Rp {{ number_format($user->subscriptions_sum_amount ?? 0, 0, ',', '.') }}
                             </td>
                             <td class="whitespace-nowrap px-4 py-3 sm:px-5 text-center">
                                 @if($user->banned_at)
-                                    <span class="badge space-x-1.5 rounded-full bg-error/10 text-error text-[11px] font-bold px-2.5 py-0.5">
+                                    <span class="badge space-x-1.5 rounded-full bg-error/10 text-error text-xs font-medium px-2.5 py-0.5">
                                         <span class="size-1.5 rounded-full bg-current"></span>
                                         <span>Banned</span>
                                     </span>
                                 @else
-                                    <span class="badge space-x-1.5 rounded-full bg-success/10 text-success text-[11px] font-bold px-2.5 py-0.5">
+                                    <span class="badge space-x-1.5 rounded-full bg-success/10 text-success text-xs font-medium px-2.5 py-0.5">
                                         <span class="size-1.5 rounded-full bg-current"></span>
                                         <span>Aktif</span>
                                     </span>
@@ -205,22 +203,22 @@
         <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-300"
              x-data
              x-on:keydown.escape.window="$wire.closeUserModal()">
-            <div class="relative w-full max-w-2xl rounded-2xl bg-white dark:bg-navy-700 shadow-2xl border border-slate-200 dark:border-navy-600 overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="relative w-full max-w-2xl rounded-lg bg-white dark:bg-navy-700 shadow-xl border border-slate-150 dark:border-navy-600 overflow-hidden flex flex-col max-h-[90vh]">
                 
                 {{-- Modal Header --}}
                 <div class="flex items-center justify-between px-5 py-4 border-b border-slate-150 dark:border-navy-600 bg-slate-50 dark:bg-navy-800">
                     <div class="flex items-center space-x-3">
-                        <div class="mask is-squircle flex size-10 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light font-bold">
+                        <div class="mask is-squircle flex size-10 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light font-medium">
                             <x-lucide-user-cog class="size-5" />
                         </div>
                         <div>
-                            <h3 class="text-base font-bold text-slate-800 dark:text-navy-100 flex items-center gap-2">
+                            <h3 class="text-base font-semibold text-slate-800 dark:text-navy-100 flex items-center gap-2">
                                 <span>Kelola Akun Pengguna</span>
                                 @if($editIsBanned)
-                                    <span class="badge rounded-full bg-error/15 text-error text-[10px] font-bold px-2 py-0.5">Banned</span>
+                                    <span class="badge rounded-full bg-error/15 text-error text-xs font-medium px-2 py-0.5">Banned</span>
                                 @endif
                                 @if($editIsAdmin)
-                                    <span class="badge rounded-full bg-slate-800 text-white dark:bg-navy-500 text-[10px] font-bold px-2 py-0.5">Admin</span>
+                                    <span class="badge rounded-full bg-error/10 text-error text-xs font-medium px-2 py-0.5">Admin</span>
                                 @endif
                             </h3>
                             <p class="text-xs text-slate-400 dark:text-navy-300">
@@ -246,27 +244,26 @@
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 dark:text-navy-100 mb-1">Nama Lengkap</label>
                                 <input wire:model="editName" type="text" class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 text-xs hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent" required />
-                                @error('editName') <span class="text-[11px] text-error mt-0.5 block">{{ $message }}</span> @enderror
+                                @error('editName') <span class="text-xs text-error mt-0.5 block">{{ $message }}</span> @enderror
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 dark:text-navy-100 mb-1">Alamat Email</label>
                                 <input wire:model="editEmail" type="email" class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 text-xs hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent" required />
-                                @error('editEmail') <span class="text-[11px] text-error mt-0.5 block">{{ $message }}</span> @enderror
+                                @error('editEmail') <span class="text-xs text-error mt-0.5 block">{{ $message }}</span> @enderror
                             </div>
                         </div>
 
                         <div class="mt-3.5 grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div class="rounded-xl border border-slate-200 dark:border-navy-600 p-3 bg-slate-50/50 dark:bg-navy-800/40">
-                                <span class="text-[11px] text-slate-400 dark:text-navy-300 block mb-1">Status Verifikasi</span>
+                                <span class="text-xs text-slate-400 dark:text-navy-300 block mb-1">Status Verifikasi</span>
                                 @if($editEmailVerified)
-                                    <span class="badge rounded-full bg-success/15 text-success text-[10px] font-bold px-2 py-0.5 inline-flex items-center gap-1">
-                                        <x-lucide-check class="size-3" />
-                                        <span>Terverifikasi</span>
+                                    <span class="badge rounded-full bg-success/15 text-success text-xs font-medium px-2.5 py-0.5">
+                                        Terverifikasi
                                     </span>
                                 @else
                                     <div class="flex items-center justify-between">
-                                        <span class="badge rounded-full bg-warning/15 text-warning text-[10px] font-bold px-2 py-0.5">Belum</span>
-                                        <button wire:click="verifyEmailNow" type="button" class="text-[10px] text-primary hover:underline dark:text-accent-light font-bold">
+                                        <span class="badge rounded-full bg-warning/15 text-warning text-xs font-medium px-2 py-0.5">Belum</span>
+                                        <button wire:click="verifyEmailNow" type="button" class="text-xs text-primary hover:underline dark:text-accent-light font-medium">
                                             Verifikasi Sekarang
                                         </button>
                                     </div>
@@ -274,18 +271,18 @@
                             </div>
 
                             <div class="rounded-xl border border-slate-200 dark:border-navy-600 p-3 bg-slate-50/50 dark:bg-navy-800/40">
-                                <span class="text-[11px] text-slate-400 dark:text-navy-300 block mb-1">Hak Akses Role</span>
+                                <span class="text-xs text-slate-400 dark:text-navy-300 block mb-1">Hak Akses Role</span>
                                 <label class="inline-flex items-center space-x-2 cursor-pointer">
                                     <input wire:model="editIsAdmin" type="checkbox" class="form-checkbox is-basic size-4 rounded border-slate-400/70 checked:bg-primary checked:border-primary dark:border-navy-400 dark:checked:bg-accent dark:checked:border-accent" @if($selectedUserId === auth()->id()) disabled @endif />
-                                    <span class="text-xs font-semibold text-slate-700 dark:text-navy-100">Administrator</span>
+                                    <span class="text-xs font-medium text-slate-700 dark:text-navy-100">Administrator</span>
                                 </label>
                             </div>
 
                             <div class="rounded-xl border border-slate-200 dark:border-navy-600 p-3 bg-slate-50/50 dark:bg-navy-800/40">
-                                <span class="text-[11px] text-slate-400 dark:text-navy-300 block mb-1">Status Blokir (Ban)</span>
+                                <span class="text-xs text-slate-400 dark:text-navy-300 block mb-1">Status Blokir (Ban)</span>
                                 <label class="inline-flex items-center space-x-2 cursor-pointer">
                                     <input wire:model="editIsBanned" type="checkbox" class="form-checkbox is-basic size-4 rounded border-slate-400/70 checked:bg-error checked:border-error dark:border-navy-400 dark:checked:bg-error dark:checked:border-error" @if($selectedUserId === auth()->id()) disabled @endif />
-                                    <span class="text-xs font-semibold text-error">Banned / Ditangguhkan</span>
+                                    <span class="text-xs font-medium text-error">Banned / Ditangguhkan</span>
                                 </label>
                             </div>
                         </div>
@@ -296,11 +293,11 @@
                     {{-- 2. PENGATURAN PAKET & LANGGANAN BEBAS --}}
                     <div>
                         <div class="flex items-center justify-between mb-3">
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-primary dark:text-accent-light flex items-center gap-1.5">
+                            <h4 class="text-xs font-semibold uppercase tracking-wider text-primary dark:text-accent-light flex items-center gap-1.5">
                                 <x-lucide-crown class="size-4" />
                                 <span>2. Pengaturan Paket Langganan (Tanpa Bayar)</span>
                             </h4>
-                            <span class="badge rounded-full bg-info/10 text-info text-[10px] font-bold px-2 py-0.5">
+                            <span class="badge rounded-full bg-info/10 text-info text-xs font-medium px-2.5 py-0.5">
                                 Direct Admin Grant
                             </span>
                         </div>
@@ -341,13 +338,13 @@
                                         <input wire:model="editExpiresAt" type="date" class="form-input w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-800 dark:hover:border-navy-400 dark:focus:border-accent" required />
                                     </div>
                                     <div class="flex items-center pt-5">
-                                        <p class="text-[11px] text-slate-500 dark:text-navy-300 leading-relaxed">
+                                        <p class="text-xs text-slate-500 dark:text-navy-300 leading-relaxed">
                                             ✓ Paket akan langsung aktif di akun pengguna dengan kuota fitur tanpa batas tanpa perlu proses checkout/bayar.
                                         </p>
                                     </div>
                                 </div>
                             @else
-                                <p class="text-[11px] text-slate-500 dark:text-navy-300">
+                                <p class="text-xs text-slate-500 dark:text-navy-300">
                                     Jika memilih Free Plan, maka langganan berbayar aktif saat ini (jika ada) akan otomatis dibatalkan.
                                 </p>
                             @endif
@@ -359,11 +356,11 @@
                     {{-- 3. GANTI / RESET PASSWORD --}}
                     <div>
                         <div class="flex items-center justify-between mb-3">
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-primary dark:text-accent-light flex items-center gap-1.5">
+                            <h4 class="text-xs font-semibold uppercase tracking-wider text-primary dark:text-accent-light flex items-center gap-1.5">
                                 <x-lucide-key-round class="size-4" />
                                 <span>3. Ganti / Reset Password</span>
                             </h4>
-                            <button wire:click="generateRandomPassword" type="button" class="btn h-7 rounded-lg bg-slate-150 px-2.5 text-[11px] font-semibold text-slate-700 hover:bg-slate-200 dark:bg-navy-600 dark:text-navy-100 dark:hover:bg-navy-500 shadow-xs flex items-center gap-1">
+                            <button wire:click="generateRandomPassword" type="button" class="btn h-7 rounded-lg bg-slate-150 px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-200 dark:bg-navy-600 dark:text-navy-100 dark:hover:bg-navy-500 shadow-xs flex items-center gap-1">
                                 <x-lucide-wand-2 class="size-3" />
                                 <span>Buat Password Acak</span>
                             </button>
@@ -372,7 +369,7 @@
                         @if($generatedPassword)
                             <div class="mb-3 rounded-lg bg-info/10 border border-info/30 p-2.5 flex items-center justify-between text-xs text-info">
                                 <span>Password dibuat: <strong class="font-mono text-slate-800 dark:text-navy-100 text-sm select-all">{{ $generatedPassword }}</strong></span>
-                                <span class="text-[10px] text-slate-500">Salin sebelum menutup modal</span>
+                                <span class="text-xs text-slate-500">Salin sebelum menutup modal</span>
                             </div>
                         @endif
 
@@ -380,12 +377,12 @@
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 dark:text-navy-100 mb-1">Password Baru (Kosongkan jika tidak ingin diubah)</label>
                                 <input wire:model="newPassword" type="text" placeholder="Masukkan password baru..." class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 text-xs hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent" />
-                                @error('newPassword') <span class="text-[11px] text-error mt-0.5 block">{{ $message }}</span> @enderror
+                                @error('newPassword') <span class="text-xs text-error mt-0.5 block">{{ $message }}</span> @enderror
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 dark:text-navy-100 mb-1">Konfirmasi Password Baru</label>
                                 <input wire:model="newPasswordConfirmation" type="text" placeholder="Ulangi password baru..." class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 text-xs hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent" />
-                                @error('newPasswordConfirmation') <span class="text-[11px] text-error mt-0.5 block">{{ $message }}</span> @enderror
+                                @error('newPasswordConfirmation') <span class="text-xs text-error mt-0.5 block">{{ $message }}</span> @enderror
                             </div>
                         </div>
                     </div>
@@ -395,10 +392,10 @@
                         <div class="h-px bg-slate-150 dark:bg-navy-600"></div>
                         <div class="rounded-xl border border-error/20 bg-error/5 p-3.5 flex items-center justify-between">
                             <div>
-                                <h5 class="text-xs font-bold text-error">Hapus Akun Pengguna</h5>
-                                <p class="text-[11px] text-slate-500 dark:text-navy-300">Menghapus akun beserta semua riwayat dan langganan secara permanen.</p>
+                                <h5 class="text-xs font-semibold text-error">Hapus Akun Pengguna</h5>
+                                <p class="text-xs text-slate-500 dark:text-navy-300">Menghapus akun beserta semua riwayat dan langganan secara permanen.</p>
                             </div>
-                            <button wire:click="confirmDeleteUser({{ $selectedUserId }})" type="button" class="btn h-8 rounded-lg bg-error text-white text-xs font-semibold px-3 shadow-xs hover:bg-error-focus">
+                            <button wire:click="confirmDeleteUser({{ $selectedUserId }})" type="button" class="btn h-8 rounded-lg bg-error text-white text-xs font-medium px-3 shadow-xs hover:bg-error-focus">
                                 Hapus Akun
                             </button>
                         </div>

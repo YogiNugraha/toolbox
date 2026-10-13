@@ -33,10 +33,10 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-sm font-bold tracking-wide text-slate-700 dark:text-navy-100 uppercase">
+                            <h3 class="text-sm font-semibold tracking-wide text-slate-700 dark:text-navy-100 uppercase">
                                 Identitas & Branding Website
                             </h3>
-                            <p class="text-[11px] text-slate-400 dark:text-navy-300">Nama brand, slogan, dan logo resmi website.</p>
+                            <p class="text-xs text-slate-400 dark:text-navy-300">Nama brand, slogan, dan logo resmi website.</p>
                         </div>
                     </div>
 
@@ -54,7 +54,7 @@
                                     </span>
                                 </div>
                             </label>
-                            @error('site_name') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                            @error('site_name') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
                         {{-- Tagline --}}
@@ -63,7 +63,7 @@
                                 <span class="font-semibold text-slate-700 dark:text-navy-100 mb-1 block">Tagline / Slogan Singkat</span>
                                 <input wire:model.live="site_tagline" type="text" placeholder="Platform Konversi & Optimasi Dokumen Digital" class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 text-xs placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent" />
                             </label>
-                            @error('site_tagline') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                            @error('site_tagline') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
                         {{-- Deskripsi Website --}}
@@ -72,12 +72,12 @@
                                 <span class="font-semibold text-slate-700 dark:text-navy-100 mb-1 block">Deskripsi Website (Meta Description & Footer)</span>
                                 <textarea wire:model="site_description" rows="3" placeholder="Deskripsi ringkas mengenai layanan dan fungsi platform..." class="form-textarea w-full rounded-lg border border-slate-300 bg-transparent p-3 text-xs placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent"></textarea>
                             </label>
-                            @error('site_description') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                            @error('site_description') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
                         {{-- Upload Logo Website --}}
                         <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-4 dark:border-navy-600 dark:bg-navy-700/40">
-                            <span class="font-bold text-slate-700 dark:text-navy-100 block mb-2">Logo Website</span>
+                            <span class="font-semibold text-slate-700 dark:text-navy-100 block mb-2">Logo Website</span>
                             <div class="flex items-center space-x-4">
                                 {{-- Logo Preview --}}
                                 <div class="flex size-16 shrink-0 items-center justify-center rounded-xl bg-white dark:bg-navy-800 border border-slate-200 dark:border-navy-600 overflow-hidden shadow-xs">
@@ -95,7 +95,7 @@
                                 </div>
 
                                 <div class="space-y-2">
-                                    <label class="btn h-8 rounded-full bg-primary px-3.5 text-xs font-semibold text-white shadow-xs hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus cursor-pointer inline-flex items-center space-x-1.5">
+                                    <label class="btn h-8 rounded-full bg-primary px-3.5 text-xs font-medium text-white shadow-xs hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus cursor-pointer inline-flex items-center space-x-1.5">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
@@ -104,20 +104,20 @@
                                     </label>
                                     
                                     @if ($logo || $existing_logo)
-                                        <button type="button" wire:click="removeLogo" class="btn h-8 rounded-full border border-error/30 text-error hover:bg-error/10 px-3 text-[11px] font-semibold block">
+                                        <button type="button" wire:click="removeLogo" class="btn h-8 rounded-full border border-error/30 text-error hover:bg-error/10 px-3 text-xs font-medium block">
                                             Hapus Logo
                                         </button>
                                     @endif
 
-                                    <p class="text-[10px] text-slate-400 dark:text-navy-300">Format: PNG, SVG, JPG. Maksimal 2MB.</p>
+                                    <p class="text-xs text-slate-400 dark:text-navy-300">Format: PNG, SVG, JPG. Maksimal 2MB.</p>
                                 </div>
                             </div>
-                            @error('logo') <span class="text-[11px] text-error mt-2 block">{{ $message }}</span> @enderror
+                            @error('logo') <span class="text-xs text-error mt-2 block">{{ $message }}</span> @enderror
                         </div>
 
                         {{-- Upload Favicon Website --}}
                         <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-4 dark:border-navy-600 dark:bg-navy-700/40">
-                            <span class="font-bold text-slate-700 dark:text-navy-100 block mb-2">Favicon Website (Browser Tab)</span>
+                            <span class="font-semibold text-slate-700 dark:text-navy-100 block mb-2">Favicon Website (Browser Tab)</span>
                             <div class="flex items-center space-x-4">
                                 {{-- Favicon Preview --}}
                                 <div class="flex size-12 shrink-0 items-center justify-center rounded-lg bg-white dark:bg-navy-800 border border-slate-200 dark:border-navy-600 overflow-hidden shadow-xs">
@@ -135,7 +135,7 @@
                                 </div>
 
                                 <div class="space-y-2">
-                                    <label class="btn h-8 rounded-full bg-slate-200 text-slate-700 hover:bg-slate-300 dark:bg-navy-500 dark:text-navy-100 dark:hover:bg-navy-450 px-3.5 text-xs font-semibold cursor-pointer inline-flex items-center space-x-1.5 shadow-xs">
+                                    <label class="btn h-8 rounded-full bg-slate-200 text-slate-700 hover:bg-slate-300 dark:bg-navy-500 dark:text-navy-100 dark:hover:bg-navy-450 px-3.5 text-xs font-medium cursor-pointer inline-flex items-center space-x-1.5 shadow-xs">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                                         </svg>
@@ -144,15 +144,15 @@
                                     </label>
 
                                     @if ($favicon || $existing_favicon)
-                                        <button type="button" wire:click="removeFavicon" class="btn h-8 rounded-full border border-error/30 text-error hover:bg-error/10 px-3 text-[11px] font-semibold block">
+                                        <button type="button" wire:click="removeFavicon" class="btn h-8 rounded-full border border-error/30 text-error hover:bg-error/10 px-3 text-xs font-medium block">
                                             Hapus Favicon
                                         </button>
                                     @endif
 
-                                    <p class="text-[10px] text-slate-400 dark:text-navy-300">Format: ICO, PNG (32x32 atau 64x64). Maks 1MB.</p>
+                                    <p class="text-xs text-slate-400 dark:text-navy-300">Format: ICO, PNG (32x32 atau 64x64). Maks 1MB.</p>
                                 </div>
                             </div>
-                            @error('favicon') <span class="text-[11px] text-error mt-2 block">{{ $message }}</span> @enderror
+                            @error('favicon') <span class="text-xs text-error mt-2 block">{{ $message }}</span> @enderror
                         </div>
                     </div>
                 </div>
@@ -166,10 +166,10 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-sm font-bold tracking-wide text-slate-700 dark:text-navy-100 uppercase">
+                            <h3 class="text-sm font-semibold tracking-wide text-slate-700 dark:text-navy-100 uppercase">
                                 Kontak Layanan & Footer
                             </h3>
-                            <p class="text-[11px] text-slate-400 dark:text-navy-300">Email support, WhatsApp helpdesk, dan teks hak cipta footer.</p>
+                            <p class="text-xs text-slate-400 dark:text-navy-300">Email support, WhatsApp helpdesk, dan teks hak cipta footer.</p>
                         </div>
                     </div>
 
@@ -187,7 +187,7 @@
                                     </span>
                                 </div>
                             </label>
-                            @error('support_email') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                            @error('support_email') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
                         {{-- WhatsApp CS --}}
@@ -203,7 +203,7 @@
                                     </span>
                                 </div>
                             </label>
-                            @error('support_whatsapp') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                            @error('support_whatsapp') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
                         {{-- Teks Footer Copyright --}}
@@ -212,7 +212,7 @@
                                 <span class="font-semibold text-slate-700 dark:text-navy-100 mb-1 block">Teks Hak Cipta Footer (Copyright Notice)</span>
                                 <input wire:model="footer_copyright" type="text" placeholder="© 2026 Mudah Kerja. All rights reserved." class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 text-xs placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent" />
                             </label>
-                            @error('footer_copyright') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                            @error('footer_copyright') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                         </div>
                     </div>
                 </div>
@@ -227,17 +227,17 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="text-sm font-bold tracking-wide text-slate-700 dark:text-navy-100 uppercase">
+                                <h3 class="text-sm font-semibold tracking-wide text-slate-700 dark:text-navy-100 uppercase">
                                     Banner Pengumuman Global
                                 </h3>
-                                <p class="text-[11px] text-slate-400 dark:text-navy-300">Tampilkan bar notifikasi di bagian paling atas halaman website.</p>
+                                <p class="text-xs text-slate-400 dark:text-navy-300">Tampilkan bar notifikasi di bagian paling atas halaman website.</p>
                             </div>
                         </div>
 
                         {{-- Toggle Switch --}}
                         <label class="inline-flex items-center space-x-2 cursor-pointer">
                             <input wire:model.live="announcement_enabled" type="checkbox" class="form-switch h-5 w-10 rounded-full bg-slate-300 before:rounded-full before:bg-slate-50 checked:bg-primary checked:before:bg-white dark:bg-navy-900 dark:before:bg-navy-300 dark:checked:bg-accent" />
-                            <span class="text-xs font-bold {{ $announcement_enabled ? 'text-primary dark:text-accent-light' : 'text-slate-400' }}">
+                            <span class="text-xs font-semibold {{ $announcement_enabled ? 'text-primary dark:text-accent-light' : 'text-slate-400' }}">
                                 {{ $announcement_enabled ? 'AKTIF' : 'NONAKTIF' }}
                             </span>
                         </label>
@@ -249,7 +249,7 @@
                                 <span class="font-semibold text-slate-700 dark:text-navy-100 mb-1 block">Teks Pengumuman</span>
                                 <input wire:model.live="announcement_text" type="text" placeholder="Dapatkan Diskon 20% Paket Pro untuk kuota tanpa batas!" class="form-input w-full rounded-lg border border-slate-300 bg-transparent px-3 py-2 text-xs placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent" />
                             </label>
-                            @error('announcement_text') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                            @error('announcement_text') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
                         <div>
@@ -292,43 +292,43 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-sm font-bold tracking-wide text-slate-700 dark:text-navy-100 uppercase">
+                            <h3 class="text-sm font-semibold tracking-wide text-slate-700 dark:text-navy-100 uppercase">
                                 Integrasi Payment Gateway Midtrans
                             </h3>
-                            <p class="text-[11px] text-slate-400 dark:text-navy-300">Status koneksi gateway pembayaran otomatis QRIS & Bank Transfer.</p>
+                            <p class="text-xs text-slate-400 dark:text-navy-300">Status koneksi gateway pembayaran otomatis QRIS & Bank Transfer.</p>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 text-xs">
                         <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-3.5 dark:border-navy-600 dark:bg-navy-700/40 space-y-2">
                             <div class="flex justify-between items-center">
-                                <span class="font-bold text-slate-700 dark:text-navy-100">Environment Mode</span>
-                                <span class="badge rounded-full {{ config('services.midtrans.is_production') ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning' }} text-[10px] font-bold px-2 py-0.5">
+                                <span class="font-medium text-slate-700 dark:text-navy-100">Environment Mode</span>
+                                <span class="badge rounded-full {{ config('services.midtrans.is_production') ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning' }} text-xs font-medium px-2.5 py-0.5">
                                     {{ config('services.midtrans.is_production') ? 'PRODUCTION' : 'SANDBOX / TESTING' }}
                                 </span>
                             </div>
-                            <p class="text-slate-400 dark:text-navy-300 text-[11px]">Dikonfigurasi melalui file <code class="bg-slate-200 px-1 py-0.5 rounded dark:bg-navy-600">.env</code></p>
+                            <p class="text-slate-400 dark:text-navy-300 text-xs">Dikonfigurasi melalui file <code class="bg-slate-200 px-1 py-0.5 rounded dark:bg-navy-600">.env</code></p>
                         </div>
 
                         <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-3.5 dark:border-navy-600 dark:bg-navy-700/40 space-y-2">
                             <div class="flex justify-between items-center">
-                                <span class="font-bold text-slate-700 dark:text-navy-100">Status API Keys</span>
-                                <span class="badge rounded-full bg-success/10 text-success text-[10px] font-bold px-2 py-0.5">
+                                <span class="font-medium text-slate-700 dark:text-navy-100">Status API Keys</span>
+                                <span class="badge rounded-full bg-success/10 text-success text-xs font-medium px-2.5 py-0.5">
                                     {{ config('services.midtrans.server_key') ? 'TERHUBUNG' : 'BELUM DIATUR' }}
                                 </span>
                             </div>
-                            <p class="text-slate-400 dark:text-navy-300 text-[11px]">Server Key & Client Key aktif di sistem.</p>
+                            <p class="text-slate-400 dark:text-navy-300 text-xs">Server Key & Client Key aktif di sistem.</p>
                         </div>
 
                         <div class="sm:col-span-2 rounded-xl border border-slate-200 bg-slate-50/50 p-3.5 dark:border-navy-600 dark:bg-navy-700/40">
-                            <span class="font-bold text-slate-700 dark:text-navy-100 block mb-1">Webhook Callback URL</span>
+                            <span class="font-semibold text-slate-700 dark:text-navy-100 block mb-1">Webhook Callback URL</span>
                             <div class="flex items-center space-x-2">
                                 <input type="text" readonly value="{{ route('webhook.midtrans') }}" class="form-input w-full rounded-lg border border-slate-300 bg-white dark:bg-navy-800 px-3 py-1.5 text-xs text-slate-600 dark:text-navy-200" />
-                                <span class="badge rounded-full bg-primary/10 text-primary text-[11px] font-bold px-2.5 py-1 shrink-0">
+                                <span class="badge rounded-full bg-primary/10 text-primary text-xs font-medium px-2.5 py-0.5 shrink-0">
                                     POST Endpoint
                                 </span>
                             </div>
-                            <p class="text-slate-400 dark:text-navy-300 text-[11px] mt-1.5">
+                            <p class="text-slate-400 dark:text-navy-300 text-xs mt-1.5">
                                 Salin URL ini ke pengaturan <strong>Payment Notification URL</strong> di dashboard Midtrans Anda.
                             </p>
                         </div>
@@ -344,30 +344,30 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-sm font-bold tracking-wide text-slate-700 dark:text-navy-100 uppercase">
+                            <h3 class="text-sm font-semibold tracking-wide text-slate-700 dark:text-navy-100 uppercase">
                                 Keamanan Sesi & Pemrosesan Latar Belakang
                             </h3>
-                            <p class="text-[11px] text-slate-400 dark:text-navy-300">Proteksi akun multi-device dan status queue worker.</p>
+                            <p class="text-xs text-slate-400 dark:text-navy-300">Proteksi akun multi-device dan status queue worker.</p>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 text-xs">
                         <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-3.5 dark:border-navy-600 dark:bg-navy-700/40 space-y-1.5">
                             <div class="flex justify-between items-center">
-                                <span class="font-bold text-slate-700 dark:text-navy-100">Single Session Login</span>
-                                <span class="badge rounded-full bg-success/10 text-success text-[10px] font-bold px-2 py-0.5">AKTIF</span>
+                                <span class="font-medium text-slate-700 dark:text-navy-100">Single Session Login</span>
+                                <span class="badge rounded-full bg-success/10 text-success text-xs font-medium px-2.5 py-0.5">AKTIF</span>
                             </div>
-                            <p class="text-slate-400 dark:text-navy-300 text-[11px]">
+                            <p class="text-slate-400 dark:text-navy-300 text-xs">
                                 Sesi lama otomatis logout jika akun login di perangkat baru.
                             </p>
                         </div>
 
                         <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-3.5 dark:border-navy-600 dark:bg-navy-700/40 space-y-1.5">
                             <div class="flex justify-between items-center">
-                                <span class="font-bold text-slate-700 dark:text-navy-100">Background Queue Worker</span>
-                                <span class="badge rounded-full bg-info/10 text-info text-[10px] font-bold px-2 py-0.5">RUNNING</span>
+                                <span class="font-medium text-slate-700 dark:text-navy-100">Background Queue Worker</span>
+                                <span class="badge rounded-full bg-info/10 text-info text-xs font-medium px-2.5 py-0.5">RUNNING</span>
                             </div>
-                            <p class="text-slate-400 dark:text-navy-300 text-[11px]">
+                            <p class="text-slate-400 dark:text-navy-300 text-xs">
                                 Konversi file dan pengiriman email faktur berjalan di latar belakang.
                             </p>
                         </div>
@@ -380,13 +380,13 @@
                 
                 {{-- Quick Save Box --}}
                 <div class="card p-4 sm:p-5 sticky top-24 z-10">
-                    <h3 class="text-sm font-bold tracking-wide text-slate-700 dark:text-navy-100 uppercase mb-2">
+                    <h3 class="text-sm font-semibold tracking-wide text-slate-700 dark:text-navy-100 uppercase mb-2">
                         Simpan Pengaturan
                     </h3>
                     <p class="text-xs text-slate-400 dark:text-navy-300 mb-4">
                         Perubahan akan langsung diterapkan secara global ke seluruh halaman website.
                     </p>
-                    <button type="submit" class="btn rounded-full w-full bg-primary font-bold text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs py-2.5 shadow-md shadow-primary/30">
+                    <button type="submit" class="btn h-10 rounded-lg w-full bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus text-xs sm:text-sm">
                         <span wire:loading.remove wire:target="save">Simpan Perubahan</span>
                         <div wire:loading wire:target="save" class="flex items-center justify-center space-x-2">
                             <div class="spinner size-4 animate-spin rounded-full border-2 border-current border-r-transparent"></div>
@@ -397,7 +397,7 @@
 
                 {{-- Live Branding Preview Card --}}
                 <div class="card p-4 sm:p-5">
-                    <h3 class="text-sm font-bold tracking-wide text-slate-700 dark:text-navy-100 uppercase mb-3">
+                    <h3 class="text-sm font-semibold tracking-wide text-slate-700 dark:text-navy-100 uppercase mb-3">
                         Pratinjau Branding
                     </h3>
                     <div class="rounded-xl border border-slate-150 bg-slate-50/50 p-3.5 dark:border-navy-600 dark:bg-navy-800/60 space-y-3">
@@ -418,16 +418,16 @@
                                 </div>
                             @endif
                             <div>
-                                <h4 class="text-sm font-extrabold text-slate-800 dark:text-navy-50 uppercase leading-none">
+                                <h4 class="text-sm font-semibold text-slate-800 dark:text-navy-50 uppercase leading-none">
                                     {{ $site_name ?: config('app.name') }}
                                 </h4>
-                                <p class="text-[10px] text-slate-400 dark:text-navy-300 font-semibold tracking-wider uppercase mt-0.5">
+                                <p class="text-xs text-slate-400 dark:text-navy-300 font-medium tracking-wider uppercase mt-0.5">
                                     {{ $site_tagline ?: 'Online Web Tools' }}
                                 </p>
                             </div>
                         </div>
 
-                        <p class="text-[11px] text-slate-500 dark:text-navy-300 line-clamp-2 leading-relaxed">
+                        <p class="text-xs text-slate-500 dark:text-navy-300 line-clamp-2 leading-relaxed">
                             {{ $site_description ?: 'Deskripsi platform akan muncul di sini.' }}
                         </p>
                     </div>
@@ -441,32 +441,32 @@
                     <div class="space-y-2.5 text-xs">
                         <div class="flex items-center justify-between border-b border-slate-150 pb-2 dark:border-navy-600">
                             <span class="text-slate-500 dark:text-navy-300">PHP Version</span>
-                            <span class="font-bold text-slate-700 dark:text-navy-100">{{ PHP_VERSION }}</span>
+                            <span class="font-medium text-slate-700 dark:text-navy-100">{{ PHP_VERSION }}</span>
                         </div>
                         <div class="flex items-center justify-between border-b border-slate-150 pb-2 dark:border-navy-600">
                             <span class="text-slate-500 dark:text-navy-300">Laravel Version</span>
-                            <span class="font-bold text-slate-700 dark:text-navy-100">{{ app()->version() }}</span>
+                            <span class="font-medium text-slate-700 dark:text-navy-100">{{ app()->version() }}</span>
                         </div>
                         <div class="flex items-center justify-between border-b border-slate-150 pb-2 dark:border-navy-600">
                             <span class="text-slate-500 dark:text-navy-300">Environment</span>
-                            <span class="badge rounded-full bg-slate-150 text-slate-700 dark:bg-navy-600 dark:text-navy-200 text-[10px] font-bold px-2 py-0.5">
+                            <span class="badge rounded-full bg-slate-150 text-slate-700 dark:bg-navy-600 dark:text-navy-200 text-xs font-medium px-2.5 py-0.5">
                                 {{ strtoupper(config('app.env')) }}
                             </span>
                         </div>
                         <div class="flex items-center justify-between border-b border-slate-150 pb-2 dark:border-navy-600">
                             <span class="text-slate-500 dark:text-navy-300">Queue Connection</span>
-                            <span class="font-bold text-slate-700 dark:text-navy-100 uppercase">{{ config('queue.default') }}</span>
+                            <span class="font-medium text-slate-700 dark:text-navy-100 uppercase">{{ config('queue.default') }}</span>
                         </div>
                         <div class="flex items-center justify-between pt-0.5">
                             <span class="text-slate-500 dark:text-navy-300">Timezone</span>
-                            <span class="font-bold text-slate-700 dark:text-navy-100">{{ config('app.timezone') }}</span>
+                            <span class="font-medium text-slate-700 dark:text-navy-100">{{ config('app.timezone') }}</span>
                         </div>
                     </div>
                 </div>
 
                 {{-- Fast Navigation Links --}}
                 <div class="card p-4 sm:p-5">
-                    <h3 class="text-sm font-bold tracking-wide text-slate-700 dark:text-navy-100 uppercase mb-3">
+                    <h3 class="text-sm font-semibold tracking-wide text-slate-700 dark:text-navy-100 uppercase mb-3">
                         Pintasan Menu Admin
                     </h3>
                     <div class="space-y-2 text-xs">

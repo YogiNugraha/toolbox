@@ -6,14 +6,14 @@
     {{-- Breadcrumb / Header --}}
     <div class="flex items-center justify-between py-4 sm:py-5">
         <div>
-            <h2 class="text-xl font-bold text-slate-800 dark:text-navy-50 lg:text-2xl">
+            <h2 class="text-xl font-medium tracking-wide text-slate-800 dark:text-navy-50 lg:text-2xl">
                 Pengaturan Akun & Profil
             </h2>
-            <p class="mt-1 text-xs text-slate-400 dark:text-navy-300">
+            <p class="mt-1 text-xs text-slate-500 dark:text-navy-300">
                 Kelola informasi identitas pribadi, kontak, foto profil, dan keamanan password Anda.
             </p>
         </div>
-        <div class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-xs font-bold px-3 py-1">
+        <div class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/15 dark:text-accent-light text-xs font-medium px-3 py-1">
             Account Settings
         </div>
     </div>
@@ -32,64 +32,51 @@
                 $isProMax = $activePlanSlug === 'pro-max' || strtolower((string)$activePlanName) === 'pro max';
                 $subExpiry = auth()->user()->activeSubscription() ? auth()->user()->activeSubscription()->expires_at : null;
             @endphp
-            <div class="card p-4 sm:p-5 {{ $isAdmin ? 'border border-rose-500/30 bg-linear-to-b from-rose-50/40 via-purple-50/20 to-white dark:from-rose-950/20 dark:via-purple-950/10 dark:to-navy-700' : ($isProUser ? ($isProMax ? 'border border-purple-500/30 bg-linear-to-b from-purple-50/40 via-white to-white dark:from-purple-950/20 dark:via-navy-700 dark:to-navy-700' : 'border border-amber-400/30 bg-linear-to-b from-amber-50/40 via-white to-white dark:from-amber-950/20 dark:via-navy-700 dark:to-navy-700') : '') }}">
+            <div class="card p-4 sm:p-5">
                 <div class="flex items-center space-x-4">
-                    <div class="avatar size-16 shrink-0 relative">
+                    <div class="avatar size-14 shrink-0 relative">
                         @if(auth()->user()->profile_photo_path)
-                            <img class="mask is-squircle object-cover size-full {{ $isAdmin ? 'ring-2 ring-rose-500 shadow-md shadow-rose-500/20' : ($isProUser ? ($isProMax ? 'ring-2 ring-purple-500' : 'ring-2 ring-amber-400') : '') }}" src="{{ Storage::url(auth()->user()->profile_photo_path) }}" alt="{{ auth()->user()->name }}" />
+                            <img class="mask is-squircle object-cover size-full" src="{{ Storage::url(auth()->user()->profile_photo_path) }}" alt="{{ auth()->user()->name }}" />
                         @else
-                            <div class="mask is-squircle flex size-full items-center justify-center {{ $isAdmin ? 'bg-gradient-to-tr from-rose-600 via-purple-600 to-indigo-600 text-white shadow-md shadow-rose-500/20' : ($isProUser ? ($isProMax ? 'bg-linear-to-tr from-purple-600 to-indigo-500 text-white' : 'bg-linear-to-tr from-amber-400 to-orange-500 text-white') : 'bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light') }} text-xl font-bold">
+                            <div class="mask is-squircle flex size-full items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-lg font-medium">
                                 {{ substr(auth()->user()->name, 0, 1) }}
                             </div>
                         @endif
 
                         @if($isAdmin)
-                            <span class="absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full bg-linear-to-r from-rose-500 to-pink-500 text-white shadow-xs ring-2 ring-white dark:ring-navy-700">
+                            <span class="absolute -top-1 -right-1 flex size-5 items-center justify-center rounded-full bg-primary text-white shadow-xs ring-2 ring-white dark:ring-navy-700">
                                 <x-lucide-shield-check class="size-3 stroke-[2.5]" />
                             </span>
                         @elseif($isProUser)
-                            <span class="absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full {{ $isProMax ? 'bg-linear-to-r from-amber-400 to-yellow-300 text-slate-900' : 'bg-amber-400 text-slate-900' }} shadow-xs ring-2 ring-white dark:ring-navy-700">
-                                @if($isProMax)
-                                    <x-lucide-crown class="size-3 stroke-[2.5]" />
-                                @else
-                                    <x-lucide-star class="size-3 stroke-[2.5] fill-current" />
-                                @endif
+                            <span class="absolute -top-1 -right-1 flex size-5 items-center justify-center rounded-full bg-warning text-white shadow-xs ring-2 ring-white dark:ring-navy-700">
+                                <x-lucide-star class="size-3 stroke-[2.5] fill-current" />
                             </span>
                         @endif
                     </div>
                     <div class="overflow-hidden flex-1">
-                        <h3 class="text-base font-bold text-slate-700 dark:text-navy-100 truncate">
+                        <h3 class="text-base font-medium text-slate-700 dark:text-navy-100 truncate">
                             {{ auth()->user()->name }}
                         </h3>
-                        <p class="text-xs text-slate-400 dark:text-navy-300 truncate">{{ auth()->user()->email }}</p>
+                        <p class="text-xs text-slate-500 dark:text-navy-300 truncate">{{ auth()->user()->email }}</p>
                         <div class="mt-1.5 flex items-center gap-1.5 flex-wrap">
                             @if($isAdmin)
-                                <span class="badge rounded-full bg-linear-to-r from-rose-600 via-purple-600 to-indigo-600 text-white font-black text-[10px] px-2.5 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
-                                    <x-lucide-shield-check class="size-3 stroke-[2.5]" />
-                                    <span>SUPER ADMIN</span>
+                                <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/15 dark:text-accent-light font-medium text-xs px-2.5 py-0.5 uppercase tracking-wider">
+                                    SUPER ADMIN
                                 </span>
-                                <span class="badge rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 text-[9px] font-bold px-2 py-0.5">
+                                <span class="badge rounded-full bg-slate-150 text-slate-800 dark:bg-navy-500 dark:text-navy-100 text-xs font-medium px-2 py-0.5">
                                     Full Access
                                 </span>
                             @elseif($isProUser)
-                                @if($isProMax)
-                                    <span class="badge rounded-full bg-linear-to-r from-amber-500 via-purple-600 to-indigo-600 text-white font-black text-[10px] px-2.5 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
-                                        <x-lucide-crown class="size-3 stroke-[2.5]" />
-                                        <span>{{ $activePlanName }}</span>
-                                    </span>
-                                @else
-                                    <span class="badge rounded-full bg-linear-to-r from-amber-500 to-orange-500 text-white font-black text-[10px] px-2.5 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
-                                        <x-lucide-star class="size-3 stroke-[2.5] fill-current" />
-                                        <span>{{ $activePlanName }}</span>
-                                    </span>
-                                @endif
+                                <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/15 dark:text-accent-light font-medium text-xs px-2.5 py-0.5 uppercase tracking-wider">
+                                    {{ $activePlanName }}
+                                </span>
                                 @if($subExpiry)
-                                    <span class="text-[10px] text-slate-400 dark:text-navy-300 font-medium">
+                                    <span class="text-xs text-slate-500 dark:text-navy-300 font-medium">
                                         s/d {{ $subExpiry->translatedFormat('d M Y') }}
                                     </span>
                                 @endif
                             @else
-                                <span class="badge rounded-full bg-slate-150 text-slate-600 dark:bg-navy-600 dark:text-navy-200 font-semibold text-[10px] px-2 py-0.5">
+                                <span class="badge rounded-full bg-slate-150 text-slate-800 dark:bg-navy-500 dark:text-navy-100 font-medium text-xs px-2 py-0.5">
                                     FREE PLAN
                                 </span>
                             @endif
@@ -100,15 +87,15 @@
                 {{-- Fast Navigation Nav List --}}
                 <ul class="mt-6 space-y-1.5 font-medium text-xs">
                     <li>
-                        <a class="flex items-center space-x-2.5 rounded-xl bg-primary px-4 py-2.5 tracking-wide text-white outline-hidden transition-all dark:bg-accent shadow-xs" href="#">
+                        <a class="flex items-center space-x-2.5 rounded-lg bg-primary px-4 py-2.5 tracking-wide text-white outline-hidden transition-all dark:bg-accent" href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <span class="font-semibold">Informasi Akun</span>
+                            <span>Informasi Akun</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('history') }}" wire:navigate class="group flex items-center space-x-2.5 rounded-xl px-4 py-2.5 tracking-wide text-slate-600 outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 dark:text-navy-200 dark:hover:bg-navy-600 dark:hover:text-navy-100">
+                        <a href="{{ route('history') }}" wire:navigate class="group flex items-center space-x-2.5 rounded-lg px-4 py-2.5 tracking-wide text-slate-600 outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 dark:text-navy-200 dark:hover:bg-navy-600 dark:hover:text-navy-100">
                             <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5 text-slate-400 group-hover:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
@@ -116,7 +103,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('dashboard.billing') }}" wire:navigate class="group flex items-center space-x-2.5 rounded-xl px-4 py-2.5 tracking-wide text-slate-600 outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 dark:text-navy-200 dark:hover:bg-navy-600 dark:hover:text-navy-100">
+                        <a href="{{ route('dashboard.billing') }}" wire:navigate class="group flex items-center space-x-2.5 rounded-lg px-4 py-2.5 tracking-wide text-slate-600 outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 dark:text-navy-200 dark:hover:bg-navy-600 dark:hover:text-navy-100">
                             <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5 text-slate-400 group-hover:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                             </svg>
@@ -125,14 +112,14 @@
                     </li>
                     @if($isAdmin)
                     <li>
-                        <a href="{{ route('admin.overview') }}" wire:navigate class="group flex items-center space-x-2.5 rounded-xl px-4 py-2.5 tracking-wide text-rose-600 outline-hidden transition-all hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-navy-600 font-bold">
-                            <x-lucide-shield-check class="size-4.5 text-rose-500" />
+                        <a href="{{ route('admin.overview') }}" wire:navigate class="group flex items-center space-x-2.5 rounded-lg px-4 py-2.5 tracking-wide text-primary outline-hidden transition-all hover:bg-primary/10 dark:text-accent-light dark:hover:bg-navy-600">
+                            <x-lucide-shield-check class="size-4.5 text-primary dark:text-accent-light" />
                             <span>Buka Admin Panel</span>
                         </a>
                     </li>
                     @else
                     <li>
-                        <a href="{{ route('pricing') }}" wire:navigate class="group flex items-center space-x-2.5 rounded-xl px-4 py-2.5 tracking-wide text-slate-600 outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 dark:text-navy-200 dark:hover:bg-navy-600 dark:hover:text-navy-100">
+                        <a href="{{ route('pricing') }}" wire:navigate class="group flex items-center space-x-2.5 rounded-lg px-4 py-2.5 tracking-wide text-slate-600 outline-hidden transition-all hover:bg-slate-100 hover:text-slate-800 dark:text-navy-200 dark:hover:bg-navy-600 dark:hover:text-navy-100">
                             <svg xmlns="http://www.w3.org/2000/svg" class="size-4.5 text-slate-400 group-hover:text-slate-500 dark:text-navy-300 dark:group-hover:text-navy-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
@@ -146,17 +133,17 @@
 
                 {{-- Activity Statistics --}}
                 <div>
-                    <h4 class="font-bold text-slate-700 dark:text-navy-100 uppercase tracking-wide text-xs mb-3">
+                    <h4 class="font-medium text-slate-700 dark:text-navy-100 uppercase tracking-wide text-xs mb-3">
                         Statistik Penggunaan
                     </h4>
                     <div class="space-y-2 text-xs">
-                        <div class="flex items-center justify-between rounded-xl border border-slate-150 bg-slate-50/60 p-3 dark:border-navy-600 dark:bg-navy-700/40">
+                        <div class="flex items-center justify-between rounded-lg border border-slate-150 bg-slate-50 p-3 dark:border-navy-600 dark:bg-navy-700">
                             <span class="text-slate-500 dark:text-navy-300">Total File Diproses</span>
-                            <span class="font-bold text-slate-800 dark:text-navy-100 text-sm">{{ auth()->user()->activities()->count() }}</span>
+                            <span class="font-semibold text-slate-800 dark:text-navy-100 text-sm">{{ auth()->user()->activities()->count() }}</span>
                         </div>
-                        <div class="flex items-center justify-between rounded-xl border border-slate-150 bg-slate-50/60 p-3 dark:border-navy-600 dark:bg-navy-700/40">
+                        <div class="flex items-center justify-between rounded-lg border border-slate-150 bg-slate-50 p-3 dark:border-navy-600 dark:bg-navy-700">
                             <span class="text-slate-500 dark:text-navy-300">Berhasil Diselesaikan</span>
-                            <span class="font-bold text-success text-sm">{{ auth()->user()->activities()->where('status', 'completed')->count() }}</span>
+                            <span class="font-semibold text-success text-sm">{{ auth()->user()->activities()->where('status', 'completed')->count() }}</span>
                         </div>
                     </div>
                 </div>
@@ -169,11 +156,11 @@
             {{-- Profile Settings Card --}}
             <div class="card">
                 <div class="flex items-center justify-between border-b border-slate-150 p-4 dark:border-navy-600 sm:px-5">
-                    <h2 class="text-base font-bold tracking-wide text-slate-700 dark:text-navy-100">
+                    <h2 class="text-lg font-medium tracking-wide text-slate-700 dark:text-navy-100">
                         Pengaturan Profil
                     </h2>
                     <div class="flex items-center space-x-2">
-                        <button type="button" wire:click="updateProfile" class="btn min-w-[7rem] rounded-full bg-primary font-bold text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs py-2 shadow-sm">
+                        <button type="button" wire:click="updateProfile" class="btn min-w-[7rem] rounded-full bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90 text-xs py-2">
                             <span wire:loading.remove wire:target="updateProfile">Simpan Profil</span>
                             <div wire:loading wire:target="updateProfile" class="flex items-center space-x-1.5">
                                 <div class="spinner size-3.5 animate-spin rounded-full border-2 border-current border-r-transparent"></div>
@@ -186,14 +173,14 @@
                 <div class="p-4 sm:p-5">
                     {{-- Avatar Section with Squircle and Edit Action --}}
                     <div class="flex flex-col">
-                        <span class="text-xs font-bold text-slate-700 dark:text-navy-100 uppercase tracking-wide">
+                        <span class="text-xs font-medium text-slate-700 dark:text-navy-100 uppercase tracking-wide">
                             Foto Profil (Avatar)
                         </span>
                         <div class="avatar mt-2 size-20 relative">
                             @if(auth()->user()->profile_photo_path)
                                 <img class="mask is-squircle object-cover size-full" src="{{ Storage::url(auth()->user()->profile_photo_path) }}" alt="{{ auth()->user()->name }}" />
                             @else
-                                <div class="mask is-squircle flex size-full items-center justify-center bg-primary/10 text-2xl font-bold uppercase text-primary dark:bg-accent-light/10 dark:text-accent-light">
+                                <div class="mask is-squircle flex size-full items-center justify-center bg-primary/10 text-2xl font-medium uppercase text-primary dark:bg-accent-light/10 dark:text-accent-light">
                                     {{ substr(auth()->user()->name, 0, 1) }}
                                 </div>
                             @endif
@@ -210,14 +197,14 @@
                                 <div class="spinner size-5 animate-spin rounded-full border-2 border-white border-r-transparent"></div>
                             </div>
                         </div>
-                        @error('photo') <span class="mt-1 text-[11px] text-error">{{ $message }}</span> @enderror
+                        @error('photo') <span class="mt-1 text-xs text-error">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="my-6 h-px bg-slate-150 dark:bg-navy-600"></div>
 
                     {{-- Pending Email Alert if Any --}}
                     @if(auth()->user()->pending_email)
-                        <div class="alert flex items-center justify-between rounded-xl border border-info/30 bg-info/10 px-4 py-3 text-info text-xs mb-5"
+                        <div class="alert flex items-center justify-between rounded-lg border border-info/30 bg-info/10 px-4 py-3 text-info text-xs mb-5"
                             x-data="{ cooldown: 0 }"
                             x-on:cooldown-start.window="cooldown = $event.detail.seconds; let t = setInterval(() => { cooldown--; if (cooldown <= 0) clearInterval(t); }, 1000);">
                             <div class="flex items-center space-x-2">
@@ -228,7 +215,7 @@
                             </div>
                             <div class="flex space-x-2">
                                 <button wire:click="cancelPendingEmail" type="button" class="underline font-medium hover:opacity-80">Batalkan</button>
-                                <button wire:click="resendPendingEmail" type="button" :disabled="cooldown > 0" class="font-bold underline hover:opacity-80 disabled:opacity-50">
+                                <button wire:click="resendPendingEmail" type="button" :disabled="cooldown > 0" class="font-medium underline hover:opacity-80 disabled:opacity-50">
                                     <span wire:loading.remove wire:target="resendPendingEmail" x-show="cooldown === 0">Kirim Ulang</span>
                                     <span wire:loading wire:target="resendPendingEmail">Mengirim...</span>
                                     <span wire:loading.remove wire:target="resendPendingEmail" x-show="cooldown > 0" x-text="'Terkirim (' + cooldown + 's)'" style="display: none;"></span>
@@ -242,7 +229,7 @@
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 text-xs">
                             {{-- Full Name Input --}}
                             <label class="block">
-                                <span class="font-semibold text-slate-700 dark:text-navy-100">Nama Lengkap</span>
+                                <span class="font-medium text-slate-700 dark:text-navy-100">Nama Lengkap</span>
                                 <span class="relative mt-1.5 flex">
                                     <input wire:model="name" class="form-input peer w-full rounded-full border border-slate-300 bg-transparent px-3 py-2 pl-9 placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent text-xs" placeholder="Masukkan nama lengkap" type="text" />
                                     <span class="pointer-events-none absolute flex h-full w-9 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">
@@ -251,12 +238,12 @@
                                         </svg>
                                     </span>
                                 </span>
-                                @error('name') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                                @error('name') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                             </label>
 
                             {{-- Email Address Input --}}
                             <label class="block">
-                                <span class="font-semibold text-slate-700 dark:text-navy-100">Alamat Email</span>
+                                <span class="font-medium text-slate-700 dark:text-navy-100">Alamat Email</span>
                                 <span class="relative mt-1.5 flex">
                                     <input wire:model="email" class="form-input peer w-full rounded-full border border-slate-300 bg-transparent px-3 py-2 pl-9 placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent text-xs" placeholder="Masukkan email" type="email" />
                                     <span class="pointer-events-none absolute flex h-full w-9 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">
@@ -265,13 +252,13 @@
                                         </svg>
                                     </span>
                                 </span>
-                                @error('email') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                                @error('email') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                             </label>
 
                             {{-- Phone Number Input --}}
                             <div class="sm:col-span-2">
                                 <label class="block">
-                                    <span class="font-semibold text-slate-700 dark:text-navy-100">Nomor WhatsApp / HP</span>
+                                    <span class="font-medium text-slate-700 dark:text-navy-100">Nomor WhatsApp / HP</span>
                                     <div class="mt-1.5 flex -space-x-px">
                                         <select wire:model="country_code" class="form-select w-28 rounded-l-full border border-slate-300 bg-slate-50 px-3 py-2 text-xs hover:z-10 hover:border-slate-400 focus:z-10 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent">
                                             <option value="+62">🇮🇩 +62</option>
@@ -290,13 +277,13 @@
                                             </span>
                                         </span>
                                     </div>
-                                    @error('phone') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                                    @error('phone') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                                 </label>
                             </div>
                         </div>
 
                         <div class="flex justify-end pt-2">
-                            <button type="submit" class="btn rounded-full bg-primary font-bold text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs px-6 py-2 shadow-sm">
+                            <button type="submit" class="btn rounded-full bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90 text-xs px-6 py-2">
                                 <span wire:loading.remove wire:target="updateProfile">Simpan Informasi Profil</span>
                                 <span wire:loading wire:target="updateProfile">Menyimpan...</span>
                             </button>
@@ -308,10 +295,10 @@
             {{-- Security & Password Card (forms-layout-v5 Style) --}}
             <div class="card">
                 <div class="border-b border-slate-150 p-4 dark:border-navy-600 sm:px-5">
-                    <h2 class="text-base font-bold tracking-wide text-slate-700 dark:text-navy-100">
+                    <h2 class="text-lg font-medium tracking-wide text-slate-700 dark:text-navy-100">
                         Keamanan & Kata Sandi
                     </h2>
-                    <p class="text-xs text-slate-400 dark:text-navy-300 mt-0.5">
+                    <p class="text-xs text-slate-500 dark:text-navy-300 mt-0.5">
                         Pastikan akun Anda menggunakan password yang kuat dan tidak digunakan di situs lain.
                     </p>
                 </div>
@@ -321,7 +308,7 @@
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                             {{-- Current Password --}}
                             <label class="block">
-                                <span class="font-semibold text-slate-700 dark:text-navy-100">Password Saat Ini</span>
+                                <span class="font-medium text-slate-700 dark:text-navy-100">Password Saat Ini</span>
                                 <span class="relative mt-1.5 flex">
                                     <input wire:model="current_password" class="form-input peer w-full rounded-full border border-slate-300 bg-transparent px-3 py-2 pl-9 placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent text-xs" type="password" placeholder="••••••••" />
                                     <span class="pointer-events-none absolute flex h-full w-9 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">
@@ -330,12 +317,12 @@
                                         </svg>
                                     </span>
                                 </span>
-                                @error('current_password') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                                @error('current_password') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                             </label>
 
                             {{-- New Password --}}
                             <label class="block">
-                                <span class="font-semibold text-slate-700 dark:text-navy-100">Password Baru</span>
+                                <span class="font-medium text-slate-700 dark:text-navy-100">Password Baru</span>
                                 <span class="relative mt-1.5 flex">
                                     <input wire:model="password" class="form-input peer w-full rounded-full border border-slate-300 bg-transparent px-3 py-2 pl-9 placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent text-xs" type="password" placeholder="Minimal 8 karakter" />
                                     <span class="pointer-events-none absolute flex h-full w-9 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">
@@ -344,12 +331,12 @@
                                         </svg>
                                     </span>
                                 </span>
-                                @error('password') <span class="text-[11px] text-error mt-1 block">{{ $message }}</span> @enderror
+                                @error('password') <span class="text-xs text-error mt-1 block">{{ $message }}</span> @enderror
                             </label>
 
                             {{-- Password Confirmation --}}
                             <label class="block">
-                                <span class="font-semibold text-slate-700 dark:text-navy-100">Ulangi Password Baru</span>
+                                <span class="font-medium text-slate-700 dark:text-navy-100">Ulangi Password Baru</span>
                                 <span class="relative mt-1.5 flex">
                                     <input wire:model="password_confirmation" class="form-input peer w-full rounded-full border border-slate-300 bg-transparent px-3 py-2 pl-9 placeholder:text-slate-400 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:hover:border-navy-400 dark:focus:border-accent text-xs" type="password" placeholder="Ulangi password baru" />
                                     <span class="pointer-events-none absolute flex h-full w-9 items-center justify-center text-slate-400 peer-focus:text-primary dark:text-navy-300 dark:peer-focus:text-accent">
@@ -362,7 +349,7 @@
                         </div>
 
                         <div class="flex justify-end pt-2">
-                            <button type="submit" class="btn rounded-full bg-primary font-bold text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs px-6 py-2 shadow-sm">
+                            <button type="submit" class="btn rounded-full bg-primary font-medium text-white hover:bg-primary-focus focus:bg-primary-focus active:bg-primary-focus/90 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/90 text-xs px-6 py-2">
                                 <span wire:loading.remove wire:target="updatePassword">Perbarui Kata Sandi</span>
                                 <span wire:loading wire:target="updatePassword">Menyimpan...</span>
                             </button>

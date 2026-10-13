@@ -59,17 +59,17 @@
         {{-- Total Users --}}
         <div class="card p-4 sm:p-5">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300">Pengguna Baru</span>
-                <div class="mask is-squircle flex size-10 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light font-bold">
+                <span class="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-navy-300">Pengguna Baru</span>
+                <div class="mask is-squircle flex size-10 items-center justify-center bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light">
                     <x-lucide-users class="size-5" />
                 </div>
             </div>
             <div class="mt-3">
-                <p class="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-navy-100">
+                <p class="text-2xl sm:text-3xl font-semibold text-slate-800 dark:text-navy-100">
                     {{ number_format($periodUsers) }}
                 </p>
-                <div class="mt-1 flex items-center gap-1.5 text-[11px] text-slate-400 dark:text-navy-300">
-                    <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-[10px] font-bold px-1.5 py-0.5">
+                <div class="mt-1 flex items-center gap-1.5 text-xs text-slate-400 dark:text-navy-300">
+                    <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-xs font-medium px-2 py-0.5">
                         {{ $periodLabel }}
                     </span>
                     <span>Total {{ number_format($totalAllUsers) }} terdaftar</span>
@@ -78,19 +78,19 @@
         </div>
 
         {{-- Active Subscribed Users --}}
-        <div class="card p-4 sm:p-5">
+        <div class="card p-4 sm:p-5 border border-slate-150 dark:border-navy-600">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300">Member PRO Aktif</span>
-                <div class="mask is-squircle flex size-10 items-center justify-center bg-purple-500/10 text-purple-600 dark:text-purple-400 font-bold">
+                <span class="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-navy-300">Member PRO Aktif</span>
+                <div class="mask is-squircle flex size-10 items-center justify-center bg-secondary/10 text-secondary dark:bg-secondary-light/10 dark:text-secondary-light">
                     <x-lucide-crown class="size-5" />
                 </div>
             </div>
             <div class="mt-3">
-                <p class="text-2xl sm:text-3xl font-extrabold text-purple-600 dark:text-purple-400">
+                <p class="text-2xl sm:text-3xl font-semibold text-secondary dark:text-secondary-light">
                     {{ number_format($activeProUsers) }}
                 </p>
-                <div class="mt-1 flex items-center gap-1.5 text-[11px] text-slate-400 dark:text-navy-300">
-                    <span class="badge rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 text-[10px] font-bold px-1.5 py-0.5">
+                <div class="mt-1 flex items-center gap-1.5 text-xs text-slate-400 dark:text-navy-300">
+                    <span class="badge rounded-full bg-secondary/15 text-secondary dark:bg-secondary-light/15 dark:text-secondary-light text-xs font-medium px-2 py-0.5">
                         +{{ $periodProSubs }} di periode ini
                     </span>
                     <span>{{ $conversionRate }}% conversion</span>
@@ -99,20 +99,20 @@
         </div>
 
         {{-- Total Revenue --}}
-        <div class="card p-4 sm:p-5">
+        <div class="card p-4 sm:p-5 border border-slate-150 dark:border-navy-600">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300">Pendapatan Periode Ini</span>
-                <div class="mask is-squircle flex size-10 items-center justify-center bg-success/10 text-success font-bold">
+                <span class="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-navy-300">Pendapatan Periode Ini</span>
+                <div class="mask is-squircle flex size-10 items-center justify-center bg-success/10 text-success">
                     <x-lucide-dollar-sign class="size-5" />
                 </div>
             </div>
             <div class="mt-3">
-                <p class="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-navy-100">
-                    <span class="text-xs font-semibold text-slate-400 dark:text-navy-300">Rp</span>
+                <p class="text-2xl sm:text-3xl font-semibold text-slate-800 dark:text-navy-100">
+                    <span class="text-xs font-medium text-slate-400 dark:text-navy-300">Rp</span>
                     {{ number_format($periodRevenue, 0, ',', '.') }}
                 </p>
-                <div class="mt-1 flex items-center gap-1.5 text-[11px] text-slate-400 dark:text-navy-300">
-                    <span class="badge rounded-full bg-success/10 text-success text-[10px] font-bold px-1.5 py-0.5">
+                <div class="mt-1 flex items-center gap-1.5 text-xs text-slate-400 dark:text-navy-300">
+                    <span class="badge rounded-full bg-success/10 text-success text-xs font-medium px-2 py-0.5">
                         Total Rp {{ number_format($totalAllRevenue, 0, ',', '.') }}
                     </span>
                     <span>akumulasi</span>
@@ -121,19 +121,19 @@
         </div>
 
         {{-- Total Files Processed --}}
-        <div class="card p-4 sm:p-5">
+        <div class="card p-4 sm:p-5 border border-slate-150 dark:border-navy-600">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-navy-300">File Diproses</span>
-                <div class="mask is-squircle flex size-10 items-center justify-center bg-info/10 text-info font-bold">
+                <span class="text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-navy-300">File Diproses</span>
+                <div class="mask is-squircle flex size-10 items-center justify-center bg-info/10 text-info">
                     <x-lucide-sparkles class="size-5" />
                 </div>
             </div>
             <div class="mt-3">
-                <p class="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-navy-100">
+                <p class="text-2xl sm:text-3xl font-semibold text-slate-800 dark:text-navy-100">
                     {{ number_format($periodFiles) }}
                 </p>
-                <div class="mt-1 flex items-center gap-1.5 text-[11px] text-slate-400 dark:text-navy-300">
-                    <span class="badge rounded-full bg-info/10 text-info text-[10px] font-bold px-1.5 py-0.5">
+                <div class="mt-1 flex items-center gap-1.5 text-xs text-slate-400 dark:text-navy-300">
+                    <span class="badge rounded-full bg-info/10 text-info text-xs font-medium px-2 py-0.5">
                         {{ $periodLabel }}
                     </span>
                     <span>Total {{ number_format($totalAllFiles) }} file</span>
@@ -391,13 +391,13 @@
                     @foreach($toolDetails as $tool)
                         <div class="rounded-lg border border-slate-150 dark:border-navy-600 p-2.5 bg-slate-50/50 dark:bg-navy-800/40">
                             <div class="flex items-center justify-between text-xs mb-1.5">
-                                <span class="font-bold text-slate-700 dark:text-navy-100 flex items-center gap-1.5">
+                                <span class="font-medium text-slate-700 dark:text-navy-100 flex items-center gap-1.5">
                                     <span>{{ $tool['name'] }}</span>
                                     @if($tool['is_pro_only'])
-                                        <span class="badge rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 text-[9px] font-bold px-1.5 py-0.2 uppercase">PRO</span>
+                                        <span class="badge rounded-full bg-secondary/15 text-secondary dark:bg-secondary-light/15 dark:text-secondary-light text-xs font-medium px-2 py-0.5 uppercase">PRO</span>
                                     @endif
                                 </span>
-                                <span class="font-semibold text-slate-500 dark:text-navy-300">
+                                <span class="font-medium text-slate-500 dark:text-navy-300">
                                     {{ number_format($tool['count']) }} kali ({{ $tool['percent'] }}%)
                                 </span>
                             </div>
@@ -472,10 +472,10 @@
                                             @endif
                                         </div>
                                         <div>
-                                            <div class="font-bold text-slate-700 dark:text-navy-100 text-xs">
+                                            <div class="font-medium text-slate-700 dark:text-navy-100 text-xs">
                                                 {{ $tx->user->name ?? 'Pengguna Terhapus' }}
                                             </div>
-                                            <div class="text-[11px] text-slate-400 dark:text-navy-300 mt-0.5">
+                                            <div class="text-xs text-slate-400 dark:text-navy-300 mt-0.5">
                                                 {{ $tx->user->email ?? '-' }}
                                             </div>
                                         </div>
@@ -483,49 +483,47 @@
                                 </td>
                                 <td class="whitespace-nowrap px-4 py-3 text-xs">
                                     @if($isProMax)
-                                        <span class="badge rounded-full bg-linear-to-r from-amber-500 via-purple-600 to-indigo-600 text-white font-black text-[9px] px-2 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
-                                            <x-lucide-crown class="size-2.5 stroke-[2.5]" />
-                                            <span>{{ $planName }}</span>
+                                        <span class="badge rounded-full bg-secondary/15 text-secondary dark:bg-secondary-light/15 dark:text-secondary-light text-xs font-medium px-2 py-0.5">
+                                            {{ $planName }}
                                         </span>
                                     @else
-                                        <span class="badge rounded-full bg-linear-to-r from-amber-500 to-orange-500 text-white font-black text-[9px] px-2 py-0.5 shadow-xs uppercase tracking-wider inline-flex items-center gap-1">
-                                            <x-lucide-star class="size-2.5 stroke-[2.5] fill-current" />
-                                            <span>{{ $planName }}</span>
+                                        <span class="badge rounded-full bg-warning/15 text-warning dark:bg-warning/20 dark:text-warning-light text-xs font-medium px-2 py-0.5">
+                                            {{ $planName }}
                                         </span>
                                     @endif
                                 </td>
-                                <td class="whitespace-nowrap px-4 py-3 text-right font-bold text-slate-700 dark:text-navy-100">
+                                <td class="whitespace-nowrap px-4 py-3 text-right font-medium text-slate-700 dark:text-navy-100">
                                     Rp {{ number_format($tx->amount, 0, ',', '.') }}
                                 </td>
                                 <td class="whitespace-nowrap px-4 py-3 text-center">
                                     @if($tx->status === 'active' || $tx->status === 'settlement' || $tx->status === 'capture' || $tx->status === 'paid')
-                                        <span class="badge space-x-1.5 rounded-full bg-success/10 text-success text-[11px] font-bold px-2.5 py-1 inline-flex items-center">
+                                        <span class="badge space-x-1.5 rounded-full bg-success/10 text-success text-xs font-medium px-2.5 py-0.5 inline-flex items-center">
                                             <span class="size-1.5 rounded-full bg-current"></span>
                                             <span>Berhasil</span>
                                         </span>
                                     @elseif($tx->status === 'pending')
-                                        <span class="badge space-x-1.5 rounded-full bg-warning/10 text-warning text-[11px] font-bold px-2.5 py-1 inline-flex items-center">
+                                        <span class="badge space-x-1.5 rounded-full bg-warning/10 text-warning text-xs font-medium px-2.5 py-0.5 inline-flex items-center">
                                             <span class="size-1.5 rounded-full bg-current animate-ping"></span>
                                             <span>Menunggu</span>
                                         </span>
                                     @elseif($tx->status === 'expired')
-                                        <span class="badge space-x-1.5 rounded-full bg-slate-150 text-slate-600 dark:bg-navy-500 dark:text-navy-200 text-[11px] font-bold px-2.5 py-1 inline-flex items-center">
+                                        <span class="badge space-x-1.5 rounded-full bg-slate-150 text-slate-600 dark:bg-navy-500 dark:text-navy-200 text-xs font-medium px-2.5 py-0.5 inline-flex items-center">
                                             <span class="size-1.5 rounded-full bg-current"></span>
                                             <span>Expired</span>
                                         </span>
                                     @elseif($tx->status === 'cancelled')
-                                        <span class="badge space-x-1.5 rounded-full bg-info/10 text-info dark:bg-info/15 text-[11px] font-bold px-2.5 py-1 inline-flex items-center">
+                                        <span class="badge space-x-1.5 rounded-full bg-info/10 text-info dark:bg-info/15 text-xs font-medium px-2.5 py-0.5 inline-flex items-center">
                                             <span class="size-1.5 rounded-full bg-current"></span>
                                             <span>Dibatalkan</span>
                                         </span>
                                     @else
-                                        <span class="badge space-x-1.5 rounded-full bg-error/10 text-error text-[11px] font-bold px-2.5 py-1 inline-flex items-center">
+                                        <span class="badge space-x-1.5 rounded-full bg-error/10 text-error text-xs font-medium px-2.5 py-0.5 inline-flex items-center">
                                             <span class="size-1.5 rounded-full bg-current"></span>
                                             <span>{{ ucfirst($tx->status) }}</span>
                                         </span>
                                     @endif
                                 </td>
-                                <td class="whitespace-nowrap px-4 py-3 text-right text-[11px] text-slate-400 dark:text-navy-300">
+                                <td class="whitespace-nowrap px-4 py-3 text-right text-xs text-slate-400 dark:text-navy-300">
                                     {{ $tx->created_at->diffForHumans() }}
                                 </td>
                             </tr>
@@ -542,11 +540,11 @@
         </div>
 
         {{-- Right: Platform Health & Plans Breakdown (4 Columns) --}}
-        <div class="card lg:col-span-4 p-4 sm:p-5 space-y-5">
+        <div class="card lg:col-span-4 p-4 sm:p-5 space-y-5 border border-slate-150 dark:border-navy-600">
             
             {{-- Platform Tools Operational Status --}}
             <div>
-                <h3 class="text-base font-bold text-slate-800 dark:text-navy-100 flex items-center gap-2 pb-3 border-b border-slate-150 dark:border-navy-600">
+                <h3 class="text-base font-semibold text-slate-800 dark:text-navy-100 flex items-center gap-2 pb-3 border-b border-slate-150 dark:border-navy-600">
                     <x-lucide-activity class="size-4.5 text-warning" />
                     <span>Status Operasional Tools</span>
                 </h3>
@@ -557,15 +555,15 @@
                             <span class="size-2 rounded-full bg-success"></span>
                             <span>Tools Aktif & Normal</span>
                         </span>
-                        <span class="font-extrabold text-success">{{ $activeToolsCount }}</span>
+                        <span class="font-semibold text-success">{{ $activeToolsCount }}</span>
                     </div>
 
                     <div class="flex items-center justify-between rounded-lg border border-slate-150 dark:border-navy-600 p-2.5 bg-slate-50/50 dark:bg-navy-800/40">
                         <span class="text-slate-600 dark:text-navy-200 flex items-center gap-2">
-                            <span class="size-2 rounded-full bg-purple-500"></span>
+                            <span class="size-2 rounded-full bg-secondary"></span>
                             <span>Khusus Member PRO (Gated)</span>
                         </span>
-                        <span class="font-extrabold text-purple-600 dark:text-purple-400">{{ $proOnlyToolsCount }}</span>
+                        <span class="font-semibold text-secondary dark:text-secondary-light">{{ $proOnlyToolsCount }}</span>
                     </div>
 
                     <div class="flex items-center justify-between rounded-lg border border-slate-150 dark:border-navy-600 p-2.5 bg-slate-50/50 dark:bg-navy-800/40">
@@ -573,7 +571,7 @@
                             <span class="size-2 rounded-full bg-warning"></span>
                             <span>Mode Maintenance</span>
                         </span>
-                        <span class="font-extrabold text-warning">{{ $maintenanceToolsCount }}</span>
+                        <span class="font-semibold text-warning">{{ $maintenanceToolsCount }}</span>
                     </div>
                 </div>
             </div>

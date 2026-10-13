@@ -26,9 +26,8 @@
             {{-- Quota Notification Pill --}}
             <div class="flex items-center justify-between">
                 @if(auth()->check() && auth()->user()->is_admin)
-                    <div class="badge rounded-full space-x-1.5 bg-linear-to-r from-rose-500/15 via-purple-500/15 to-indigo-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/20 px-3 py-1 text-xs font-bold shadow-xs flex items-center">
-                        <x-lucide-shield-check class="size-3.5" />
-                        <span>Akses: Unlimited (Admin)</span>
+                    <div class="badge rounded-full bg-primary/10 text-primary dark:bg-accent-light/15 dark:text-accent-light px-3 py-1 text-xs font-medium">
+                        Akses: Unlimited (Admin)
                     </div>
                 @elseif($remainingQuota !== null)
                     <div class="badge rounded-full space-x-2 bg-slate-150 px-3 py-1 text-slate-800 dark:bg-navy-600 dark:text-navy-100 text-xs font-semibold">
@@ -113,10 +112,10 @@
                     <div class="card p-4 sm:p-5 space-y-3">
                         <div class="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-navy-700">
                             <div class="flex items-center gap-2">
-                                <h4 class="text-xs font-bold text-slate-700 dark:text-navy-100 uppercase tracking-wider">
+                                <h4 class="text-xs font-semibold text-slate-700 dark:text-navy-100 uppercase tracking-wider">
                                     Urutan Dokumen ({{ count($files) }} File)
                                 </h4>
-                                <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent/15 dark:text-accent font-bold text-[10px] px-2 py-0.2">
+                                <span class="badge rounded-full bg-primary/10 text-primary dark:bg-accent/15 dark:text-accent font-medium text-xs px-2.5 py-0.5">
                                     Gunakan tombol ↑ / ↓ untuk atur urutan
                                 </span>
                             </div>
@@ -124,16 +123,16 @@
 
                         <div class="space-y-2 max-h-[340px] overflow-y-auto is-scrollbar-hidden pr-1">
                             @foreach($files as $index => $fileItem)
-                                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-navy-750/50 border border-slate-200/80 dark:border-navy-650 transition-all hover:border-primary/40 group">
+                                <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-navy-750/50 border border-slate-150 dark:border-navy-600 transition-all hover:border-primary/40 group">
                                     <div class="flex items-center space-x-3 overflow-hidden">
-                                        <span class="flex size-6 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-xs font-black">
+                                        <span class="flex size-6 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary dark:bg-accent-light/10 dark:text-accent-light text-xs font-medium">
                                             {{ $index + 1 }}
                                         </span>
                                         <div class="overflow-hidden">
-                                            <p class="text-xs font-bold text-slate-800 dark:text-navy-100 truncate max-w-xs sm:max-w-sm">
+                                            <p class="text-xs font-medium text-slate-800 dark:text-navy-100 truncate max-w-xs sm:max-w-sm">
                                                 {{ $fileItem->getClientOriginalName() }}
                                             </p>
-                                            <p class="text-[10px] text-slate-400 dark:text-navy-300">
+                                            <p class="text-xs text-slate-400 dark:text-navy-300">
                                                 {{ number_format($fileItem->getSize() / 1024, 1) }} KB · Dokumen PDF
                                             </p>
                                         </div>
@@ -181,8 +180,8 @@
                             <button wire:click="merge" 
                                     wire:loading.attr="disabled"
                                     @if(count($files) < 2) disabled @endif
-                                    class="btn w-full h-11 rounded-lg bg-primary font-bold text-white shadow-lg shadow-primary/30 hover:bg-primary-focus dark:bg-accent dark:shadow-accent/30 dark:hover:bg-accent-focus text-xs sm:text-sm flex items-center justify-center space-x-2 transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer">
-                                <div wire:loading wire:target="merge" class="spinner size-4.5 border-2 border-white border-r-transparent rounded-full"></div>
+                                    class="btn w-full h-10 rounded-lg bg-primary font-medium text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs sm:text-sm flex items-center justify-center space-x-2 transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer">
+                                <div wire:loading wire:target="merge" class="spinner size-4 border-2 border-white border-r-transparent rounded-full"></div>
                                 <span wire:loading.remove wire:target="merge" class="flex items-center space-x-1.5">
                                     <x-lucide-combine class="size-4" />
                                     <span>Gabungkan {{ count($files) }} Dokumen PDF</span>
@@ -200,10 +199,10 @@
             {{-- Processing State Card (Lineone Indeterminate Progress) --}}
             <div wire:loading wire:target="merge" class="w-full">
                 <div class="card flex min-h-[380px] h-full flex-col items-center justify-center p-6 text-center border border-primary/30 dark:border-accent/30 bg-primary/5 dark:bg-accent/5">
-                    <div class="mask is-squircle flex size-16 items-center justify-center bg-primary/10 text-primary dark:bg-accent/10 dark:text-accent-light mb-4 shadow-sm">
+                    <div class="mask is-squircle flex size-16 items-center justify-center bg-primary/10 text-primary dark:bg-accent/10 dark:text-accent-light mb-4">
                         <x-lucide-combine class="size-8 animate-pulse" />
                     </div>
-                    <h3 class="text-base font-bold text-slate-800 dark:text-navy-100">
+                    <h3 class="text-base font-medium text-slate-800 dark:text-navy-100">
                         Sedang Menggabungkan PDF...
                     </h3>
                     <p class="mt-1 text-xs text-slate-500 dark:text-navy-300 max-w-xs leading-relaxed">
@@ -218,27 +217,24 @@
                     </div>
 
                     <div class="mt-5 flex flex-wrap items-center justify-center gap-2">
-                        <span class="badge rounded-full bg-white/80 text-slate-700 dark:bg-navy-700 dark:text-navy-200 text-[10px] font-semibold px-2.5 py-0.5 shadow-xs flex items-center gap-1">
-                            <x-lucide-shield-check class="size-3 text-success" />
-                            <span>Kualitas Vektor Terjaga</span>
+                        <span class="badge rounded-full bg-slate-100 text-slate-700 dark:bg-navy-600 dark:text-navy-200 text-xs font-medium px-2.5 py-0.5">
+                            Kualitas Vektor Terjaga
                         </span>
-                        <span class="badge rounded-full bg-white/80 text-slate-700 dark:bg-navy-700 dark:text-navy-200 text-[10px] font-semibold px-2.5 py-0.5 shadow-xs flex items-center gap-1">
-                            <x-lucide-zap class="size-3 text-warning" />
-                            <span>Proses Ultra Cepat</span>
+                        <span class="badge rounded-full bg-slate-100 text-slate-700 dark:bg-navy-600 dark:text-navy-200 text-xs font-medium px-2.5 py-0.5">
+                            Proses Cepat
                         </span>
                     </div>
                 </div>
             </div>
 
             {{-- Result Panel (Hidden during merge loading) --}}
-            <div wire:loading.remove wire:target="merge" class="card p-5 sm:p-6 text-center border border-slate-200/80 dark:border-navy-700 h-full flex flex-col justify-between">
+            <div wire:loading.remove wire:target="merge" class="card p-5 sm:p-6 text-center border border-slate-150 dark:border-navy-600 h-full flex flex-col justify-between">
                 <div>
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-navy-100 mb-4 pb-3 border-b border-slate-200 dark:border-navy-700 flex items-center justify-between">
+                    <h3 class="text-sm font-medium text-slate-700 dark:text-navy-100 mb-4 pb-3 border-b border-slate-150 dark:border-navy-600 flex items-center justify-between">
                         <span>Hasil PDF Gabungan</span>
                         @if($resultPath)
-                            <span class="badge rounded-full bg-success/15 text-success text-[10px] font-bold px-2 py-0.5 flex items-center gap-1">
-                                <x-lucide-check class="size-3" />
-                                <span>Selesai</span>
+                            <span class="badge rounded-full bg-success/15 text-success text-xs font-medium px-2 py-0.5">
+                                Selesai
                             </span>
                         @endif
                     </h3>
@@ -247,11 +243,11 @@
                         {{-- Comparison Cards --}}
                         <div class="space-y-4">
                             {{-- Success Hero Badge --}}
-                            <div class="rounded-2xl bg-linear-to-br from-indigo-50 to-purple-50 dark:from-navy-750 dark:to-navy-700 p-5 border border-indigo-200/60 dark:border-navy-600">
-                                <div class="mask is-squircle flex size-12 items-center justify-center bg-indigo-600 text-white mx-auto mb-2 shadow-md shadow-indigo-500/20">
+                            <div class="rounded-lg bg-slate-50 dark:bg-navy-750/60 p-5 border border-slate-150 dark:border-navy-600">
+                                <div class="mask is-squircle flex size-12 items-center justify-center bg-primary text-white mx-auto mb-2">
                                     <x-lucide-combine class="size-6" />
                                 </div>
-                                <h4 class="text-xl font-black text-slate-800 dark:text-navy-50">
+                                <h4 class="text-xl font-semibold text-slate-800 dark:text-navy-100">
                                     PDF Berhasil Digabung!
                                 </h4>
                                 <p class="text-xs text-slate-500 dark:text-navy-300 mt-0.5">
@@ -261,24 +257,24 @@
 
                             {{-- Size Comparison Grid --}}
                             <div class="grid grid-cols-2 gap-3 text-left">
-                                <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-navy-700/50 border border-slate-200 dark:border-navy-600">
-                                    <p class="text-[10px] font-semibold text-slate-400 dark:text-navy-300 uppercase">Total File Awal</p>
-                                    <p class="text-sm font-bold text-slate-700 dark:text-navy-100 mt-0.5">
+                                <div class="p-3 rounded-lg bg-white dark:bg-navy-700 border border-slate-150 dark:border-navy-600">
+                                    <p class="text-xs font-medium text-slate-400 dark:text-navy-300 uppercase">Total File Awal</p>
+                                    <p class="text-sm font-semibold text-slate-700 dark:text-navy-100 mt-0.5">
                                         {{ number_format($originalSize / 1024, 1) }} KB
                                     </p>
                                 </div>
-                                <div class="p-3.5 rounded-xl bg-primary/5 dark:bg-accent-light/5 border border-primary/20 dark:border-accent-light/20">
-                                    <p class="text-[10px] font-semibold text-primary dark:text-accent-light uppercase">Ukuran Gabungan</p>
-                                    <p class="text-sm font-bold text-primary dark:text-accent-light mt-0.5">
+                                <div class="p-3 rounded-lg bg-primary/5 dark:bg-accent-light/5 border border-primary/20 dark:border-accent-light/20">
+                                    <p class="text-xs font-medium text-primary dark:text-accent-light uppercase">Ukuran Gabungan</p>
+                                    <p class="text-sm font-semibold text-primary dark:text-accent-light mt-0.5">
                                         {{ number_format($newSize / 1024, 1) }} KB
                                     </p>
                                 </div>
                             </div>
 
                             <div class="text-xs text-slate-400 dark:text-navy-300 flex items-center justify-center gap-3 pt-1">
-                                <span>📑 Dokumen: <strong class="text-slate-700 dark:text-navy-200">{{ $filesCount }} File</strong></span>
+                                <span>📑 Dokumen: <strong class="text-slate-700 dark:text-navy-200 font-medium">{{ $filesCount }} File</strong></span>
                                 <span>•</span>
-                                <span>📄 Total: <strong class="text-slate-700 dark:text-navy-200">{{ $pageCount }} Halaman</strong></span>
+                                <span>📄 Total: <strong class="text-slate-700 dark:text-navy-200 font-medium">{{ $pageCount }} Halaman</strong></span>
                             </div>
                         </div>
                     @else
@@ -287,7 +283,7 @@
                             <div class="mask is-squircle flex size-16 items-center justify-center bg-slate-100 text-slate-400 dark:bg-navy-700 dark:text-navy-300 mb-3">
                                 <x-lucide-combine class="size-8" />
                             </div>
-                            <p class="text-sm font-bold text-slate-700 dark:text-navy-200">Belum Ada File Digabung</p>
+                            <p class="text-sm font-medium text-slate-700 dark:text-navy-200">Belum Ada File Digabung</p>
                             <p class="text-xs text-slate-400 dark:text-navy-300 mt-1 max-w-xs">
                                 Unggah minimal 2 file dokumen PDF di panel sebelah kiri, atur urutan yang diinginkan, dan klik tombol gabungkan.
                             </p>
@@ -298,11 +294,11 @@
                 {{-- Download & Reset Buttons --}}
                 @if($resultPath)
                     <div class="pt-6 space-y-2">
-                        <button wire:click="download" class="btn w-full h-11 rounded-lg bg-success font-bold text-white shadow-lg shadow-success/30 hover:bg-success-focus text-xs sm:text-sm flex items-center justify-center space-x-2 cursor-pointer">
-                            <x-lucide-download class="size-4.5" />
+                        <button wire:click="download" class="btn w-full h-10 rounded-lg bg-primary font-medium text-white hover:bg-primary-focus dark:bg-accent dark:hover:bg-accent-focus text-xs sm:text-sm flex items-center justify-center space-x-2 cursor-pointer">
+                            <x-lucide-download class="size-4" />
                             <span>Unduh PDF Gabungan (.pdf)</span>
                         </button>
-                        <button wire:click="resetFiles" class="btn w-full h-9 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 dark:border-navy-600 dark:text-navy-200 dark:hover:bg-navy-700 text-xs font-semibold cursor-pointer">
+                        <button wire:click="resetFiles" class="btn w-full h-9 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 dark:border-navy-450 dark:text-navy-200 dark:hover:bg-navy-700 text-xs font-medium cursor-pointer">
                             Gabungkan Dokumen Lain
                         </button>
                     </div>
