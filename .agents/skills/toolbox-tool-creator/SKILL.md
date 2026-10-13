@@ -194,6 +194,10 @@ class SampleToolService
 Buat file `app/Livewire/Tools/{Name}.php`:
 - Implementasikan trait `WithFileUploads` dan `LivewireLineoneAlerts`.
 - Sertakan validasi file, pengecekan kuota `EntitlementService`, dan perekaman `Activity`.
+- **Aturan Payload Livewire (Anti-PayloadTooLargeException)**:
+  - **DILARANG KERAS** menyimpan array string base64 (`data:image/...;base64,...`) atau data biner besar ke dalam `public` property Livewire. Setiap aksi tombol / klik kartu akan mengirim ulang seluruh isi properti publik sehingga memicu `Livewire\Exceptions\PayloadTooLargeException`.
+  - Jika alat membutuhkan rendering thumbnail visual (seperti Split PDF, Remove Pages, Reorder Pages), simpan berkas gambar PNG ke disk `public` (`storage/app/public/temp_thumbs/{batchId}/...`). Komponen Livewire cukup menyimpan identifier batch (`public $thumbBatch`) dan hitungan integer (`public $thumbnailsCount`).
+  - Sediakan method `cleanupThumbnails()` di Service untuk membersihkan folder publik saat berkas diganti atau di-reset (`resetFile()`).
 
 ---
 

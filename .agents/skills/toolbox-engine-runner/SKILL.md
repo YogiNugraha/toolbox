@@ -49,6 +49,18 @@ python storage/scripts/compress_pdf.py test_edit.pdf storage/app/private/test_co
 python storage/scripts/word2pdf.py storage/scripts/sample.docx storage/app/private/sample.pdf
 ```
 
+### Contoh Test Hapus Halaman PDF:
+```powershell
+python storage/scripts/remove_pdf_pages.py --inspect test.pdf
+python storage/scripts/remove_pdf_pages.py --thumbnails test.pdf storage/app/public/temp_thumbs/test 12
+python storage/scripts/remove_pdf_pages.py test.pdf storage/app/private/test_pruned.pdf "2, 4-5"
+```
+
+### Contoh Test Penomoran Halaman PDF:
+```powershell
+python storage/scripts/page_number_pdf.py test.pdf storage/app/private/test_numbered.pdf bottom_center 1 1 standard normal
+```
+
 ---
 
 ## 3. Menjalankan Queue Worker untuk Asynchronous Jobs
