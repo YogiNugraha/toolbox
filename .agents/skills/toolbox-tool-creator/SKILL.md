@@ -1,0 +1,204 @@
+---
+name: toolbox-tool-creator
+description: >-
+  Use this skill when creating a new tool or modifying an existing tool in the ToolBox project,
+  guiding through configuration in config/tools.php, database sync, backend processing service,
+  Python execution script, Livewire component, and Lineone Blade view.
+---
+
+# 🛠️ Toolbox Tool Creator Runbook
+
+Skill ini memandu proses pembuatan tool baru pada aplikasi ToolBox secara menyeluruh dan sesuai konvensi arsitektur proyek.
+
+## Ringkasan Alur Pembuatan
+
+Setiap tool di ToolBox dibangun melalui 5 langkah terpadu:
+1. Pendaftaran konfigurasi di `config/tools.php`
+2. Sinkronisasi metadata ke basis data (`Tool::syncFromConfig()`)
+3. Pembuatan skrip pemroses (Python di `storage/scripts/` atau PHP Service)
+4. Pembuatan Service wrapper di `app/Services/Tools/`
+5. Pembuatan Livewire Component & Blade Template di `app/Livewire/Tools/` dan `resources/views/livewire/tools/`
+
+---
+
+## Langkah 1: Registrasi Konfigurasi Tool
+
+Buka [config/tools.php](file:///c:/laragon/www/toolbox/config/tools.php) dan tambahkan entri tool:
+
+```php
+[
+    'slug' => 'nama-tool',
+    'name' => 'Nama Tampilan Tool',
+    'description' => 'Penjelasan ringkas apa yang dilakukan alat ini.',
+    'icon' => 'wrench', // Lucide icon identifier (tanpa prefix "lucide-")
+    'category' => 'Document', // Atau 'Image'
+    'component' => 'tools.nama-tool', // Format kebab-case component
+    'lockable_features' => [
+        'nama_fitur_pro' => 'Deskripsi Fitur Khusus Pro',
+    ],
+],
+```
+
+Sinkronkan ke tabel database via terminal:
+```powershell
+php artisan tinker --execute="App\Models\Tool::syncFromConfig();"
+```
+
+---
+
+## Langkah 2: Skrip Pemroses Python (Jika Konversi Dokumen/PDF)
+
+Jika operasi membutuhkan manipulasi PDF atau Office, buat file baru di `storage/scripts/{nama_tool}.py`.
+
+**Template Baku Skrip Python:**
+```python
+#!/usr/bin/env python3
+import sys
+import os
+import json
+import site
+
+# Wajib: Registrasi site-packages untuk runtime Windows/Laragon
+_potential_site_dirs = [
+    os.path.expanduser(r"~\AppData\Roaming\Python\Python313\site-packages"),
+    r"C:\Users\Yogi Nugraha\AppData\Roaming\Python\Python313\site-packages",
+    r"C:\Python313\Lib\site-packages",
+    r"C:\laragon\bin\python\python-3.10\Lib\site-packages",
+]
+for _dir in _potential_site_dirs:
+    if os.path.exists(_dir) and _dir not in sys.path:
+        site.addsitedir(_dir)
+
+def process_file(input_path, output_path, **kwargs):
+    if not os.path.exists(input_path):
+        raise FileNotFoundError(f"Input file tidak ditemukan: {input_path}")
+    
+    original_size = os.path.getsize(input_path)
+    output_dir = os.path.dirname(os.path.abspath(output_path))
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # --- Logika manipulasi (misal PyMuPDF / fitz) ---
+    # doc = fitz.open(input_path)
+    # doc.save(output_path)
+    # doc.close()
+    
+    new_size = os.path.getsize(output_path)
+    return {
+        "status": "success",
+        "original_size": original_size,
+        "new_size": new_size,
+        "output_path": output_path
+    }
+
+if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        print(json.dumps({"status": "error", "message": "Argumen tidak lengkap."}))
+        sys.exit(1)
+        
+    input_path = os.path.abspath(sys.argv[1])
+    output_path = os.path.abspath(sys.argv[2])
+    
+    try:
+        res = process_file(input_path, output_path)
+        print(json.dumps(res))
+        sys.exit(0)
+    except Exception as e:
+        print(json.dumps({"status": "error", "message": str(e)}))
+        sys.exit(1)
+```
+
+---
+
+## Langkah 3: Pembuatan Tool Service
+
+Buat file `app/Services/Tools/{Name}Service.php`.
+
+```php
+<?php
+
+namespace App\Services\Tools;
+
+use Symfony\Component\Process\Process;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
+class SampleToolService
+{
+    public function process(UploadedFile $file, array $options = []): array
+    {
+        $pythonScript = base_path('storage/scripts/sample_tool.py');
+        $pythonExecutable = config('services.python_path', 'python');
+
+        if (!file_exists($pythonScript)) {
+            throw new \Exception("Skrip pemroses tidak ditemukan.");
+        }
+
+        // Siapkan direktori lokal
+        $uniqueId = Str::uuid()->toString();
+        $userId = auth()->id() ?? 'guest';
+        $relativeDir = 'users/' . $userId;
+        $outputFilename = 'processed_' . $uniqueId . '.pdf';
+        $relativeResultPath = $relativeDir . '/' . $outputFilename;
+
+        Storage::disk('local')->makeDirectory($relativeDir);
+        $absoluteResultPath = Storage::disk('local')->path($relativeResultPath);
+
+        // Siapkan input file
+        $realInputPath = $file->getRealPath();
+        $cleanupInput = false;
+        if (!$realInputPath || !file_exists($realInputPath)) {
+            $tempRelative = $file->store('temp_tools', 'local');
+            $realInputPath = Storage::disk('local')->path($tempRelative);
+            $cleanupInput = true;
+        }
+
+        // Jalankan proses
+        $process = new Process([
+            $pythonExecutable,
+            $pythonScript,
+            $realInputPath,
+            $absoluteResultPath,
+        ]);
+        $process->setTimeout(120);
+        $process->run();
+
+        if ($cleanupInput && isset($tempRelative)) {
+            Storage::disk('local')->delete($tempRelative);
+        }
+
+        $output = trim($process->getOutput());
+        if (preg_match('/\{.*\}/s', $output, $matches)) {
+            $data = json_decode($matches[0], true);
+            if (isset($data['status']) && $data['status'] === 'success') {
+                $origBasename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                return [
+                    'result_path' => $relativeResultPath,
+                    'result_filename' => $origBasename . '_processed.pdf',
+                    'original_size' => $data['original_size'] ?? $file->getSize(),
+                    'new_size' => $data['new_size'] ?? (file_exists($absoluteResultPath) ? filesize($absoluteResultPath) : 0),
+                ];
+            }
+            throw new \Exception($data['message'] ?? 'Gagal memproses berkas.');
+        }
+
+        throw new \Exception("Terjadi kesalahan: " . ($process->getErrorOutput() ?: $output));
+    }
+}
+```
+
+---
+
+## Langkah 4: Pembuatan Livewire Component
+
+Buat file `app/Livewire/Tools/{Name}.php`:
+- Implementasikan trait `WithFileUploads` dan `LivewireLineoneAlerts`.
+- Sertakan validasi file, pengecekan kuota `EntitlementService`, dan perekaman `Activity`.
+
+---
+
+## Langkah 5: Pembuatan Blade View
+
+Buat file `resources/views/livewire/tools/{kebab-case}.blade.php`:
+- Terapkan 3 state tampilan (Upload Dropzone, Pengaturan/Pratinjau, Hasil Download).
+- Gunakan badge kuota, spinner saat proses, dan styling tema Lineone.
