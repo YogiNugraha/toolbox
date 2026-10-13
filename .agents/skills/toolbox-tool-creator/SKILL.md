@@ -13,9 +13,9 @@ Skill ini memandu proses pembuatan tool baru pada aplikasi ToolBox secara menyel
 ## Ringkasan Alur Pembuatan
 
 Setiap tool di ToolBox dibangun melalui 5 langkah terpadu:
-1. Pendaftaran konfigurasi di `config/tools.php`
+1. Pendaftaran konfigurasi di `config/tools.php` (kategori: `Document`, `Image`, atau `Utility`)
 2. Sinkronisasi metadata ke basis data (`Tool::syncFromConfig()`)
-3. Pembuatan skrip pemroses (Python di `storage/scripts/` atau PHP Service)
+3. Pembuatan skrip pemroses (Python di `storage/scripts/`, Intervention Image v4, atau library PHP seperti `chillerlan/php-qrcode`)
 4. Pembuatan Service wrapper di `app/Services/Tools/`
 5. Pembuatan Livewire Component & Blade Template di `app/Livewire/Tools/` dan `resources/views/livewire/tools/`
 

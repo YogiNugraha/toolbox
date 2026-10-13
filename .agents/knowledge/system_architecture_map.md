@@ -61,6 +61,7 @@ graph TD
 | `watermark-pdf` | Document | `Tools\WatermarkPdf` | `WatermarkPdfService` | `storage/scripts/watermark_pdf.py` (`PyMuPDF` / `Pillow`) |
 | `resize-image` | Image | `Tools\ResizeImage` | `ResizeImageService` | Intervention Image v4 (GD Driver) |
 | `crop-image` | Image | `Tools\CropImage` | `CropImageService` | Intervention Image v4 (GD Driver) |
+| `qr-generator` | Utility | `Tools\QrGenerator` | `QrGeneratorService` | `chillerlan/php-qrcode` (v6.0) + Intervention Image v4 |
 
 ---
 

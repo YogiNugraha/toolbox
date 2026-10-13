@@ -38,6 +38,10 @@ Dokumen ini mencatat keputusan arsitektural penting (*architectural decision rec
 - **Alasan**: Operasi resize dan crop gambar tidak memerlukan dependensi eksternal Python atau FFmpeg; Intervention Image v4 dengan driver GD bekerja secara in-memory dalam hitungan milidetik. Menggunakan `scale(width, height)` untuk mempertahankan aspek rasio secara proporsional dan `crop(width, height, x, y)` untuk pemotongan presisi berbagai rasio preset (1:1, 4:3, 16:9, pas foto).
 - **Konsekuensi**: Sangat cepat, hemat sumber daya server, dan tidak memerlukan eksekusi CLI latar belakang.
 
+### I. Custom QR Code Suite (chillerlan/php-qrcode v6 + Intervention Image v4)
+- **Alasan**: `chillerlan/php-qrcode` mendukung output ganda: raster PNG (`QRGdImagePNG`) dan vektor SVG murni (`QRMarkupSVG`) tanpa dependensi sistem C atau eksternal. Untuk fitur logo tengah, Intervention Image v4 menempelkan logo di atas canvas QR dengan badge putih melingkar dan otomatis beralih ke Error Correction Level H (30% redundansi) agar QR tetap mudah dipindai kamera smartphone.
+- **Konsekuensi**: Pratinjau langsung instan (Live Sync data URI) dan ekspor vektor lossless berkualitas tinggi untuk cetak materi fisik maupun digital.
+
 ---
 
 ## 2. Perangkap & Hal yang Sering Menjadi Masalah (Gotchas)

@@ -185,4 +185,13 @@ return [
         'component' => 'tools.crop-image',
         'lockable_features' => [],
     ],
+    [
+        'slug' => 'qr-generator',
+        'name' => 'QR Code Generator',
+        'description' => 'Buat kode QR kustom untuk URL, Wi-Fi, WhatsApp, vCard, dan teks dengan pilihan warna, bentuk titik, dan logo tengah.',
+        'icon' => 'qr-code',
+        'category' => 'Utility',
+        'component' => 'tools.qr-generator',
+        'lockable_features' => [],
+    ],
 ];
